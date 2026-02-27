@@ -385,6 +385,8 @@ export default {
     "ui.backup.fileCountUnit": "fișiere",
     "ui.backup.retentionDays.sync": "Zile păstrare istoric (0: fără curățare, -1: fără istoric)",
     "ui.backup.retentionDays.backup": "Zile păstrare pachete backup (0: fără curățare, -1: fără backup istoric)",
+    "ui.backup.includeVaultName.label": "Include numele vault-ului",
+    "ui.backup.includeVaultName.tooltip": "Oprit: {customPath}/notes/xxx.md\nPornit: {customPath}/{vaultName}/notes/xxx.md",
     "ui.backup.noAvailableStorage": "Nu există configurări de stocare disponibile",
     "ui.backup.addStorageTip": "Te rugăm să adaugi și să activezi un serviciu de stocare în gestionarea stocării",
     "ui.backup.storages": "Selecție stocare",

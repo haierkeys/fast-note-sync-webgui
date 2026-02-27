@@ -385,6 +385,8 @@ export default {
     "ui.backup.fileCountUnit": "個のファイル",
     "ui.backup.retentionDays.sync": "同期履歴の保持日数 (0: 削除しない, -1: 保持しない)",
     "ui.backup.retentionDays.backup": "バックアップの保持日数 (0: 削除しない, -1: 保持しない)",
+    "ui.backup.includeVaultName.label": "Vault名を含める",
+    "ui.backup.includeVaultName.tooltip": "オフ: {customPath}/notes/xxx.md\nオン: {customPath}/{vaultName}/notes/xxx.md",
     "ui.backup.noAvailableStorage": "利用可能なストレージ設定がありません",
     "ui.backup.addStorageTip": "まずストレージ管理でストレージを追加し、有効にしてください",
     "ui.backup.storages": "ストレージの選択",

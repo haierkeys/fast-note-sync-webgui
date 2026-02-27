@@ -385,6 +385,8 @@ export default {
     "ui.backup.fileCountUnit": "skedarë",
     "ui.backup.retentionDays.sync": "Ditët e mbajtjes së historisë (0: pa pastrim, -1: pa histori)",
     "ui.backup.retentionDays.backup": "Ditët e mbajtjes së paketave backup (0: pa pastrim, -1: pa backup historik)",
+    "ui.backup.includeVaultName.label": "Perfshi emrin e vault-it",
+    "ui.backup.includeVaultName.tooltip": "Fikur: {customPath}/notes/xxx.md\nNdezur: {customPath}/{vaultName}/notes/xxx.md",
     "ui.backup.noAvailableStorage": "Nuk ka konfigurime rregullimi të disponueshme",
     "ui.backup.addStorageTip": "Ju lutemi shtoni dhe aktivizoni një shërbim rregullimi në menaxhimin e rregullimit",
     "ui.backup.storages": "Zgjedhja e rregullimit",

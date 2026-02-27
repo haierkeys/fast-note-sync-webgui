@@ -385,6 +385,8 @@ export default {
     "ui.backup.fileCountUnit": "pliki",
     "ui.backup.retentionDays.sync": "Dni przechowywania historii (0: brak czyszczenia, -1: brak historii)",
     "ui.backup.retentionDays.backup": "Dni przechowywania pakietów kopii zapasowej (0: brak czyszczenia, -1: brak kopii historycznej)",
+    "ui.backup.includeVaultName.label": "Uwzglednij nazwe vault",
+    "ui.backup.includeVaultName.tooltip": "Wyl: {customPath}/notes/xxx.md\nWl: {customPath}/{vaultName}/notes/xxx.md",
     "ui.backup.noAvailableStorage": "Brak dostępnych konfiguracji pamięci",
     "ui.backup.addStorageTip": "Najpierw dodaj i włącz usługę pamięci w zarządzaniu pamięcią",
     "ui.backup.storages": "Wybór pamięci",

@@ -385,6 +385,8 @@ export default {
     "ui.backup.fileCountUnit": "ไฟล์",
     "ui.backup.retentionDays.sync": "จำนวนวันที่เก็บประวัติ (0: ไม่ล้างประวัติ, -1: ไม่เก็บประวัติ)",
     "ui.backup.retentionDays.backup": "จำนวนวันที่เก็บไฟล์สำรอง (0: ไม่ล้างข้อมูล, -1: ไม่เก็บประวัติการสำรอง)",
+    "ui.backup.includeVaultName.label": "รวมชื่อ Vault",
+    "ui.backup.includeVaultName.tooltip": "ปิด: {customPath}/notes/xxx.md\nเปิด: {customPath}/{vaultName}/notes/xxx.md",
     "ui.backup.noAvailableStorage": "ไม่มีการตั้งค่าพื้นที่เก็บข้อมูลที่ใช้งานได้",
     "ui.backup.addStorageTip": "โปรดเพิ่มและเปิดใช้งาน Storage Backend ในหน้าจัดการพื้นที่เก็บข้อมูลก่อน",
     "ui.backup.storages": "เลือกพื้นที่เก็บข้อมูล",

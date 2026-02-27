@@ -385,6 +385,8 @@ export default {
     "ui.backup.fileCountUnit": "bestanden",
     "ui.backup.retentionDays.sync": "Historie-retentiedagen (0: geen schoonmaak, -1: geen historie)",
     "ui.backup.retentionDays.backup": "Backup-pakket retentiedagen (0: geen schoonmaak, -1: geen historische backup)",
+    "ui.backup.includeVaultName.label": "Vault-naam opnemen",
+    "ui.backup.includeVaultName.tooltip": "Uit: {customPath}/notes/xxx.md\nAan: {customPath}/{vaultName}/notes/xxx.md",
     "ui.backup.noAvailableStorage": "Geen beschikbare opslagconfiguraties",
     "ui.backup.addStorageTip": "Voeg eerst een opslagservice toe en schakel deze in bij opslagbeheer",
     "ui.backup.storages": "Opslagselectie",

@@ -385,6 +385,8 @@ export default {
     "ui.backup.fileCountUnit": "файлів",
     "ui.backup.retentionDays.sync": "Термін зберігання історії (0: без очищення, -1: без історії)",
     "ui.backup.retentionDays.backup": "Термін зберігання бекап-архівів (0: без очищення, -1: без історії)",
+    "ui.backup.includeVaultName.label": "Включити назву сховища",
+    "ui.backup.includeVaultName.tooltip": "Вимк: {customPath}/notes/xxx.md\nУвімк: {customPath}/{vaultName}/notes/xxx.md",
     "ui.backup.noAvailableStorage": "Немає доступних сховищ",
     "ui.backup.addStorageTip": "Будь ласка, спочатку додайте сховище в розділі управління сховищами",
     "ui.backup.storages": "Вибір сховища",

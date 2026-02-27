@@ -385,6 +385,8 @@ export default {
     "ui.backup.fileCountUnit": "fichiers",
     "ui.backup.retentionDays.sync": "Jours de rétention d'historique (0 : pas de nettoyage, -1 : pas d'historique)",
     "ui.backup.retentionDays.backup": "Jours de rétention des paquets de sauvegarde (0 : pas de nettoyage, -1 : pas de sauvegarde historique)",
+    "ui.backup.includeVaultName.label": "Inclure le nom du coffre",
+    "ui.backup.includeVaultName.tooltip": "Desactive: {customPath}/notes/xxx.md\nActive: {customPath}/{vaultName}/notes/xxx.md",
     "ui.backup.noAvailableStorage": "Aucune configuration de stockage disponible",
     "ui.backup.addStorageTip": "Veuillez d'abord ajouter et activer un service de stockage dans la gestion du stockage",
     "ui.backup.storages": "Sélection de stockage",

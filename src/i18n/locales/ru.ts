@@ -385,6 +385,8 @@ export default {
     "ui.backup.fileCountUnit": "файлов",
     "ui.backup.retentionDays.sync": "Срок хранения истории (0: без очистки, -1: без истории)",
     "ui.backup.retentionDays.backup": "Срок хранения бэкап-архивов (0: без очистки, -1: без истории)",
+    "ui.backup.includeVaultName.label": "Включить имя хранилища",
+    "ui.backup.includeVaultName.tooltip": "Выкл: {customPath}/notes/xxx.md\nВкл: {customPath}/{vaultName}/notes/xxx.md",
     "ui.backup.noAvailableStorage": "Нет доступных хранилищ",
     "ui.backup.addStorageTip": "Пожалуйста, сначала добавьте хранилище в разделе управления хранилищами",
     "ui.backup.storages": "Выбор хранилища",

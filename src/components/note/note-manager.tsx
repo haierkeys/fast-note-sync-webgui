@@ -45,6 +45,11 @@ export function NoteManager({
     });
     const [searchKeyword, setSearchKeyword] = useState("");
 
+    // Lifted state for folder navigation (survives editor unmount)
+    const [currentPath, setCurrentPath] = useState("");
+    const [currentPathHash, setCurrentPathHash] = useState("");
+    const [pathHashMap, setPathHashMap] = useState<Record<string, string>>({});
+
     useEffect(() => {
         localStorage.setItem("notePageSize", pageSize.toString());
     }, [pageSize]);
@@ -58,9 +63,12 @@ export function NoteManager({
         });
     }, [handleVaultList]);
 
-    // Reset page when vault changes
+    // Reset page and folder navigation state when vault changes
     useEffect(() => {
         setPage(1);
+        setCurrentPath("");
+        setCurrentPathHash("");
+        setPathHashMap({});
     }, [vault]);
 
     const handleSelectNote = (note: Note, previewMode: boolean = false) => {
@@ -76,6 +84,14 @@ export function NoteManager({
     };
 
     const handleBack = () => {
+        setView("list");
+        setSelectedNote(undefined);
+    };
+
+    const handleNavigateToFolder = (folderPath: string) => {
+        setCurrentPath(folderPath);
+        setCurrentPathHash(pathHashMap[folderPath] || "");
+        setPage(1);
         setView("list");
         setSelectedNote(undefined);
     };
@@ -143,6 +159,7 @@ export function NoteManager({
                 vault={vault}
                 note={selectedNote}
                 onBack={handleBack}
+                onNavigateToFolder={handleNavigateToFolder}
                 onSaveSuccess={handleSaveSuccess}
                 onViewHistory={() => selectedNote && handleViewHistory(selectedNote)}
                 isMaximized={isMaximized}
@@ -167,6 +184,12 @@ export function NoteManager({
                 setSearchKeyword={setSearchKeyword}
                 onViewHistory={handleViewHistory}
                 isRecycle={isRecycle}
+                currentPath={currentPath}
+                setCurrentPath={setCurrentPath}
+                currentPathHash={currentPathHash}
+                setCurrentPathHash={setCurrentPathHash}
+                pathHashMap={pathHashMap}
+                setPathHashMap={setPathHashMap}
             />
         );
     }

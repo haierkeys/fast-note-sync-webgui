@@ -385,6 +385,8 @@ export default {
     "ui.backup.fileCountUnit": "개 파일",
     "ui.backup.retentionDays.sync": "이력 보관 일수 (0: 정리 안 함, -1: 이력 보관 안 함)",
     "ui.backup.retentionDays.backup": "백업 파일 보관 일수 (0: 정리 안 함, -1: 과거 백업 보관 안 함)",
+    "ui.backup.includeVaultName.label": "Vault 이름 포함",
+    "ui.backup.includeVaultName.tooltip": "끔: {customPath}/notes/xxx.md\n켬: {customPath}/{vaultName}/notes/xxx.md",
     "ui.backup.noAvailableStorage": "사용 가능한 저장소 설정이 없습니다",
     "ui.backup.addStorageTip": "먼저 저장소 관리에서 저장소 백엔드를 추가하고 활성화하세요",
     "ui.backup.storages": "저장소 선택",

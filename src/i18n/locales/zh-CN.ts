@@ -386,6 +386,8 @@ export default {
     "ui.backup.fileCountUnit": "个文件",
     "ui.backup.retentionDays.sync": "历史保留天数(0:不清理历史, -1:不保留历史记录)",
     "ui.backup.retentionDays.backup": "备份包保留天数(0:不清理备份, -1:不保留历史备份)",
+    "ui.backup.includeVaultName.label": "包含仓库名",
+    "ui.backup.includeVaultName.tooltip": "关闭: {customPath}/notes/xxx.md\n开启: {customPath}/{vaultName}/notes/xxx.md",
     "ui.backup.noAvailableStorage": "暂无可用存储配置",
     "ui.backup.addStorageTip": "请先在存储管理中添加并启用存储后端",
     "ui.backup.storages": "存储选择",

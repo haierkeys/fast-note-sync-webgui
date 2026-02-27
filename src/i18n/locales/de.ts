@@ -385,6 +385,8 @@ export default {
     "ui.backup.fileCountUnit": "Dateien",
     "ui.backup.retentionDays.sync": "Historien-Aufbewahrungstage (0: keine Bereinigung, -1: keine Historie)",
     "ui.backup.retentionDays.backup": "Backup-Paket-Aufbewahrungstage (0: keine Bereinigung, -1: keine Backup-Historie)",
+    "ui.backup.includeVaultName.label": "Vault-Name einschließen",
+    "ui.backup.includeVaultName.tooltip": "Aus: {customPath}/notes/xxx.md\nEin: {customPath}/{vaultName}/notes/xxx.md",
     "ui.backup.noAvailableStorage": "Keine verfügbare Speicherkonfiguration",
     "ui.backup.addStorageTip": "Bitte fügen Sie zuerst ein Speicher-Backend in der Speicherverwaltung hinzu",
     "ui.backup.storages": "Speicherauswahl",

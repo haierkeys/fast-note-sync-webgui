@@ -385,6 +385,8 @@ export default {
     "ui.backup.fileCountUnit": "file",
     "ui.backup.retentionDays.sync": "Hari retensi riwayat (0: tidak dibersihkan, -1: tidak simpan riwayat)",
     "ui.backup.retentionDays.backup": "Hari retensi paket cadangan (0: tidak dibersihkan, -1: tidak simpan riwayat cadangan)",
+    "ui.backup.includeVaultName.label": "Sertakan nama vault",
+    "ui.backup.includeVaultName.tooltip": "Mati: {customPath}/notes/xxx.md\nHidup: {customPath}/{vaultName}/notes/xxx.md",
     "ui.backup.noAvailableStorage": "Belum ada konfigurasi penyimpanan tersedia",
     "ui.backup.addStorageTip": "Silakan tambah dan aktifkan backend penyimpanan di manajemen penyimpanan terlebih dahulu",
     "ui.backup.storages": "Pemilihan Penyimpanan",

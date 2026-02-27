@@ -10,6 +10,7 @@ export interface BackupConfig {
     cronExpression?: string;
     storageIds: string; // JSON array string, e.g., "[1, 2]"
     isEnabled: boolean;
+    includeVaultName?: boolean;
     retentionDays?: number;
     lastRunTime?: string;
     nextRunTime?: string;
@@ -44,6 +45,7 @@ export interface BackupConfigRequest {
     cronExpression?: string;
     storageIds: string;
     isEnabled: boolean;
+    includeVaultName?: boolean;
     retentionDays?: number;
 }
 

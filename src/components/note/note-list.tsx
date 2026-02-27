@@ -35,9 +35,15 @@ interface NoteListProps {
     isRecycle?: boolean;
     searchKeyword: string;
     setSearchKeyword: (keyword: string) => void;
+    currentPath: string;
+    setCurrentPath: (path: string) => void;
+    currentPathHash: string;
+    setCurrentPathHash: (hash: string) => void;
+    pathHashMap: Record<string, string>;
+    setPathHashMap: (map: Record<string, string>) => void;
 }
 
-export function NoteList({ vault, vaults, onVaultChange, onSelectNote, onCreateNote, page, setPage, pageSize, setPageSize, onViewHistory, isRecycle = false, searchKeyword, setSearchKeyword }: NoteListProps) {
+export function NoteList({ vault, vaults, onVaultChange, onSelectNote, onCreateNote, page, setPage, pageSize, setPageSize, onViewHistory, isRecycle = false, searchKeyword, setSearchKeyword, currentPath, setCurrentPath, currentPathHash, setCurrentPathHash, pathHashMap, setPathHashMap }: NoteListProps) {
     const { t } = useTranslation();
     const { handleNoteList, handleDeleteNote, handleRestoreNote, handleFolderList, handleFolderNotes } = useNoteHandle();
     const { openConfirmDialog } = useConfirmDialog();
@@ -51,8 +57,6 @@ export function NoteList({ vault, vaults, onVaultChange, onSelectNote, onCreateN
     const [sortOrder, setSortOrder] = useState<SortOrder>("desc");
     const [selectedPaths, setSelectedPaths] = useState<Set<string>>(new Set());
     const [viewMode, setViewMode] = useState<ViewMode>("folder");
-    const [currentPath, setCurrentPath] = useState<string>("");
-    const [currentPathHash, setCurrentPathHash] = useState<string>("");
     const [folders, setFolders] = useState<Folder[]>([]);
     const { trashType, setModule } = useAppStore();
 
@@ -492,8 +496,7 @@ export function NoteList({ vault, vaults, onVaultChange, onSelectNote, onCreateN
                                 onClick={() => {
                                     const path = arr.slice(0, index + 1).join("/");
                                     setCurrentPath(path);
-                                    // 注意：面包屑点击由于没有对应的 hash 暂时清空，或者保留逻辑看是否需要后端处理
-                                    setCurrentPathHash("");
+                                    setCurrentPathHash(pathHashMap[path] || "");
                                     setPage(1);
                                 }}
                             >
@@ -523,6 +526,7 @@ export function NoteList({ vault, vaults, onVaultChange, onSelectNote, onCreateN
                                 key={`folder-${folder.pathHash}`}
                                 className="rounded-xl border border-border bg-card p-4 cursor-pointer transition-all duration-200 hover:shadow-md hover:border-primary/30"
                                 onClick={() => {
+                                    setPathHashMap({ ...pathHashMap, [folder.path]: folder.pathHash });
                                     setCurrentPath(folder.path);
                                     setCurrentPathHash(folder.pathHash);
                                     setPage(1);

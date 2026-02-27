@@ -385,6 +385,8 @@ export default {
     "ui.backup.fileCountUnit": "files",
     "ui.backup.retentionDays.sync": "History retention days (0: no cleanup, -1: no history)",
     "ui.backup.retentionDays.backup": "Retention days (0: no cleanup, -1: no history backup)",
+    "ui.backup.includeVaultName.label": "Include Vault Name",
+    "ui.backup.includeVaultName.tooltip": "Off: {customPath}/notes/xxx.md\nOn: {customPath}/{vaultName}/notes/xxx.md",
     "ui.backup.noAvailableStorage": "No available storage config",
     "ui.backup.addStorageTip": "Please add and enable a storage backend in Storage Management first",
     "ui.backup.storages": "Storage Selection",

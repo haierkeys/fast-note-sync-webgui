@@ -385,6 +385,8 @@ export default {
     "ui.backup.fileCountUnit": "tệp",
     "ui.backup.retentionDays.sync": "Số ngày giữ lại lịch sử (0: không dọn dẹp, -1: không giữ lịch sử)",
     "ui.backup.retentionDays.backup": "Số ngày giữ gói sao lưu (0: không dọn dẹp, -1: không giữ sao lưu lịch sử)",
+    "ui.backup.includeVaultName.label": "Bao gom ten vault",
+    "ui.backup.includeVaultName.tooltip": "Tat: {customPath}/notes/xxx.md\nBat: {customPath}/{vaultName}/notes/xxx.md",
     "ui.backup.noAvailableStorage": "Chưa có cấu hình lưu trữ khả dụng",
     "ui.backup.addStorageTip": "Vui lòng thêm và bật lưu trữ phụ trợ trong quản lý lưu trữ trước",
     "ui.backup.storages": "Lựa chọn lưu trữ",

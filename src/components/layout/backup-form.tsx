@@ -5,9 +5,11 @@ import { useBackupHandle } from "@/components/api-handle/backup-handle";
 import { useVaultHandle } from "@/components/api-handle/vault-handle";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { StorageConfig } from "@/lib/types/storage";
+import { Tooltip } from "@/components/ui/tooltip";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
+import { HelpCircle } from "lucide-react";
 import { VaultType } from "@/lib/types/vault";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -65,6 +67,7 @@ export function BackupForm({ config, storages, onSubmit, onCancel }: BackupFormP
             cronExpression: config?.cronExpression || "0 0 * * *",
             storageIds: JSON.stringify(initialStorageIds),
             isEnabled: config?.isEnabled ?? true,
+            includeVaultName: config?.includeVaultName ?? false,
             retentionDays: config?.retentionDays ?? 30,
         },
     });
@@ -129,6 +132,32 @@ export function BackupForm({ config, storages, onSubmit, onCancel }: BackupFormP
                     </Select>
                     {errors.type && <p className="text-[11px] text-destructive mt-1 ml-1">{errors.type.message}</p>}
                 </div>
+
+                {/* 仅在同步备份时显示：包含仓库名选项 */}
+                {watch("type") === "sync" && (
+                    <div className="space-y-1.5 md:col-span-2">
+                        <div className="flex items-center space-x-2">
+                            <Checkbox
+                                id="includeVaultName"
+                                checked={watch("includeVaultName")}
+                                onCheckedChange={(checked) => setValue("includeVaultName", Boolean(checked))}
+                            />
+                            <Label htmlFor="includeVaultName" className="text-sm font-medium text-foreground">
+                                {t("ui.backup.includeVaultName.label")}
+                            </Label>
+                            <Tooltip
+                                content={
+                                    <div className="whitespace-pre-line text-left">
+                                        {t("ui.backup.includeVaultName.tooltip")}
+                                    </div>
+                                }
+                                side="right"
+                            >
+                                <HelpCircle className="h-4 w-4 text-muted-foreground cursor-help" />
+                            </Tooltip>
+                        </div>
+                    </div>
+                )}
 
                 {/* 仅在全量或增量备份时显示的配置项 */}
                 {(watch("type") === "full" || watch("type") === "incremental") && (

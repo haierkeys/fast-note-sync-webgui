@@ -33,6 +33,7 @@ interface NoteEditorProps {
     vault: string;
     note?: Note;
     onBack: () => void;
+    onNavigateToFolder?: (folderPath: string) => void;
     onSaveSuccess: (path: string, pathHash: string) => void;
     onViewHistory?: () => void;
     isMaximized?: boolean;
@@ -45,6 +46,7 @@ export function NoteEditor({
     vault,
     note,
     onBack,
+    onNavigateToFolder,
     onSaveSuccess,
     onViewHistory,
     isMaximized: _isMaximized = false,
@@ -331,18 +333,28 @@ export function NoteEditor({
         // 显示标题（可点击编辑）
         return (
             <div className="flex items-center gap-1 min-w-0 flex-1">
-                <div
-                    className={`flex items-center gap-1 min-w-0 text-sm sm:text-lg ${!isRecycle ? "cursor-pointer hover:bg-muted/50 rounded px-1 py-0.5 -mx-1 -my-0.5 transition-colors" : ""}`}
-                    onClick={startEditingTitle}
-                >
+                <div className="flex items-center gap-1 min-w-0 text-sm sm:text-lg">
                     {folder && (
-                        <div className="hidden sm:flex items-center gap-2 shrink-0">
+                        <div
+                            className="hidden sm:flex items-center gap-2 shrink-0 cursor-pointer hover:text-primary transition-colors"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                if (onNavigateToFolder) {
+                                    onNavigateToFolder(folder);
+                                }
+                            }}
+                        >
                             <Folder className="h-4 w-4 text-muted-foreground" />
-                            <span className="text-muted-foreground truncate max-w-37.5">{folder}</span>
+                            <span className="text-muted-foreground truncate max-w-37.5 hover:text-primary">{folder}</span>
                             <span className="text-muted-foreground">/</span>
                         </div>
                     )}
-                    <span className="font-bold truncate">{filename}</span>
+                    <span
+                        className={`font-bold truncate ${!isRecycle ? "cursor-pointer hover:bg-muted/50 rounded px-1 py-0.5 -mx-1 -my-0.5 transition-colors" : ""}`}
+                        onClick={startEditingTitle}
+                    >
+                        {filename}
+                    </span>
                 </div>
                 {/* 保存状态、版本号和更新时间显示 */}
                 {!isRecycle && (

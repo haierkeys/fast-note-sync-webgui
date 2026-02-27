@@ -385,6 +385,8 @@ export default {
     "ui.backup.fileCountUnit": "ملفات",
     "ui.backup.retentionDays.sync": "أيام الاحتفاظ بالسجل (0: لا تنظيف، -1: لا سجل)",
     "ui.backup.retentionDays.backup": "أيام الاحتفاظ بملفات النسخ (0: لا تنظيف، -1: لا نسخ احتياطي تاريخي)",
+    "ui.backup.includeVaultName.label": "تضمين اسم المخزن",
+    "ui.backup.includeVaultName.tooltip": "إيقاف: {customPath}/notes/xxx.md\nتشغيل: {customPath}/{vaultName}/notes/xxx.md",
     "ui.backup.noAvailableStorage": "لا توجد إعدادات تخزين متاحة",
     "ui.backup.addStorageTip": "يرجى إضافة وتفعيل خدمة تخزين أولاً في إدارة التخزين",
     "ui.backup.storages": "اختيار التخزين",

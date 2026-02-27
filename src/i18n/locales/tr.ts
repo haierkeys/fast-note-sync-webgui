@@ -385,6 +385,8 @@ export default {
     "ui.backup.fileCountUnit": "dosya",
     "ui.backup.retentionDays.sync": "Geçmiş saklama süresi (0: temizlik yok, -1: geçmiş yok)",
     "ui.backup.retentionDays.backup": "Yedek paketleri saklama süresi (0: temizlik yok, -1: geçmiş yedekleme yok)",
+    "ui.backup.includeVaultName.label": "Vault adini dahil et",
+    "ui.backup.includeVaultName.tooltip": "Kapali: {customPath}/notes/xxx.md\nAcik: {customPath}/{vaultName}/notes/xxx.md",
     "ui.backup.noAvailableStorage": "Mevcut depolama yapılandırması yok",
     "ui.backup.addStorageTip": "Lütfen önce depolama yönetiminden bir depolama servisi ekleyin ve etkinleştirin",
     "ui.backup.storages": "Depolama Seçimi",

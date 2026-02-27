@@ -385,6 +385,8 @@ export default {
     "ui.backup.fileCountUnit": "arquivos",
     "ui.backup.retentionDays.sync": "Dias de retenção do histórico (0: sem limpeza, -1: sem histórico)",
     "ui.backup.retentionDays.backup": "Dias de retenção dos pacotes de backup (0: sem limpeza, -1: sem backup histórico)",
+    "ui.backup.includeVaultName.label": "Incluir nome do vault",
+    "ui.backup.includeVaultName.tooltip": "Desligado: {customPath}/notes/xxx.md\nLigado: {customPath}/{vaultName}/notes/xxx.md",
     "ui.backup.noAvailableStorage": "Nenhuma configuração de armazenamento disponível",
     "ui.backup.addStorageTip": "Por favor, adicione e ative primeiro um serviço de armazenamento na gestão de armazenamento",
     "ui.backup.storages": "Seleção de Armazenamento",

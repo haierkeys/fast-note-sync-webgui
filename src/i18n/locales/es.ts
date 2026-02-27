@@ -385,6 +385,8 @@ export default {
     "ui.backup.fileCountUnit": "archivos",
     "ui.backup.retentionDays.sync": "Días de retención de historial (0: no limpiar, -1: no guardar historial)",
     "ui.backup.retentionDays.backup": "Días de retención de paquetes de backup (0: no limpiar, -1: no guardar historial de backup)",
+    "ui.backup.includeVaultName.label": "Incluir nombre del vault",
+    "ui.backup.includeVaultName.tooltip": "Desactivado: {customPath}/notes/xxx.md\nActivado: {customPath}/{vaultName}/notes/xxx.md",
     "ui.backup.noAvailableStorage": "No hay configuración de almacenamiento disponible",
     "ui.backup.addStorageTip": "Por favor, añada y habilite primero un backend de almacenamiento en la gestión de almacenamiento",
     "ui.backup.storages": "Selección de almacenamiento",
