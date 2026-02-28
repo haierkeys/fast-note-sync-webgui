@@ -284,41 +284,48 @@ export function VaultList({ onNavigateToNotes, onNavigateToAttachments }: VaultL
     })
   )
 
-  const loadVaults = useCallback((showNotification = false) => {
+  const loadVaults = useCallback(async (showNotification = false) => {
     if (showNotification) {
       setIsRefreshing(true)
     }
-    handleVaultList((data) => {
-      // 从本地存储读取排序顺序
-      const savedOrder = localStorage.getItem(VAULT_ORDER_KEY)
-      if (savedOrder) {
-        try {
-          const orderIds = JSON.parse(savedOrder) as string[]
-          // 按保存的顺序排序
-          const sortedData = [...data].sort((a, b) => {
-            const indexA = orderIds.indexOf(a.id)
-            const indexB = orderIds.indexOf(b.id)
-            // 如果不在保存的顺序中，放到最后
-            if (indexA === -1) return 1
-            if (indexB === -1) return -1
-            return indexA - indexB
-          })
-          setVaults(sortedData)
-        } catch {
+    try {
+      await handleVaultList((data) => {
+        // 从本地存储读取排序顺序
+        const savedOrder = localStorage.getItem(VAULT_ORDER_KEY)
+        if (savedOrder) {
+          try {
+            const orderIds = JSON.parse(savedOrder) as string[]
+            // 按保存的顺序排序
+            const sortedData = [...data].sort((a, b) => {
+              const indexA = orderIds.indexOf(a.id)
+              const indexB = orderIds.indexOf(b.id)
+              // 如果不在保存的顺序中，放到最后
+              if (indexA === -1) return 1
+              if (indexB === -1) return -1
+              return indexA - indexB
+            })
+            setVaults(sortedData)
+          } catch {
+            setVaults(data)
+          }
+        } else {
           setVaults(data)
         }
-      } else {
-        setVaults(data)
-      }
+      })
       if (showNotification) {
-        setIsRefreshing(false)
         toast.success(t("ui.common.refreshSuccess"))
       }
-    })
+    } catch (error: unknown) {
+      toast.error(error instanceof Error ? error.message : String(error))
+    } finally {
+      if (showNotification) {
+        setIsRefreshing(false)
+      }
+    }
   }, [handleVaultList, t])
 
   useEffect(() => {
-    loadVaults()
+    void loadVaults()
   }, [loadVaults])
 
   // 筛选后的仓库列表

@@ -6,7 +6,7 @@ import { useBackupHandle } from "@/components/api-handle/backup-handle";
 import { BackupHistory, BackupType } from "@/lib/types/backup";
 import { mapError } from "@/lib/utils/error-mapper";
 import { toast } from "@/components/common/Toast";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { StorageConfig } from "@/lib/types/storage";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
@@ -30,23 +30,49 @@ export function BackupHistoryDialog({ configId, configType, open, onOpenChange }
     const [page, setPage] = useState(1);
     const [isLoading, setIsLoading] = useState(false);
     const pageSize = 5;
+    const historyRequestIdRef = useRef(0);
+    const storageRequestIdRef = useRef(0);
 
     const loadHistory = useCallback(async (currentPage: number) => {
+        const requestId = ++historyRequestIdRef.current;
         setIsLoading(true);
         await handleBackupHistory(currentPage, pageSize, configId, (data) => {
+            if (requestId !== historyRequestIdRef.current) {
+                return;
+            }
             setHistory(data.list);
             setTotal(data.total);
         });
-        setIsLoading(false);
+        if (requestId === historyRequestIdRef.current) {
+            setIsLoading(false);
+        }
     }, [configId, handleBackupHistory]);
 
     useEffect(() => {
         if (open) {
-            handleStorageList(setStorages);
+            const storageRequestId = ++storageRequestIdRef.current;
+            handleStorageList((data) => {
+                if (storageRequestId !== storageRequestIdRef.current) {
+                    return;
+                }
+                setStorages(data);
+            });
             setPage(1);
             loadHistory(1);
+            return;
         }
+
+        historyRequestIdRef.current += 1;
+        storageRequestIdRef.current += 1;
+        setIsLoading(false);
     }, [open, loadHistory, handleStorageList]);
+
+    useEffect(() => {
+        return () => {
+            historyRequestIdRef.current += 1;
+            storageRequestIdRef.current += 1;
+        };
+    }, []);
 
     const getStorageType = (storageId: number) => {
         const storage = storages.find(s => Number(s.id) === storageId);
@@ -66,6 +92,16 @@ export function BackupHistoryDialog({ configId, configType, open, onOpenChange }
         let fp = filePath.startsWith('/') ? filePath.substring(1) : filePath;
         url += '/' + fp;
         return url;
+    };
+
+    const getSafeHttpUrl = (url?: string | null): string | null => {
+        if (!url) return null;
+        try {
+            const parsedUrl = new URL(url);
+            return parsedUrl.protocol === "http:" || parsedUrl.protocol === "https:" ? url : null;
+        } catch {
+            return null;
+        }
     };
 
     const formatFileSize = (bytes?: number) => {
@@ -144,9 +180,10 @@ export function BackupHistoryDialog({ configId, configType, open, onOpenChange }
                                             {item.type !== 'sync' && item.filePath ? (
                                                 (() => {
                                                     const url = getFileUrl(item.storageId, item.filePath);
+                                                    const safeUrl = getSafeHttpUrl(url);
                                                     const fileName = item.filePath.split('/').pop() || item.filePath;
-                                                    return url ? (
-                                                        <a href={url} target="_blank" rel="noopener noreferrer" className="text-primary hover:text-blue-500 hover:underline flex items-center gap-1 transition-colors" title={item.filePath}>
+                                                    return safeUrl ? (
+                                                        <a href={safeUrl} target="_blank" rel="noopener noreferrer" className="text-primary hover:text-blue-500 hover:underline flex items-center gap-1 transition-colors" title={item.filePath}>
                                                             <span className="truncate">{fileName}</span>
                                                             <ExternalLink className="h-3 w-3 shrink-0 opacity-50" />
                                                         </a>

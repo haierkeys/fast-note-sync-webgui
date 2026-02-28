@@ -38,17 +38,34 @@ export function GitAutomation() {
     const [dialogConfigId, setDialogConfigId] = useState<number | undefined>(undefined);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-    const reloadData = async () => {
+    const loadConfigs = useCallback(async () => {
+        try {
+            await handleGitSyncList((data) => {
+                setConfigs(data);
+            });
+        } catch (error) {
+            console.error("Git config load error:", error);
+        }
+    }, [handleGitSyncList]);
+
+    const loadVaults = useCallback(async () => {
+        try {
+            await handleVaultList((data) => {
+                setVaults(data);
+            });
+        } catch (error) {
+            console.error("Vault list load error:", error);
+        }
+    }, [handleVaultList]);
+
+    const reloadData = useCallback(async () => {
         setIsLoading(true);
         try {
-            await Promise.all([
-                new Promise<void>((resolve) => handleGitSyncList((data) => { setConfigs(data); resolve(); })),
-                new Promise<void>((resolve) => handleVaultList((data) => { setVaults(data); resolve(); }))
-            ]);
+            await Promise.all([loadConfigs(), loadVaults()]);
         } finally {
             setIsLoading(false);
         }
-    };
+    }, [loadConfigs, loadVaults]);
 
     const loadGlobalHistory = useCallback(async (page: number) => {
         setIsHistoryLoading(true);
@@ -106,6 +123,16 @@ export function GitAutomation() {
         const s = Math.round(ms / 1000);
         if (s < 60) return `${s}s`;
         return `${Math.floor(s / 60)}m ${s % 60}s`;
+    };
+
+    const getSafeHttpUrl = (url?: string | null): string | null => {
+        if (!url) return null;
+        try {
+            const parsedUrl = new URL(url);
+            return parsedUrl.protocol === "http:" || parsedUrl.protocol === "https:" ? url : null;
+        } catch {
+            return null;
+        }
     };
 
     return (
@@ -197,9 +224,18 @@ export function GitAutomation() {
                                                         {config.branch}
                                                     </span>
                                                 </div>
-                                                <a href={config.repoUrl} target="_blank" rel="noopener noreferrer" className="text-[10px] text-muted-foreground hover:text-primary font-mono truncate max-w-[200px] sm:max-w-[300px] block hover:underline">
-                                                    {config.repoUrl}
-                                                </a>
+                                                {(() => {
+                                                    const safeRepoUrl = getSafeHttpUrl(config.repoUrl);
+                                                    return safeRepoUrl ? (
+                                                        <a href={safeRepoUrl} target="_blank" rel="noopener noreferrer" className="text-[10px] text-muted-foreground hover:text-primary font-mono truncate max-w-[200px] sm:max-w-[300px] block hover:underline">
+                                                            {config.repoUrl}
+                                                        </a>
+                                                    ) : (
+                                                        <span className="text-[10px] text-muted-foreground font-mono truncate max-w-[200px] sm:max-w-[300px] block">
+                                                            {config.repoUrl}
+                                                        </span>
+                                                    );
+                                                })()}
                                             </div>
                                         </div>
                                         <div className="flex items-center gap-1 flex-wrap shrink-0">

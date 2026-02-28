@@ -16,6 +16,8 @@ export function useVersion() {
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
+        const controller = new AbortController();
+
         const fetchVersion = async () => {
             setIsLoading(true);
             setError(null);
@@ -27,6 +29,7 @@ export function useVersion() {
                         Domain: window.location.origin,
                         Lang: getBrowserLang(),
                     },
+                    signal: controller.signal,
                 });
 
                 if (!response.ok) {
@@ -34,6 +37,9 @@ export function useVersion() {
                 }
 
                 const res = await response.json();
+                if (controller.signal.aborted) {
+                    return;
+                }
                 if (res.code < 100 && res.code > 0 && res.data) {
                     setVersionInfoLocal(res.data);
                     setVersionInfo(res.data);
@@ -41,14 +47,25 @@ export function useVersion() {
                     setError(res.message || t('getVersionError'));
                 }
             } catch (error) {
-                setError(t('getVersionError'));
-                console.error("Version fetch error:", error);
+                if (error instanceof DOMException && error.name === "AbortError") {
+                    return;
+                }
+                if (!controller.signal.aborted) {
+                    setError(t('getVersionError'));
+                    console.error("Version fetch error:", error);
+                }
             } finally {
-                setIsLoading(false);
+                if (!controller.signal.aborted) {
+                    setIsLoading(false);
+                }
             }
         };
 
         fetchVersion();
+
+        return () => {
+            controller.abort();
+        };
     }, [setVersionInfo, t]);
 
     return {

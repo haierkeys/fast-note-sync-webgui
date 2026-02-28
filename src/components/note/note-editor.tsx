@@ -110,12 +110,14 @@ export function NoteEditor({
             handleGetNote(vault, note.path, note.pathHash, isRecycle, (data) => {
                 setOriginalNote(data);
                 setContent(data.content);
+            }, () => {
                 setLoading(false);
             });
         } else {
             updatePath("");
             setContent("");
             setOriginalNote(null);
+            setLoading(false);
         }
     }, [note, vault, handleGetNote, isRecycle, updatePath]);
 

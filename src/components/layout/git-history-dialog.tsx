@@ -2,7 +2,7 @@ import { ChevronLeft, ChevronRight, Loader2, GitCommitHorizontal, CheckCircle2, 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useGitHandle } from "@/components/api-handle/git-handle";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { GitSyncHistoryDTO } from "@/lib/types/git";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
@@ -27,22 +27,39 @@ export function GitHistoryDialog({ configId, open, onOpenChange }: GitHistoryDia
     const [page, setPage] = useState(1);
     const [isLoading, setIsLoading] = useState(false);
     const pageSize = 10;
+    const historyRequestIdRef = useRef(0);
 
     const loadHistory = useCallback(async (currentPage: number) => {
+        const requestId = ++historyRequestIdRef.current;
         setIsLoading(true);
         await handleGitSyncHistories(currentPage, pageSize, configId, (data) => {
+            if (requestId !== historyRequestIdRef.current) {
+                return;
+            }
             setHistory(data.list);
             setTotal(data.total);
         });
-        setIsLoading(false);
+        if (requestId === historyRequestIdRef.current) {
+            setIsLoading(false);
+        }
     }, [configId, handleGitSyncHistories]);
 
     useEffect(() => {
         if (open) {
             setPage(1);
             loadHistory(1);
+            return;
         }
+
+        historyRequestIdRef.current += 1;
+        setIsLoading(false);
     }, [open, loadHistory]);
+
+    useEffect(() => {
+        return () => {
+            historyRequestIdRef.current += 1;
+        };
+    }, []);
 
     const totalPages = total > 0 ? Math.ceil(total / pageSize) : 1;
 

@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useMemo, useState } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
-import { ShieldCheck } from "lucide-react";
+import { Eye, EyeOff, ShieldCheck } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -34,6 +34,8 @@ export function StorageForm({ config, types, onSubmit, onCancel }: StorageFormPr
 
     const { handleStorageUpdate, handleStorageValidate } = useStorageHandle()
     const [isValidating, setIsValidating] = useState(false)
+    const [showWebdavPassword, setShowWebdavPassword] = useState(false)
+    const [showAccessKeySecret, setShowAccessKeySecret] = useState(false)
 
     const schema = useMemo(() => createStorageSchema(t), [t])
 
@@ -144,7 +146,24 @@ export function StorageForm({ config, types, onSubmit, onCancel }: StorageFormPr
                 {storageType === "webdav" && (
                     <div className="space-y-1.5">
                         <Label htmlFor="password" className="text-xs font-semibold text-muted-foreground ml-1">{t("ui.storage.webdavPassword")}</Label>
-                        <Input id="password" type="text" placeholder={t("ui.storage.placeholder.webdavPassword")} className="bg-background border-input no-password-prompt" {...register("password")} />
+                        <div className="relative">
+                            <Input
+                                id="password"
+                                type={showWebdavPassword ? "text" : "password"}
+                                placeholder={t("ui.storage.placeholder.webdavPassword")}
+                                className="bg-background border-input no-password-prompt pr-10"
+                                {...register("password")}
+                            />
+                            <Button
+                                type="button"
+                                variant="ghost"
+                                size="icon"
+                                className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent text-muted-foreground hover:text-foreground"
+                                onClick={() => setShowWebdavPassword(!showWebdavPassword)}
+                            >
+                                {showWebdavPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                            </Button>
+                        </div>
                         <p className="text-[11px] text-muted-foreground ml-1">{t("ui.storage.help.webdavPassword")}</p>
                         {errors.password && <p className="text-[11px] text-destructive mt-1 ml-1">{errors.password.message}</p>}
                     </div>
@@ -183,7 +202,24 @@ export function StorageForm({ config, types, onSubmit, onCancel }: StorageFormPr
                 {storageType !== "localfs" && storageType !== "webdav" && (
                     <div className="space-y-1.5">
                         <Label htmlFor="accessKeySecret" className="text-xs font-semibold text-muted-foreground ml-1">{t("ui.storage.accessKeySecret")}</Label>
-                        <Input id="accessKeySecret" type="text" placeholder={t("ui.storage.placeholder.accessKeySecret")} className="bg-background border-input no-password-prompt" {...register("accessKeySecret")} />
+                        <div className="relative">
+                            <Input
+                                id="accessKeySecret"
+                                type={showAccessKeySecret ? "text" : "password"}
+                                placeholder={t("ui.storage.placeholder.accessKeySecret")}
+                                className="bg-background border-input no-password-prompt pr-10"
+                                {...register("accessKeySecret")}
+                            />
+                            <Button
+                                type="button"
+                                variant="ghost"
+                                size="icon"
+                                className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent text-muted-foreground hover:text-foreground"
+                                onClick={() => setShowAccessKeySecret(!showAccessKeySecret)}
+                            >
+                                {showAccessKeySecret ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                            </Button>
+                        </div>
                         {errors.accessKeySecret && <p className="text-[11px] text-destructive mt-1 ml-1">{errors.accessKeySecret.message}</p>}
                     </div>
                 )}

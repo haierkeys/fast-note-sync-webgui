@@ -92,7 +92,14 @@ export function useNoteHandle() {
     }, [getHeaders, handleTokenExpired])
 
 
-    const handleGetNote = useCallback(async (vault: string, path: string, pathHash: string | undefined, isRecycle: boolean = false, callback: (note: NoteDetail) => void) => {
+    const handleGetNote = useCallback(async (
+        vault: string,
+        path: string,
+        pathHash: string | undefined,
+        isRecycle: boolean = false,
+        callback: (note: NoteDetail) => void,
+        onSettled?: () => void
+    ) => {
         try {
             let url = `${env.API_URL}/api/note?vault=${encodeURIComponent(vault)}&path=${encodeURIComponent(path)}`;
             if (pathHash) {
@@ -119,6 +126,8 @@ export function useNoteHandle() {
             }
         } catch (error: unknown) {
             toast.error(error instanceof Error ? error.message : String(error))
+        } finally {
+            onSettled?.()
         }
     }, [getHeaders])
 

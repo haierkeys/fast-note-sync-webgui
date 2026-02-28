@@ -10,11 +10,24 @@ import { useState } from "react";
 import env from "@/env.ts";
 
 
+const getSafeHttpUrl = (url?: string | null): string | null => {
+    if (!url) return null
+    try {
+        const parsedUrl = new URL(url)
+        return parsedUrl.protocol === "http:" || parsedUrl.protocol === "https:" ? url : null
+    } catch {
+        return null
+    }
+}
+
 export function VersionOverview({ showUpgrade = true, children }: { showUpgrade?: boolean, children?: React.ReactNode }) {
     const { t } = useTranslation()
     const { versionInfo, isLoading: versionLoading } = useVersion()
     const { checkUpdate, isChecking, updateResult } = useUpdateCheck()
     const [isUpgrading, setIsUpgrading] = useState(false)
+
+    const safeVersionNewLink = getSafeHttpUrl(versionInfo?.versionNewLink)
+    const safeReleaseUrl = getSafeHttpUrl(updateResult?.releaseUrl || versionInfo?.versionNewLink)
 
     const handleCheckUpdate = async () => {
         if (versionInfo?.version) {
@@ -84,14 +97,14 @@ export function VersionOverview({ showUpgrade = true, children }: { showUpgrade?
                         <code className="text-sm font-mono text-muted-foreground">{t("ui.common.loading")}</code>
                     ) : (
                         <>
-                            {versionInfo?.versionNewLink ? (
+                            {safeVersionNewLink ? (
                                 <a
-                                    href={versionInfo.versionNewLink}
+                                    href={safeVersionNewLink}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="text-sm font-mono text-primary hover:underline"
                                 >
-                                    {versionInfo.version}
+                                    {versionInfo?.version}
                                 </a>
                             ) : (
                                 <code className="text-sm font-mono text-muted-foreground">
@@ -122,8 +135,8 @@ export function VersionOverview({ showUpgrade = true, children }: { showUpgrade?
                                     <span className="text-sm font-medium">{(updateResult?.hasUpdate || versionInfo?.versionIsNew) ? t("ui.system.newVersionAvailable") : t("ui.system.alreadyLatest")}</span>
                                     <div className="flex items-center gap-2">
                                         {(updateResult?.latestVersion || versionInfo?.versionNewName || versionInfo?.version) && <code className="text-xs font-mono bg-background px-2 py-0.5 rounded">{updateResult?.latestVersion || versionInfo?.versionNewName || versionInfo?.version}</code>}
-                                        {(updateResult?.hasUpdate || versionInfo?.versionIsNew) && (updateResult?.releaseUrl || versionInfo?.versionNewLink) && (
-                                            <a href={updateResult?.releaseUrl || versionInfo?.versionNewLink} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs text-primary hover:underline">
+                                        {(updateResult?.hasUpdate || versionInfo?.versionIsNew) && safeReleaseUrl && (
+                                            <a href={safeReleaseUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs text-primary hover:underline">
                                                 {t("ui.system.viewRelease")} <ExternalLink className="h-3 w-3" />
                                             </a>
                                         )}
