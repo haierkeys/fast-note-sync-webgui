@@ -3,7 +3,7 @@ import "./markdown-editor.css";
 import { markdown } from "@codemirror/lang-markdown";
 import { EditorView, placeholder as cmPlaceholder } from "@codemirror/view";
 import CodeMirror from "@uiw/react-codemirror";
-import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef } from "react";
+import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
 import ReactMarkdown, { type Components } from "react-markdown";
 import { renderToStaticMarkup } from "react-dom/server";
 import rehypeHighlight from "rehype-highlight";
@@ -615,10 +615,17 @@ export const MarkdownEditor = forwardRef<MarkdownEditorRef, MarkdownEditorProps>
             });
         }, []);
 
-        // 预览转换仅在预览模式下计算
-        const previewMarkdown = useMemo(() => {
-            if (mode !== "preview") return "";
-            return transformObsidianSyntax(value, vault, fileLinks, tokenRef.current);
+        // 预览转换：首次同步计算（避免白屏），后续变化 debounce 150ms
+        const [previewMarkdown, setPreviewMarkdown] = useState(() =>
+            mode === "preview" ? transformObsidianSyntax(value, vault, fileLinks, tokenRef.current) : ""
+        );
+
+        useEffect(() => {
+            if (mode !== "preview") return;
+            const timer = setTimeout(() => {
+                setPreviewMarkdown(transformObsidianSyntax(value, vault, fileLinks, tokenRef.current));
+            }, 150);
+            return () => clearTimeout(timer);
         }, [mode, value, vault, fileLinks]);
 
         const handleExportHTML = useCallback(() => {
