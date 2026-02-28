@@ -4,7 +4,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useConfirmDialog } from "@/components/context/confirm-dialog-context";
 import { useNoteHandle } from "@/components/api-handle/note-handle";
 import { Checkbox } from "@/components/ui/checkbox";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Tooltip } from "@/components/ui/tooltip";
 import { useAppStore } from "@/stores/app-store";
 import { Button } from "@/components/ui/button";
@@ -58,6 +58,7 @@ export function NoteList({ vault, vaults, onVaultChange, onSelectNote, onCreateN
     const [selectedPaths, setSelectedPaths] = useState<Set<string>>(new Set());
     const [viewMode, setViewMode] = useState<ViewMode>("folder");
     const [folders, setFolders] = useState<Folder[]>([]);
+    const noteRequestIdRef = useRef(0);
     const { trashType, setModule } = useAppStore();
 
     // Debounce search keyword
@@ -83,16 +84,24 @@ export function NoteList({ vault, vaults, onVaultChange, onSelectNote, onCreateN
     }, [searchKeyword, searchMode, t]);
 
     const fetchNotes = (currentPage: number = page, currentPageSize: number = pageSize, keyword: string = debouncedKeyword) => {
+        const requestId = ++noteRequestIdRef.current;
+
         // 如果是正则模式且有错误，不发起请求
-        if (searchMode === "regex" && regexError) return;
+        if (searchMode === "regex" && regexError) {
+            setLoading(false);
+            return;
+        }
 
         setLoading(true);
 
         if (viewMode === "folder" && !isRecycle) {
             // 目录模式工作流：1. 加载子目录 2. 加载当前目录下的笔记
             handleFolderList(vault, currentPath, currentPathHash, (folderData) => {
+                if (requestId !== noteRequestIdRef.current) return;
+
                 setFolders(folderData || []);
                 handleFolderNotes(vault, currentPath, currentPathHash, currentPage, currentPageSize, sortBy, sortOrder, (noteData) => {
+                    if (requestId !== noteRequestIdRef.current) return;
                     setNotes(noteData?.list || []);
                     setTotalRows(noteData?.pager?.totalRows || 0);
                     setLoading(false);
@@ -101,6 +110,8 @@ export function NoteList({ vault, vaults, onVaultChange, onSelectNote, onCreateN
         } else {
             // 平铺模式或回收站
             handleNoteList(vault, currentPage, currentPageSize, keyword, isRecycle, searchMode, false, sortBy, sortOrder, (data) => {
+                if (requestId !== noteRequestIdRef.current) return;
+
                 let filteredList = data?.list || [];
 
                 // 前端正则过滤（因为后端使用 LIKE 作为后备）

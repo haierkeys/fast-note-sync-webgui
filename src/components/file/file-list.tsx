@@ -3,7 +3,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useConfirmDialog } from "@/components/context/confirm-dialog-context";
 import { useFileHandle } from "@/components/api-handle/file-handle";
 import { Checkbox } from "@/components/ui/checkbox";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { File as FileDTO } from "@/lib/types/file";
 import { Tooltip } from "@/components/ui/tooltip";
 import { useAppStore } from "@/stores/app-store";
@@ -32,6 +32,12 @@ interface FileListProps {
     setPageSize: (pageSize: number) => void;
     searchKeyword: string;
     setSearchKeyword: (keyword: string) => void;
+    currentPath: string;
+    setCurrentPath: (path: string) => void;
+    currentPathHash: string;
+    setCurrentPathHash: (hash: string) => void;
+    pathHashMap: Record<string, string>;
+    setPathHashMap: (map: Record<string, string>) => void;
 }
 
 /**
@@ -45,7 +51,7 @@ function formatFileSize(bytes: number): string {
     return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + " " + sizes[i];
 }
 
-export function FileList({ vault, vaults, onVaultChange, isRecycle = false, page, setPage, pageSize, setPageSize, searchKeyword, setSearchKeyword }: FileListProps) {
+export function FileList({ vault, vaults, onVaultChange, isRecycle = false, page, setPage, pageSize, setPageSize, searchKeyword, setSearchKeyword, currentPath, setCurrentPath, currentPathHash, setCurrentPathHash, pathHashMap, setPathHashMap }: FileListProps) {
     const { t } = useTranslation();
     const { handleFileList, handleDeleteFile, handleRestoreFile, getRawFileUrl, handleFolderFiles, handleFolderList } = useFileHandle();
     const { openConfirmDialog } = useConfirmDialog();
@@ -57,9 +63,8 @@ export function FileList({ vault, vaults, onVaultChange, isRecycle = false, page
     const [sortOrder, setSortOrder] = useState<SortOrder>("desc");
     const [selectedPaths, setSelectedPaths] = useState<Set<string>>(new Set());
     const [viewMode, setViewMode] = useState<ViewMode>("folder");
-    const [currentPath, setCurrentPath] = useState<string>("");
-    const [currentPathHash, setCurrentPathHash] = useState<string>("");
     const [folders, setFolders] = useState<Folder[]>([]);
+    const fileRequestIdRef = useRef(0);
     const { trashType, setModule } = useAppStore();
 
     // 预览相关状态
@@ -75,21 +80,29 @@ export function FileList({ vault, vaults, onVaultChange, isRecycle = false, page
     }, [searchKeyword]);
 
     const fetchFiles = (currentPage: number = page, currentPageSize: number = pageSize, keyword: string = debouncedKeyword) => {
+        const requestId = ++fileRequestIdRef.current;
+
         setLoading(true);
 
         if (viewMode === "folder" && !isRecycle) {
             handleFolderList(vault, currentPath, currentPathHash, (folderData) => {
+                if (requestId !== fileRequestIdRef.current) return;
+
                 setFolders(folderData || []);
                 handleFolderFiles(vault, currentPath, currentPathHash, currentPage, currentPageSize, sortBy, sortOrder, (fileData) => {
-                    setFiles(fileData.list || []);
-                    setTotalRows(fileData.pager?.totalRows || 0);
+                    if (requestId !== fileRequestIdRef.current) return;
+
+                    setFiles(fileData?.list || []);
+                    setTotalRows(fileData?.pager?.totalRows || 0);
                     setLoading(false);
                 });
             });
         } else {
             handleFileList(vault, currentPage, currentPageSize, isRecycle, keyword, sortBy, sortOrder, (data) => {
-                setFiles(data.list || []);
-                setTotalRows(data.pager?.totalRows || 0);
+                if (requestId !== fileRequestIdRef.current) return;
+
+                setFiles(data?.list || []);
+                setTotalRows(data?.pager?.totalRows || 0);
                 setLoading(false);
             });
         }
@@ -298,7 +311,7 @@ export function FileList({ vault, vaults, onVaultChange, isRecycle = false, page
                                 onClick={() => {
                                     const path = arr.slice(0, index + 1).join("/");
                                     setCurrentPath(path);
-                                    setCurrentPathHash("");
+                                    setCurrentPathHash(pathHashMap[path] || "");
                                     setPage(1);
                                 }}
                             >
@@ -495,6 +508,7 @@ export function FileList({ vault, vaults, onVaultChange, isRecycle = false, page
                                 key={`folder-${folder.pathHash}`}
                                 className="rounded-xl border border-border bg-card p-4 cursor-pointer transition-all duration-200 hover:shadow-md hover:border-primary/30"
                                 onClick={() => {
+                                    setPathHashMap({ ...pathHashMap, [folder.path]: folder.pathHash });
                                     setCurrentPath(folder.path);
                                     setCurrentPathHash(folder.pathHash);
                                     setPage(1);

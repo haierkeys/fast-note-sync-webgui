@@ -17,6 +17,11 @@ export function useNoteHandle() {
         Lang: getBrowserLang(),
     }), [token])
 
+    const handleTokenExpired = useCallback(() => {
+        localStorage.removeItem("token")
+        window.location.reload()
+    }, [])
+
     const handleNoteList = useCallback(async (
         vault: string,
         page: number,
@@ -27,7 +32,7 @@ export function useNoteHandle() {
         searchContent: boolean = false,
         sortBy: string = "mtime",
         sortOrder: string = "desc",
-        callback: (data: { list: Note[], pager: { page: number, pageSize: number, totalRows: number } }) => void
+        callback: (data: { list: Note[], pager: { page: number, pageSize: number, totalRows: number } } | null) => void
     ) => {
         try {
             // Ensure page and pageSize are integers strings
@@ -59,7 +64,13 @@ export function useNoteHandle() {
                 headers: getHeaders(),
             })
             if (!response.ok) {
-                throw new Error("Network response was not ok")
+                if (response.status === 508) {
+                    handleTokenExpired()
+                } else {
+                    toast.error("Network response was not ok")
+                }
+                callback(null)
+                return
             }
             const res: NoteResponse<{ list: Note[], pager: { page: number, pageSize: number, totalRows: number } }> = await response.json()
             if (res.code > 0 && res.code <= 200) {
@@ -67,12 +78,18 @@ export function useNoteHandle() {
                 if (!data.list) data.list = [];
                 callback(data)
             } else {
-                toast.error(res.message)
+                if (res.code === 508) {
+                    handleTokenExpired()
+                } else {
+                    toast.error(res.message)
+                }
+                callback(null)
             }
         } catch (error: unknown) {
             toast.error(error instanceof Error ? error.message : String(error))
+            callback(null)
         }
-    }, [getHeaders])
+    }, [getHeaders, handleTokenExpired])
 
 
     const handleGetNote = useCallback(async (vault: string, path: string, pathHash: string | undefined, isRecycle: boolean = false, callback: (note: NoteDetail) => void) => {
@@ -201,7 +218,7 @@ export function useNoteHandle() {
         }
     }, [getHeaders])
 
-    const handleNoteHistoryList = useCallback(async (vault: string, notePath: string, pathHash: string | undefined, page: number, pageSize: number, isRecycle: boolean = false, callback: (data: NoteHistoryListResponse) => void) => {
+    const handleNoteHistoryList = useCallback(async (vault: string, notePath: string, pathHash: string | undefined, page: number, pageSize: number, isRecycle: boolean = false, callback: (data: NoteHistoryListResponse | null) => void) => {
         try {
             const pageStr = Math.floor(page).toString();
             const pageSizeStr = Math.floor(pageSize).toString();
@@ -217,7 +234,13 @@ export function useNoteHandle() {
                 headers: getHeaders(),
             })
             if (!response.ok) {
-                throw new Error("Network response was not ok")
+                if (response.status === 508) {
+                    handleTokenExpired()
+                } else {
+                    toast.error("Network response was not ok")
+                }
+                callback(null)
+                return
             }
             const res: NoteResponse<NoteHistoryListResponse> = await response.json()
             if (res.code > 0 && res.code <= 200) {
@@ -225,12 +248,18 @@ export function useNoteHandle() {
                 if (!data.list) data.list = [];
                 callback(data)
             } else {
-                toast.error(res.message)
+                if (res.code === 508) {
+                    handleTokenExpired()
+                } else {
+                    toast.error(res.message)
+                }
+                callback(null)
             }
         } catch (error: unknown) {
             toast.error(error instanceof Error ? error.message : String(error))
+            callback(null)
         }
-    }, [getHeaders])
+    }, [getHeaders, handleTokenExpired])
 
     const handleNoteHistoryDetail = useCallback(async (vault: string, id: number, callback: (data: NoteHistoryDetail) => void) => {
         try {
@@ -277,7 +306,7 @@ export function useNoteHandle() {
     }, [getHeaders])
 
     // 获取目录列表
-    const handleFolderList = useCallback(async (vault: string, path: string = "", pathHash: string = "", callback: (data: Folder[]) => void) => {
+    const handleFolderList = useCallback(async (vault: string, path: string = "", pathHash: string = "", callback: (data: Folder[] | null) => void) => {
         try {
             let url = `${env.API_URL}/api/folders?vault=${encodeURIComponent(vault)}`;
             if (path) {
@@ -291,18 +320,30 @@ export function useNoteHandle() {
                 headers: getHeaders(),
             })
             if (!response.ok) {
-                throw new Error("Network response was not ok")
+                if (response.status === 508) {
+                    handleTokenExpired()
+                } else {
+                    toast.error("Network response was not ok")
+                }
+                callback(null)
+                return
             }
             const res: NoteResponse<Folder[]> = await response.json()
             if (res.code > 0 && res.code <= 200) {
                 callback(res.data || [])
             } else {
-                toast.error(res.message)
+                if (res.code === 508) {
+                    handleTokenExpired()
+                } else {
+                    toast.error(res.message)
+                }
+                callback(null)
             }
         } catch (error: unknown) {
             toast.error(error instanceof Error ? error.message : String(error))
+            callback(null)
         }
-    }, [getHeaders])
+    }, [getHeaders, handleTokenExpired])
 
     // 获取目录下笔记列表
     const handleFolderNotes = useCallback(async (
@@ -313,7 +354,7 @@ export function useNoteHandle() {
         pageSize: number,
         sortBy: string = "mtime",
         sortOrder: string = "desc",
-        callback: (data: NoteListResponse) => void
+        callback: (data: NoteListResponse | null) => void
     ) => {
         try {
             const pageStr = Math.floor(page).toString();
@@ -333,7 +374,13 @@ export function useNoteHandle() {
                 headers: getHeaders(),
             })
             if (!response.ok) {
-                throw new Error("Network response was not ok")
+                if (response.status === 508) {
+                    handleTokenExpired()
+                } else {
+                    toast.error("Network response was not ok")
+                }
+                callback(null)
+                return
             }
             const res: NoteResponse<NoteListResponse> = await response.json()
             if (res.code > 0 && res.code <= 200) {
@@ -341,12 +388,18 @@ export function useNoteHandle() {
                 if (!data.list) data.list = [];
                 callback(data)
             } else {
-                toast.error(res.message)
+                if (res.code === 508) {
+                    handleTokenExpired()
+                } else {
+                    toast.error(res.message)
+                }
+                callback(null)
             }
         } catch (error: unknown) {
             toast.error(error instanceof Error ? error.message : String(error))
+            callback(null)
         }
-    }, [getHeaders])
+    }, [getHeaders, handleTokenExpired])
 
     return useMemo(() => ({
         handleNoteList,

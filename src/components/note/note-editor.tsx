@@ -63,6 +63,8 @@ export function NoteEditor({
     const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const containerRef = useRef<HTMLDivElement>(null);
     const contentRef = useRef("");
+    const pathRef = useRef("");
+    const flushPendingSaveRef = useRef<() => void>(() => {});
 
     const [path, setPath] = useState("");
     const [content, setContent] = useState("");
@@ -89,12 +91,17 @@ export function NoteEditor({
     // 是否为新建笔记模式
     const isNewNote = !note;
 
+    const updatePath = useCallback((nextPath: string) => {
+        pathRef.current = nextPath;
+        setPath(nextPath);
+    }, []);
+
     // 记录上一次加载的笔记标识，用于判断是否需要重新加载
     const lastNoteKeyRef = useRef<string>("");
 
     const loadNote = useCallback(() => {
         if (note) {
-            setPath(note.path.replace(/\.md$/, ""));
+            updatePath(note.path.replace(/\.md$/, ""));
             setLoading(true);
             handleGetNote(vault, note.path, note.pathHash, isRecycle, (data) => {
                 setOriginalNote(data);
@@ -102,11 +109,11 @@ export function NoteEditor({
                 setLoading(false);
             });
         } else {
-            setPath("");
+            updatePath("");
             setContent("");
             setOriginalNote(null);
         }
-    }, [note, vault, handleGetNote, isRecycle]);
+    }, [note, vault, handleGetNote, isRecycle, updatePath]);
 
     // 当 note 关键信息变化时进行加载
     useEffect(() => {
@@ -117,12 +124,10 @@ export function NoteEditor({
         }
     }, [note, loadNote]);
 
-    // 清理定时器
+    // 组件卸载时：若存在防抖中的保存，立即 flush 一次
     useEffect(() => {
         return () => {
-            if (saveTimerRef.current) {
-                clearTimeout(saveTimerRef.current);
-            }
+            flushPendingSaveRef.current();
         };
     }, []);
 
@@ -182,25 +187,42 @@ export function NoteEditor({
         }, silent);
     }, [vault, originalNote, handleSaveNote, onSaveSuccess, isRecycle]);
 
+    const flushPendingSave = useCallback(() => {
+        if (!saveTimerRef.current) return;
+
+        clearTimeout(saveTimerRef.current);
+        saveTimerRef.current = null;
+
+        const latestContent = editorRef.current?.getValue() ?? contentRef.current;
+        doSave(pathRef.current, latestContent, true);
+    }, [doSave]);
+
+    useEffect(() => {
+        flushPendingSaveRef.current = flushPendingSave;
+    }, [flushPendingSave]);
+
     // 内容变化时的防抖自动保存（只更新 ref，不触发 React 重渲染）
     const handleContentChange = useCallback((newContent: string) => {
         contentRef.current = newContent;
 
         // 新建笔记且没有标题时不自动保存
-        if (isNewNote && !path) return;
+        if (isNewNote && !pathRef.current) return;
         // 回收站模式不保存
         if (isRecycle) return;
 
         // 清除之前的定时器
         if (saveTimerRef.current) {
             clearTimeout(saveTimerRef.current);
+            saveTimerRef.current = null;
         }
 
         // 设置新的防抖定时器
         saveTimerRef.current = setTimeout(() => {
-            doSave(path, newContent, true);
+            saveTimerRef.current = null;
+            const latestContent = editorRef.current?.getValue() ?? contentRef.current;
+            doSave(pathRef.current, latestContent, true);
         }, AUTO_SAVE_DELAY);
-    }, [path, isNewNote, isRecycle, doSave]);
+    }, [isNewNote, isRecycle, doSave]);
 
     // 标题编辑相关
     const startEditingTitle = useCallback(() => {
@@ -229,7 +251,7 @@ export function NoteEditor({
         }
 
         const oldPath = path;
-        setPath(sanitized);
+        updatePath(sanitized);
         setIsEditingTitle(false);
 
         // 如果路径变化了，保存笔记
@@ -237,7 +259,7 @@ export function NoteEditor({
             const currentContent = editorRef.current?.getValue() ?? contentRef.current;
             doSave(sanitized, currentContent, true);
         }
-    }, [editingTitleValue, path, doSave, cancelEditingTitle]);
+    }, [editingTitleValue, path, doSave, cancelEditingTitle, updatePath]);
 
     const handleTitleKeyDown = useCallback((e: React.KeyboardEvent) => {
         if (e.key === "Enter") {
@@ -256,8 +278,8 @@ export function NoteEditor({
             .split('')
             .filter(c => c.charCodeAt(0) >= 32)
             .join('');
-        setPath(sanitized);
-    }, []);
+        updatePath(sanitized);
+    }, [updatePath]);
 
     // 新建笔记首次保存
     const handleFirstSave = useCallback(() => {
@@ -268,6 +290,18 @@ export function NoteEditor({
         const currentContent = editorRef.current?.getValue() ?? contentRef.current;
         doSave(path, currentContent, true);
     }, [path, doSave, t]);
+
+    const handleBack = useCallback(() => {
+        flushPendingSave();
+
+        if (isNewNote && !pathRef.current && contentRef.current.trim()) {
+            toast.warning(t("ui.note.unsavedContentWithoutTitle", {
+                defaultValue: "Content is not saved because the title is empty."
+            }));
+        }
+
+        onBack();
+    }, [flushPendingSave, isNewNote, onBack, t]);
 
     const getDisplayParts = (fullPath: string) => {
         const lastSlash = fullPath.lastIndexOf('/');
@@ -405,7 +439,7 @@ export function NoteEditor({
                     <Button
                         variant="ghost"
                         size="icon"
-                        onClick={onBack}
+                        onClick={handleBack}
                         className="shrink-0 rounded-lg sm:rounded-xl h-7 w-7 sm:h-10 sm:w-10"
                     >
                         <ArrowLeft className="h-4 w-4 sm:h-5 sm:w-5" />

@@ -37,6 +37,11 @@ export function FileManager({
     });
     const [searchKeyword, setSearchKeyword] = useState("");
 
+    // Lifted state for folder navigation (reset on vault change)
+    const [currentPath, setCurrentPath] = useState("");
+    const [currentPathHash, setCurrentPathHash] = useState("");
+    const [pathHashMap, setPathHashMap] = useState<Record<string, string>>({});
+
     useEffect(() => {
         localStorage.setItem("filePageSize", pageSize.toString());
     }, [pageSize]);
@@ -50,9 +55,12 @@ export function FileManager({
         });
     }, [handleVaultList]);
 
-    // Reset page when vault changes
+    // Reset page and folder navigation state when vault changes
     useEffect(() => {
         setPage(1);
+        setCurrentPath("");
+        setCurrentPathHash("");
+        setPathHashMap({});
     }, [vault]);
 
     // 检查是否有仓库（只在加载完成后显示空状态）
@@ -92,6 +100,12 @@ export function FileManager({
             setPageSize={setPageSize}
             searchKeyword={searchKeyword}
             setSearchKeyword={setSearchKeyword}
+            currentPath={currentPath}
+            setCurrentPath={setCurrentPath}
+            currentPathHash={currentPathHash}
+            setCurrentPathHash={setCurrentPathHash}
+            pathHashMap={pathHashMap}
+            setPathHashMap={setPathHashMap}
         />
     );
 }

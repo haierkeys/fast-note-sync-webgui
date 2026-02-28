@@ -22,6 +22,11 @@ export function useFileHandle() {
         };
     }, []);
 
+    const handleTokenExpired = useCallback(() => {
+        localStorage.removeItem("token");
+        window.location.reload();
+    }, []);
+
     /**
      * 获取附件列表
      * @param vault 仓库名称
@@ -41,7 +46,7 @@ export function useFileHandle() {
         keyword: string = "",
         sortBy: string = "mtime",
         sortOrder: string = "desc",
-        callback: (data: FileListResponse) => void
+        callback: (data: FileListResponse | null) => void
     ) => {
         try {
             const apiUrl = env.API_URL.endsWith("/") ? env.API_URL.slice(0, -1) : env.API_URL;
@@ -68,7 +73,13 @@ export function useFileHandle() {
             });
 
             if (!response.ok) {
-                throw new Error("Network response was not ok");
+                if (response.status === 508) {
+                    handleTokenExpired();
+                } else {
+                    toast.error("Network response was not ok");
+                }
+                callback(null);
+                return;
             }
 
             const res: { code: number; message: string; data?: FileListResponse } = await response.json();
@@ -77,13 +88,19 @@ export function useFileHandle() {
                 const data = res.data || { list: [], pager: { page: 1, pageSize: pageSize, totalRows: 0, totalPages: 0 } };
                 callback(data);
             } else {
-                toast.error(res.message);
+                if (res.code === 508) {
+                    handleTokenExpired();
+                } else {
+                    toast.error(res.message);
+                }
+                callback(null);
             }
         } catch (error: unknown) {
             console.error("handleFileList error:", error);
             toast.error(error instanceof Error ? error.message : String(error));
+            callback(null);
         }
-    }, [getHeaders]);
+    }, [getHeaders, handleTokenExpired]);
 
     /**
      * 删除附件
@@ -188,7 +205,7 @@ export function useFileHandle() {
     /**
      * 获取仓库下的文件夹列表
      */
-    const handleFolderList = useCallback(async (vault: string, path: string = "", pathHash: string = "", callback: (data: Folder[]) => void) => {
+    const handleFolderList = useCallback(async (vault: string, path: string = "", pathHash: string = "", callback: (data: Folder[] | null) => void) => {
         try {
             const apiUrl = env.API_URL.endsWith("/") ? env.API_URL.slice(0, -1) : env.API_URL;
             let url = `${apiUrl}/api/folders?vault=${encodeURIComponent(vault)}`;
@@ -203,18 +220,30 @@ export function useFileHandle() {
                 headers: getHeaders(),
             })
             if (!response.ok) {
-                throw new Error("Network response was not ok")
+                if (response.status === 508) {
+                    handleTokenExpired();
+                } else {
+                    toast.error("Network response was not ok");
+                }
+                callback(null);
+                return;
             }
             const res: { code: number; message: string; data?: Folder[] } = await response.json()
             if (res.code > 0 && res.code <= 200) {
                 callback(res.data || [])
             } else {
-                toast.error(res.message)
+                if (res.code === 508) {
+                    handleTokenExpired();
+                } else {
+                    toast.error(res.message);
+                }
+                callback(null);
             }
         } catch (error: unknown) {
             toast.error(error instanceof Error ? error.message : String(error))
+            callback(null);
         }
-    }, [getHeaders])
+    }, [getHeaders, handleTokenExpired])
 
     /**
      * 获取目录下附件列表
@@ -227,7 +256,7 @@ export function useFileHandle() {
         pageSize: number,
         sortBy: string = "mtime",
         sortOrder: string = "desc",
-        callback: (data: FileListResponse) => void
+        callback: (data: FileListResponse | null) => void
     ) => {
         try {
             const apiUrl = env.API_URL.endsWith("/") ? env.API_URL.slice(0, -1) : env.API_URL;
@@ -248,7 +277,13 @@ export function useFileHandle() {
                 headers: getHeaders(),
             })
             if (!response.ok) {
-                throw new Error("Network response was not ok")
+                if (response.status === 508) {
+                    handleTokenExpired();
+                } else {
+                    toast.error("Network response was not ok");
+                }
+                callback(null);
+                return;
             }
             const res: { code: number; message: string; data?: FileListResponse } = await response.json()
             if (res.code > 0 && res.code <= 200) {
@@ -256,12 +291,18 @@ export function useFileHandle() {
                 if (!data.list) data.list = [];
                 callback(data)
             } else {
-                toast.error(res.message)
+                if (res.code === 508) {
+                    handleTokenExpired();
+                } else {
+                    toast.error(res.message);
+                }
+                callback(null);
             }
         } catch (error: unknown) {
             toast.error(error instanceof Error ? error.message : String(error))
+            callback(null);
         }
-    }, [getHeaders])
+    }, [getHeaders, handleTokenExpired])
 
     return useMemo(() => ({
         handleFileList,
