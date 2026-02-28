@@ -3,7 +3,7 @@ import "./markdown-editor.css";
 import { markdown } from "@codemirror/lang-markdown";
 import { EditorView, placeholder as cmPlaceholder } from "@codemirror/view";
 import CodeMirror from "@uiw/react-codemirror";
-import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
+import { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
 import ReactMarkdown, { type Components } from "react-markdown";
 import { renderToStaticMarkup } from "react-dom/server";
 import rehypeHighlight from "rehype-highlight";
@@ -523,7 +523,7 @@ const markdownComponents: Components = {
 
 // ─── 共用渲染器 ─────────────────────────────────────────────
 
-function MarkdownRenderer({ content }: { content: string }) {
+const MarkdownRenderer = memo(function MarkdownRenderer({ content }: { content: string }) {
     return (
         <ReactMarkdown
             remarkPlugins={REMARK_PLUGINS}
@@ -535,7 +535,7 @@ function MarkdownRenderer({ content }: { content: string }) {
             {content}
         </ReactMarkdown>
     );
-}
+});
 
 // ─── 编辑器组件 ─────────────────────────────────────────────
 
