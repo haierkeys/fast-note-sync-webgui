@@ -8,6 +8,7 @@ import ReactMarkdown, { type Components } from "react-markdown";
 import { renderToStaticMarkup } from "react-dom/server";
 import rehypeHighlight from "rehype-highlight";
 import rehypeRaw from "rehype-raw";
+import rehypeSanitize, { defaultSchema } from "rehype-sanitize";
 import { useTranslation } from "react-i18next";
 import remarkGfm from "remark-gfm";
 
@@ -104,7 +105,21 @@ const CM6_BASIC_SETUP = {
 };
 
 const REMARK_PLUGINS: NonNullable<React.ComponentProps<typeof ReactMarkdown>["remarkPlugins"]> = [[remarkGfm, { singleTilde: false }]];
-const REHYPE_PLUGINS = [rehypeRaw, rehypeHighlight];
+const OBSIDIAN_SANITIZE_SCHEMA = {
+    ...defaultSchema,
+    tagNames: [...(defaultSchema.tagNames ?? []), "mark"],
+    attributes: {
+        ...(defaultSchema.attributes ?? {}),
+        span: [...(defaultSchema.attributes?.span ?? []), "className", "title"],
+        img: [...(defaultSchema.attributes?.img ?? []), "width"],
+    },
+};
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const REHYPE_PLUGINS: any[] = [
+    rehypeRaw,
+    [rehypeSanitize, OBSIDIAN_SANITIZE_SCHEMA],
+    rehypeHighlight,
+];
 
 const EXPORT_STYLE = `
 body {

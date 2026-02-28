@@ -140,47 +140,54 @@ export function NoteHistoryModal({ isOpen, onClose, vault, notePath, pathHash, i
             ? processedLines.filter(line => line.segments && line.segments.some(segment => segment.Type !== 0))
             : processedLines;
 
-        // 3. 构建 HTML
-        const pathRow = `
-            <div class="diff-line-row flex items-start group h-7">
-                <div class="line-number w-10 shrink-0 text-right pr-3 select-none text-transparent font-mono text-[11px] border-r border-transparent mr-3 leading-7">
-                    -
-                </div>
-                <div class="line-content flex-1 py-0 text-slate-300 font-mono text-[11px] select-text cursor-text min-h-[28px] leading-7 h-7">${notePath}</div>
-            </div>
-        `;
-
-        const html = pathRow + displayLines.map((line) => {
-            if (!line.segments) return "";
-            const lineContent = line.segments.map(d => {
-                const text = String(d.Text || "")
-                    .replace(/&/g, "&amp;")
-                    .replace(/</g, "&lt;")
-                    .replace(/>/g, "&gt;");
-
-                if (d.Type === 1) { // DIFF_INSERT
-                    return `<ins class="bg-green-100 text-green-900 no-underline px-0.5 rounded-sm border-b border-green-300 font-bold">${text}</ins>`;
-                } else if (d.Type === -1) { // DIFF_DELETE
-                    return `<del class="bg-red-100 text-red-900 line-through decoration-red-400 px-0.5 rounded-sm opacity-70">${text}</del>`;
-                }
-                return `<span>${text}</span>`;
-            }).join("");
-
-            return `
-                <div class="diff-line-row flex items-start group h-7">
-                    <div class="line-number w-10 shrink-0 text-right pr-3 select-none text-slate-300 font-mono text-[11px] border-r border-slate-100 mr-3 group-hover:text-slate-400 transition-colors leading-7">
-                        ${line.lineNum}
-                    </div>
-                    <div class="line-content flex-1 py-0 min-h-[28px] leading-7 h-7">${lineContent || "&nbsp;"}</div>
-                </div>
-            `;
-        }).join("");
-
         return (
-            <div
-                className="diff-content overflow-auto max-h-[500px] p-6 bg-slate-50 rounded-xl border border-slate-200 font-mono text-[13px] leading-7 shadow-inner text-slate-700 select-text selection:bg-blue-100 selection:text-blue-900"
-                dangerouslySetInnerHTML={{ __html: html || `<div class="text-center py-4 opacity-50 italic">${t("ui.history.noHistory")}</div>` }}
-            />
+            <div className="diff-content overflow-auto max-h-[500px] p-6 bg-slate-50 rounded-xl border border-slate-200 font-mono text-[13px] leading-7 shadow-inner text-slate-700 select-text selection:bg-blue-100 selection:text-blue-900">
+                <div className="diff-line-row flex items-start group h-7">
+                    <div className="line-number w-10 shrink-0 text-right pr-3 select-none text-transparent font-mono text-[11px] border-r border-transparent mr-3 leading-7">
+                        -
+                    </div>
+                    <div className="line-content flex-1 py-0 text-slate-300 font-mono text-[11px] select-text cursor-text min-h-[28px] leading-7 h-7">
+                        {notePath}
+                    </div>
+                </div>
+                {displayLines.length === 0 ? (
+                    <div className="text-center py-4 opacity-50 italic">{t("ui.history.noHistory")}</div>
+                ) : (
+                    displayLines.map((line, lineIndex) => {
+                        const hasVisibleText = line.segments.some((segment) => String(segment.Text ?? "").length > 0);
+                        return (
+                            <div key={`diff-line-${lineIndex}`} className="diff-line-row flex items-start group h-7">
+                                <div className="line-number w-10 shrink-0 text-right pr-3 select-none text-slate-300 font-mono text-[11px] border-r border-slate-100 mr-3 group-hover:text-slate-400 transition-colors leading-7">
+                                    {line.lineNum}
+                                </div>
+                                <div className="line-content flex-1 py-0 min-h-[28px] leading-7 h-7">
+                                    {hasVisibleText
+                                        ? line.segments.map((segment, segmentIndex) => {
+                                            const key = `segment-${lineIndex}-${segmentIndex}`;
+                                            const text = String(segment.Text ?? "");
+                                            if (segment.Type === 1) {
+                                                return (
+                                                    <ins key={key} className="bg-green-100 text-green-900 no-underline px-0.5 rounded-sm border-b border-green-300 font-bold">
+                                                        {text}
+                                                    </ins>
+                                                );
+                                            }
+                                            if (segment.Type === -1) {
+                                                return (
+                                                    <del key={key} className="bg-red-100 text-red-900 line-through decoration-red-400 px-0.5 rounded-sm opacity-70">
+                                                        {text}
+                                                    </del>
+                                                );
+                                            }
+                                            return <span key={key}>{text}</span>;
+                                        })
+                                        : "\u00A0"}
+                                </div>
+                            </div>
+                        );
+                    })
+                )}
+            </div>
         );
     };
 
@@ -205,39 +212,29 @@ export function NoteHistoryModal({ isOpen, onClose, vault, notePath, pathHash, i
     const renderOriginalContent = (content: string) => {
         if (!content) return null;
 
-        const pathRow = `
-            <div class="diff-line-row flex items-start group h-7">
-                <div class="line-number w-10 shrink-0 text-right pr-3 select-none text-transparent font-mono text-[11px] border-r border-transparent mr-3 leading-7">
-                    -
-                </div>
-                <div class="line-content flex-1 py-0 text-slate-300 font-mono text-[11px] select-text cursor-text min-h-[28px] leading-7 h-7">${notePath}</div>
-            </div>
-        `;
-
         // Normalize line endings and trim trailing newline
         const normalizedContent = content.replace(/\r\n/g, "\n").replace(/\n$/, "");
         const lines = normalizedContent.split("\n");
-        const html = pathRow + lines.map((line, index) => {
-            const text = line
-                .replace(/&/g, "&amp;")
-                .replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;");
-
-            return `
-                <div class="diff-line-row flex items-start group h-7">
-                    <div class="line-number w-10 shrink-0 text-right pr-3 select-none text-slate-300 font-mono text-[11px] border-r border-slate-100 mr-3 group-hover:text-slate-400 transition-colors leading-7">
-                        ${index + 1}
-                    </div>
-                    <div class="line-content flex-1 py-0 min-h-[28px] leading-7 h-7">${text || "&nbsp;"}</div>
-                </div>
-            `;
-        }).join("");
 
         return (
-            <div
-                className="diff-content overflow-auto max-h-[500px] p-6 bg-slate-50 rounded-xl border border-slate-200 font-mono text-[13px] leading-7 shadow-inner text-slate-700 select-text selection:bg-blue-100 selection:text-blue-900"
-                dangerouslySetInnerHTML={{ __html: html }}
-            />
+            <div className="diff-content overflow-auto max-h-[500px] p-6 bg-slate-50 rounded-xl border border-slate-200 font-mono text-[13px] leading-7 shadow-inner text-slate-700 select-text selection:bg-blue-100 selection:text-blue-900">
+                <div className="diff-line-row flex items-start group h-7">
+                    <div className="line-number w-10 shrink-0 text-right pr-3 select-none text-transparent font-mono text-[11px] border-r border-transparent mr-3 leading-7">
+                        -
+                    </div>
+                    <div className="line-content flex-1 py-0 text-slate-300 font-mono text-[11px] select-text cursor-text min-h-[28px] leading-7 h-7">
+                        {notePath}
+                    </div>
+                </div>
+                {lines.map((line, index) => (
+                    <div key={`original-line-${index}`} className="diff-line-row flex items-start group h-7">
+                        <div className="line-number w-10 shrink-0 text-right pr-3 select-none text-slate-300 font-mono text-[11px] border-r border-slate-100 mr-3 group-hover:text-slate-400 transition-colors leading-7">
+                            {index + 1}
+                        </div>
+                        <div className="line-content flex-1 py-0 min-h-[28px] leading-7 h-7">{line || "\u00A0"}</div>
+                    </div>
+                ))}
+            </div>
         );
     };
 
