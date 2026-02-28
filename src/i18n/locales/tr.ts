@@ -161,6 +161,7 @@ export default {
     "ui.note.fullscreen": "Tam Ekran",
     "ui.note.exitFullscreen": "Tam Ekrandan Çık",
     "ui.note.contextMenu": "Sağ Tık Menüsü",
+    "ui.note.wikiLinkNotFound": "\"{{target}}\" notu bulunamadı",
 
     // --- ui.history ---
     "ui.history.title": "Not Geçmişi",

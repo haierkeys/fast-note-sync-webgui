@@ -91,7 +91,8 @@
   padding: 0 4px;
   border-radius: 4px;
   font-weight: 500;
-  cursor: default;
+  cursor: pointer;
+  transition: background 0.15s ease;
 }
 
 .obsidian-wiki-link:hover {

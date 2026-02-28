@@ -161,6 +161,7 @@ export default {
     "ui.note.fullscreen": "Schermo Intero",
     "ui.note.exitFullscreen": "Esci da Schermo Intero",
     "ui.note.contextMenu": "Menu Contestuale",
+    "ui.note.wikiLinkNotFound": "Nota \"{{target}}\" non trovata",
 
     // --- ui.history ---
     "ui.history.title": "Cronologia Note",

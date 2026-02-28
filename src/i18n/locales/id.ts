@@ -161,6 +161,7 @@ export default {
     "ui.note.fullscreen": "Layar Penuh",
     "ui.note.exitFullscreen": "Keluar Layar Penuh",
     "ui.note.contextMenu": "Menu Konteks",
+    "ui.note.wikiLinkNotFound": "Catatan \"{{target}}\" tidak ditemukan",
 
     // --- ui.history ---
     "ui.history.title": "Riwayat Catatan",

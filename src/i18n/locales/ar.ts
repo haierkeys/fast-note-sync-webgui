@@ -161,6 +161,7 @@ export default {
     "ui.note.fullscreen": "ملء الشاشة",
     "ui.note.exitFullscreen": "الخروج من ملء الشاشة",
     "ui.note.contextMenu": "قائمة السياق",
+    "ui.note.wikiLinkNotFound": "لم يتم العثور على الملاحظة \"{{target}}\"",
 
     // --- ui.history ---
     "ui.history.title": "سجل الملاحظة",

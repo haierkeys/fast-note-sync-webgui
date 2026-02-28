@@ -161,6 +161,7 @@ export default {
     "ui.note.fullscreen": "Полноэкранный режим",
     "ui.note.exitFullscreen": "Выйти из полноэкранного режима",
     "ui.note.contextMenu": "Контекстное меню",
+    "ui.note.wikiLinkNotFound": "Заметка \"{{target}}\" не найдена",
 
     // --- ui.history ---
     "ui.history.title": "История заметок",

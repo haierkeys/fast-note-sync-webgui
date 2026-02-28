@@ -162,6 +162,7 @@ export default {
     "ui.note.fullscreen": "全屏",
     "ui.note.exitFullscreen": "退出全屏",
     "ui.note.contextMenu": "上下文菜單",
+    "ui.note.wikiLinkNotFound": "未找到筆記 \"{{target}}\"",
 
     // --- ui.history ---
     "ui.history.title": "筆記歷史",

@@ -161,6 +161,7 @@ export default {
     "ui.note.fullscreen": "Ecran i plotë",
     "ui.note.exitFullscreen": "Dil nga ekrani i plotë",
     "ui.note.contextMenu": "Menuja e kontekstit",
+    "ui.note.wikiLinkNotFound": "Shënimi \"{{target}}\" nuk u gjet",
 
     // --- ui.history ---
     "ui.history.title": "Historia e shënimit",

@@ -161,6 +161,7 @@ export default {
     "ui.note.fullscreen": "Toàn màn hình",
     "ui.note.exitFullscreen": "Thoát toàn màn hình",
     "ui.note.contextMenu": "Menu ngữ cảnh",
+    "ui.note.wikiLinkNotFound": "Không tìm thấy ghi chú \"{{target}}\"",
 
     // --- ui.history ---
     "ui.history.title": "Lịch sử ghi chú",

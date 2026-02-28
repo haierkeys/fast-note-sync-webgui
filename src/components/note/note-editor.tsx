@@ -44,6 +44,7 @@ interface NoteEditorProps {
     onToggleMaximize?: () => void;
     isRecycle?: boolean;
     initialPreviewMode?: boolean;
+    onWikiLinkClick?: (target: string) => void;
 }
 
 export function NoteEditor({
@@ -56,7 +57,8 @@ export function NoteEditor({
     isMaximized: _isMaximized = false,
     onToggleMaximize: _onToggleMaximize,
     isRecycle = false,
-    initialPreviewMode = false
+    initialPreviewMode = false,
+    onWikiLinkClick
 }: NoteEditorProps) {
     // 保留 isMaximized 和 onToggleMaximize 用于未来最大化功能
     void _isMaximized;
@@ -533,6 +535,7 @@ export function NoteEditor({
                                 vault={vault}
                                 fileLinks={originalNote?.fileLinks}
                                 initialMode={isPreviewMode ? "preview" : "edit"}
+                                onWikiLinkClick={onWikiLinkClick}
                             />
                         </Suspense>
                     </div>

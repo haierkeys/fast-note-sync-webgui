@@ -161,6 +161,7 @@ export default {
     "ui.note.fullscreen": "Vollbild",
     "ui.note.exitFullscreen": "Vollbild beenden",
     "ui.note.contextMenu": "Kontextmenü",
+    "ui.note.wikiLinkNotFound": "Notiz \"{{target}}\" nicht gefunden",
 
     // --- ui.history ---
     "ui.history.title": "Notiz-Historie",

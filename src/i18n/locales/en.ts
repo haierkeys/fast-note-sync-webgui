@@ -169,6 +169,7 @@ export default {
     "ui.note.contextMenu": "Context Menu",
     "ui.note.loadingEditor": "Loading editor...",
     "ui.note.unsavedContentWithoutTitle": "Content is not saved because the title is empty.",
+    "ui.note.wikiLinkNotFound": "Note \"{{target}}\" not found",
 
     // --- ui.history ---
     "ui.history.title": "Note History",

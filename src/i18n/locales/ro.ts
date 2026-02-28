@@ -161,6 +161,7 @@ export default {
     "ui.note.fullscreen": "Ecran complet",
     "ui.note.exitFullscreen": "Ieșire din ecran complet",
     "ui.note.contextMenu": "Meniu contextual",
+    "ui.note.wikiLinkNotFound": "Nota \"{{target}}\" nu a fost găsită",
 
     // --- ui.history ---
     "ui.history.title": "Istoricul notiței",

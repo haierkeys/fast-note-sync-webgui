@@ -169,6 +169,7 @@ export default {
     "ui.note.contextMenu": "上下文菜单",
     "ui.note.loadingEditor": "加载编辑器...",
     "ui.note.unsavedContentWithoutTitle": "内容未保存，因为标题为空。",
+    "ui.note.wikiLinkNotFound": "未找到笔记 \"{{target}}\"",
 
     // --- ui.history ---
     "ui.history.title": "笔记历史",

@@ -1,11 +1,12 @@
 import { useVaultHandle } from "@/components/api-handle/vault-handle";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
 import { VaultType } from "@/lib/types/vault";
 import { Note } from "@/lib/types/note";
 import { Database } from "lucide-react";
 
+import { useNoteHandle } from "@/components/api-handle/note-handle";
 import { toast } from "@/components/common/Toast";
 import { NoteHistoryModal } from "./note-history-modal";
 import { NoteEditor } from "./note-editor";
@@ -92,11 +93,40 @@ export function NoteManager({
         setPathHashMap({});
     }, [vault]);
 
-    const handleSelectNote = (note: Note, previewMode: boolean = false) => {
+    const { handleNoteList } = useNoteHandle();
+
+    const handleSelectNote = useCallback((note: Note, previewMode: boolean = false) => {
         setSelectedNote(note);
         setInitialPreviewMode(previewMode);
         setView("editor");
-    };
+    }, []);
+
+    const handleWikiLinkClick = useCallback((target: string) => {
+        // 1. 去锚点、去 .md
+        const normalizedTarget = target.replace(/#.*$/, '').replace(/\.md$/i, '').trim();
+        if (!normalizedTarget) return;
+
+        // 2. API 搜索
+        handleNoteList(vault, 1, 50, normalizedTarget, false, "path", false, "mtime", "desc", (data) => {
+            if (!data?.list?.length) {
+                toast.info(t("ui.note.wikiLinkNotFound", { target: normalizedTarget }));
+                return;
+            }
+
+            // 3. 精确匹配
+            const match = data.list.find(n => {
+                const notePath = n.path.replace(/\.md$/i, '');
+                return notePath === normalizedTarget
+                    || notePath.endsWith('/' + normalizedTarget);
+            });
+
+            if (match) {
+                handleSelectNote(match, true);
+            } else {
+                toast.info(t("ui.note.wikiLinkNotFound", { target: normalizedTarget }));
+            }
+        });
+    }, [vault, handleNoteList, handleSelectNote, t]);
 
     const handleCreateNote = () => {
         setSelectedNote(undefined);
@@ -187,6 +217,7 @@ export function NoteManager({
                 onToggleMaximize={onToggleMaximize}
                 isRecycle={isRecycle}
                 initialPreviewMode={initialPreviewMode}
+                onWikiLinkClick={handleWikiLinkClick}
             />
         );
     } else {

@@ -161,6 +161,7 @@ export default {
     "ui.note.fullscreen": "Volledig scherm",
     "ui.note.exitFullscreen": "Volledig scherm verlaten",
     "ui.note.contextMenu": "Contextmenu",
+    "ui.note.wikiLinkNotFound": "Notitie \"{{target}}\" niet gevonden",
 
     // --- ui.history ---
     "ui.history.title": "Notitiegeschiedenis",

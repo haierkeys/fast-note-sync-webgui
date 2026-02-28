@@ -56,6 +56,7 @@ interface MarkdownEditorProps {
     fileLinks?: Record<string, string>;
     initialMode?: "edit" | "preview";
     ariaLabel?: string;
+    onWikiLinkClick?: (target: string) => void;
 }
 
 type AttachmentType = "image" | "video" | "audio" | "file";
@@ -566,6 +567,7 @@ export const MarkdownEditor = forwardRef<MarkdownEditorRef, MarkdownEditorProps>
             fileLinks = EMPTY_FILE_LINKS,
             initialMode = "edit",
             ariaLabel,
+            onWikiLinkClick,
         },
         ref
     ) => {
@@ -576,6 +578,16 @@ export const MarkdownEditor = forwardRef<MarkdownEditorRef, MarkdownEditorProps>
         const editorAriaLabel = ariaLabel ?? t("ui.note.editNote");
         const tokenRef = useRef(typeof window !== "undefined" ? localStorage.getItem("token") ?? "" : "");
         const mode = initialMode;
+
+        const handlePreviewClick = useCallback((e: React.MouseEvent) => {
+            const el = (e.target as HTMLElement).closest('.obsidian-wiki-link');
+            if (!el) return;
+            e.preventDefault();
+            const target = el.getAttribute('title');
+            if (target && onWikiLinkClick) {
+                onWikiLinkClick(target);
+            }
+        }, [onWikiLinkClick]);
 
         const highlightClass = resolvedTheme === "dark"
             ? "[&_.hljs-comment]:text-zinc-500 [&_.hljs-quote]:text-zinc-500 [&_.hljs-keyword]:text-sky-300 [&_.hljs-selector-tag]:text-sky-300 [&_.hljs-literal]:text-sky-300 [&_.hljs-title]:text-emerald-300 [&_.hljs-section]:text-emerald-300 [&_.hljs-name]:text-emerald-300 [&_.hljs-string]:text-amber-300 [&_.hljs-attr]:text-amber-300 [&_.hljs-template-tag]:text-amber-300 [&_.hljs-number]:text-fuchsia-300 [&_.hljs-built_in]:text-violet-300 [&_.hljs-type]:text-violet-300"
@@ -702,7 +714,7 @@ export const MarkdownEditor = forwardRef<MarkdownEditorRef, MarkdownEditorProps>
 
         if (mode === "preview") {
             return (
-                <div className={cn("markdown-preview h-full overflow-y-auto", highlightClass)}>
+                <div className={cn("markdown-preview h-full overflow-y-auto", highlightClass)} onClick={handlePreviewClick}>
                     <article className="mx-auto max-w-[900px] px-5 py-10">
                         <MarkdownRenderer content={previewMarkdown} />
                     </article>

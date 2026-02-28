@@ -162,6 +162,7 @@ export default {
     "ui.note.fullscreen": "전체 화면",
     "ui.note.exitFullscreen": "전체 화면 종료",
     "ui.note.contextMenu": "컨텍스트 메뉴",
+    "ui.note.wikiLinkNotFound": "노트 \"{{target}}\"을(를) 찾을 수 없습니다",
 
     // --- ui.history ---
     "ui.history.title": "노트 이력",

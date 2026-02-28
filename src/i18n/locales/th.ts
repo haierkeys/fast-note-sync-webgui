@@ -161,6 +161,7 @@ export default {
     "ui.note.fullscreen": "เต็มหน้าจอ",
     "ui.note.exitFullscreen": "ออกจากเต็มหน้าจอ",
     "ui.note.contextMenu": "เมนูบริบท",
+    "ui.note.wikiLinkNotFound": "ไม่พบบันทึก \"{{target}}\"",
 
     // --- ui.history ---
     "ui.history.title": "ประวัติโน้ต",

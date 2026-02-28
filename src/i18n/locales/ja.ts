@@ -162,6 +162,7 @@ export default {
     "ui.note.fullscreen": "全画面表示",
     "ui.note.exitFullscreen": "全画面表示終了",
     "ui.note.contextMenu": "コンテキストメニュー",
+    "ui.note.wikiLinkNotFound": "ノート \"{{target}}\" が見つかりません",
 
     // --- ui.history ---
     "ui.history.title": "ノート履歴",

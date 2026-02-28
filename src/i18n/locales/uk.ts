@@ -161,6 +161,7 @@ export default {
     "ui.note.fullscreen": "Повноекранний режим",
     "ui.note.exitFullscreen": "Вийти з повноекранного режиму",
     "ui.note.contextMenu": "Контекстне меню",
+    "ui.note.wikiLinkNotFound": "Нотатку \"{{target}}\" не знайдено",
 
     // --- ui.history ---
     "ui.history.title": "Історія нотаток",
