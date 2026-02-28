@@ -10,7 +10,7 @@ import { useState } from "react";
 import env from "@/env.ts";
 
 
-export function VersionOverview({ showUpgrade = true }: { showUpgrade?: boolean }) {
+export function VersionOverview({ showUpgrade = true, children }: { showUpgrade?: boolean, children?: React.ReactNode }) {
     const { t } = useTranslation()
     const { versionInfo, isLoading: versionLoading } = useVersion()
     const { checkUpdate, isChecking, updateResult } = useUpdateCheck()
@@ -65,11 +65,11 @@ export function VersionOverview({ showUpgrade = true }: { showUpgrade?: boolean 
                     <span className="text-sm font-medium">{t("ui.system.repo")}</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm">
-                    <a href="https://github.com/haierkeys/fast-note-sync-service" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline truncate max-w-[150px] sm:max-w-none">
+                    <a href="https://github.com/haierkeys/fast-note-sync-service" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline truncate max-w-37.5 sm:max-w-none">
                         {t("ui.system.githubRepo")}
                     </a>
                     <span className="text-muted-foreground">/</span>
-                    <a href="https://cnb.cool/haierkeys/fast-note-sync-service" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline truncate max-w-[150px] sm:max-w-none">
+                    <a href="https://cnb.cool/haierkeys/fast-note-sync-service" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline truncate max-w-37.5 sm:max-w-none">
                         {t("ui.system.cnbMirror")}
                     </a>
                 </div>
@@ -165,6 +165,12 @@ export function VersionOverview({ showUpgrade = true }: { showUpgrade?: boolean 
                     </div>
                 ) : null}
             </div>
+            {children && (
+                <>
+                    <div className="border-t border-border" />
+                    {children}
+                </>
+            )}
         </div>
     )
 }

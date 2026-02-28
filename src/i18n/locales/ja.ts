@@ -4,6 +4,7 @@ export default {
     "ui.common.subtitle": "高性能、低遅延なノート同期、管理、REST サービス",
     "ui.common.footerTitle": "Golang + Websocket + Sqlite + React で構築\nご利用には <a href='https://github.com/haierkeys/obsidian-fast-note-sync' target='_blank'>Obsidian Fast Note Sync Plugin</a> が必要です",
     "ui.common.loading": "読み込み中...",
+    "ui.common.downloading": "ダウンロード中...",
     "ui.common.actions": "操作",
     "ui.common.save": "保存",
     "ui.common.add": "新規作成",
@@ -49,6 +50,7 @@ export default {
     "ui.common.noSearchResults": "一致する結果が見つかりませんでした",
     "ui.common.selectAll": "すべて選択",
     "ui.common.items": "件",
+
 
     // --- ui.auth ---
     "ui.auth.login": "ログイン",
@@ -260,6 +262,20 @@ export default {
     "ui.settings.themeAuto": "自動 (18:00-06:00 ダーク)",
     "ui.settings.themeLight": "ライト",
     "ui.settings.themeDark": "ダーク",
+    "ui.settings.cloudflaredTestRequired": "まず 隧道プログラムをダウンロード ボタンをクリックしてください",
+    "ui.settings.downloadSuccess": "ダウンロード成功",
+    "ui.settings.downloadFailed": "ダウンロード失敗",
+    "ui.settings.tunnelGatewayConfig": "中継ゲートウェイ",
+    "ui.settings.tunnelGatewayDesc": "<b>FNS</b> 統合イントラネット浸透サービス。ローカルの <b>FNS</b> サービスを公衆ネットワーク経由で安全に直接アクセスできるようにします。煩雑な HTTPS や WebSocket プロキシ設定なしで、安全なアクセスサービスを享受できます。\nNgrok または Cloudflare トンネル経由のアクセスをサポートしています。",
+    "ui.settings.ngrokDesc": "Ngrok イントラネット浸透トンネルを使用して、ローカルサービスを安全に公衆ネットワークに公開します。\n公式申請ポータル: <a href=\"https://dashboard.ngrok.com/get-started/setup\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-primary hover:underline\">https://dashboard.ngrok.com/get-started/setup</a>\n <b>注意</b>: Ngrok 無料アカウントにはさまざまな制限があります。詳細は <a href=\"https://ngrok.com/docs/pricing-limits/free-plan-limits\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-primary hover:underline\">https://ngrok.com/docs/pricing-limits/free-plan-limits</a> を参照してください。",
+    "ui.settings.customDomain": "カスタムドメイン",
+    "ui.settings.customDomainDesc": "任意、ngrok 有料アカウントが必要です",
+    "ui.settings.saveNgrok": "設定を保存",
+    "ui.settings.cloudflareDesc": "Cloudflare Zero Trust ネットワーク上に構築されたリバーストンネルで、より高いセキュリティと安定性を提供します。\n公式申請ポータル: <a href=\"https://one.dash.cloudflare.com\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-primary hover:underline\">https://one.dash.cloudflare.com</a>\n設定を保存する前に、まず <b>隧道プログラムをダウンロード</b> する必要があります",
+    "ui.settings.enableLog": "ログを有効にする",
+    "ui.settings.cloudflareLogDesc": "ログは storage/logs/cloudflared_tunnel.log に記録されます",
+    "ui.settings.saveCloudflare": "設定を保存",
+    "ui.settings.downloadCloudflared": "隧道プログラムをダウンロード",
 
     // --- ui.obsidian ---
     "ui.obsidian.authTokenConfig": "認証設定",

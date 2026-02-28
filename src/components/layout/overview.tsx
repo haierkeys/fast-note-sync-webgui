@@ -3,11 +3,18 @@ import { useSystemInfo } from "@/components/api-handle/use-system-info";
 import { formatFileSize } from "@/lib/utils/format";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
+import { useEffect } from "react";
 
 
-export function Overview() {
+export function Overview({ refreshKey, children }: { refreshKey?: number, children?: React.ReactNode }) {
     const { t } = useTranslation()
     const { systemInfo, isLoading: systemLoading, refresh: refreshSystemInfo } = useSystemInfo()
+
+    useEffect(() => {
+        if (refreshKey) {
+            refreshSystemInfo()
+        }
+    }, [refreshKey, refreshSystemInfo])
 
     if (systemLoading && !systemInfo) {
         return (
@@ -160,6 +167,12 @@ export function Overview() {
                     </div>
                 </div>
             </div>
+            {children && (
+                <>
+                    <div className="border-t border-border/50" />
+                    {children}
+                </>
+            )}
         </div>
     )
 }

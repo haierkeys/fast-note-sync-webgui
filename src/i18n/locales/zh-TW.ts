@@ -4,6 +4,7 @@ export default {
     "ui.common.subtitle": "高性能、低延遲的筆記同步, 管理, REST 服務",
     "ui.common.footerTitle": "基於 Golang + Websocket + Sqlite + React 構建\n需要 <a href='https://github.com/haierkeys/obsidian-fast-note-sync' target='_blank'>Obsidian Fast Note Sync Plugin</a> 配合使用",
     "ui.common.loading": "加載中...",
+    "ui.common.downloading": "下載中...",
     "ui.common.actions": "操作",
     "ui.common.save": "保存",
     "ui.common.add": "新增",
@@ -49,6 +50,7 @@ export default {
     "ui.common.noSearchResults": "沒有找到匹配的結果",
     "ui.common.selectAll": "全選",
     "ui.common.items": "條",
+
 
     // --- ui.auth ---
     "ui.auth.login": "登錄",
@@ -260,6 +262,20 @@ export default {
     "ui.settings.themeAuto": "自動 (18:00-06:00 暗色)",
     "ui.settings.themeLight": "淺色",
     "ui.settings.themeDark": "深色",
+    "ui.settings.cloudflaredTestRequired": "請先點擊 隧道程序下載 按鈕",
+    "ui.settings.downloadSuccess": "下載成功",
+    "ui.settings.downloadFailed": "下載失敗",
+    "ui.settings.tunnelGatewayConfig": "中繼網關",
+    "ui.settings.tunnelGatewayDesc": "<b>FNS</b> 集成的內網穿透服務，使您的本地 <b>FNS</b> 服務可以直接通過公網安全訪問, 不用再配置繁瑣的 HTTPS 和 WebSocket 代理, 就可以享受安全訪問服務。\n支持通過 Ngrok 或 Cloudflare 隧道接入。",
+    "ui.settings.ngrokDesc": "使用 Ngrok 內網穿透隧道，將本地服務安全地暴露到公網。\n官方申請入口: <a href=\"https://dashboard.ngrok.com/get-started/setup\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-primary hover:underline\">https://dashboard.ngrok.com/get-started/setup</a>\n <b>注意</b>: Ngrok 免費賬戶有各維度限制, 具體請查閱 <a href=\"https://ngrok.com/docs/pricing-limits/free-plan-limits\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-primary hover:underline\">https://ngrok.com/docs/pricing-limits/free-plan-limits</a>",
+    "ui.settings.customDomain": "自定義域名",
+    "ui.settings.customDomainDesc": "可選, 需要 ngrok 付費賬戶",
+    "ui.settings.saveNgrok": "保存設置",
+    "ui.settings.cloudflareDesc": "基於 Cloudflare 零信任網絡構建的反向隧道，提供更高安全性和穩定性。\n官方申請入口: <a href=\"https://one.dash.cloudflare.com\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-primary hover:underline\">https://one.dash.cloudflare.com</a>\n在保存設置前 , 需要您先進行 <b>隧道程序下載</b>",
+    "ui.settings.enableLog": "記錄日誌",
+    "ui.settings.cloudflareLogDesc": "日誌記錄在 storage/logs/cloudflared_tunnel.log",
+    "ui.settings.saveCloudflare": "保存設置",
+    "ui.settings.downloadCloudflared": "隧道程序下載",
 
     // --- ui.obsidian ---
     "ui.obsidian.authTokenConfig": "授權配置",

@@ -4,6 +4,7 @@ export default {
     "ui.common.subtitle": "고성능, 저지연 노트 동기화, 관리, REST 서비스",
     "ui.common.footerTitle": "Golang + Websocket + Sqlite + React 기반 빌드\n<a href='https://github.com/haierkeys/obsidian-fast-note-sync' target='_blank'>Obsidian Fast Note Sync Plugin</a>과 함께 사용해야 합니다",
     "ui.common.loading": "로딩 중...",
+    "ui.common.downloading": "다운로드 중...",
     "ui.common.actions": "작업",
     "ui.common.save": "저장",
     "ui.common.add": "추가",
@@ -49,6 +50,7 @@ export default {
     "ui.common.noSearchResults": "일치하는 결과가 없습니다",
     "ui.common.selectAll": "전체 선택",
     "ui.common.items": "개",
+
 
     // --- ui.auth ---
     "ui.auth.login": "로그인",
@@ -260,6 +262,20 @@ export default {
     "ui.settings.themeAuto": "자동 (18:00-06:00 다크)",
     "ui.settings.themeLight": "라이트",
     "ui.settings.themeDark": "다크",
+    "ui.settings.cloudflaredTestRequired": "먼저 터널 프로그램 다운로드 버튼을 클릭해 주세요",
+    "ui.settings.downloadSuccess": "다운로드 성공",
+    "ui.settings.downloadFailed": "다운로드 실패",
+    "ui.settings.tunnelGatewayConfig": "중계 게이트웨이",
+    "ui.settings.tunnelGatewayDesc": "<b>FNS</b> 통합 내부망 침투 서비스로, 복잡한 HTTPS 및 WebSocket 프록시 설정 없이도 로컬 <b>FNS</b> 서비스를 공용 네트워크를 통해 안전하게 직접 액세스할 수 있도록 합니다.\nNgrok 또는 Cloudflare 터널을 통한 접속을 지원합니다.",
+    "ui.settings.ngrokDesc": "Ngrok 내부망 침투 터널을 사용하여 로컬 서비스를 공용 네트워크에 안전하게 노출합니다.\n공식 신청 포털: <a href=\"https://dashboard.ngrok.com/get-started/setup\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-primary hover:underline\">https://dashboard.ngrok.com/get-started/setup</a>\n <b>주의</b>: Ngrok 무료 계정은 다양한 제한이 있으므로 자세한 내용은 <a href=\"https://ngrok.com/docs/pricing-limits/free-plan-limits\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-primary hover:underline\">https://ngrok.com/docs/pricing-limits/free-plan-limits</a>를 참조하세요.",
+    "ui.settings.customDomain": "사용자 정의 도메인",
+    "ui.settings.customDomainDesc": "선택 사항, ngrok 유료 계정 필요",
+    "ui.settings.saveNgrok": "설정 저장",
+    "ui.settings.cloudflareDesc": "Cloudflare Zero Trust 네트워크를 기반으로 구축된 리버스 터널로, 더 높은 보안성과 안정성을 제공합니다.\n공식 신청 포털: <a href=\"https://one.dash.cloudflare.com\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-primary hover:underline\">https://one.dash.cloudflare.com</a>\n설정을 저장하기 전에 먼저 <b>터널 프로그램 다운로드</b>를 진행해야 합니다",
+    "ui.settings.enableLog": "로그 기록",
+    "ui.settings.cloudflareLogDesc": "로그는 storage/logs/cloudflared_tunnel.log에 기록됩니다",
+    "ui.settings.saveCloudflare": "설정 저장",
+    "ui.settings.downloadCloudflared": "터널 프로그램 다운로드",
 
     // --- ui.obsidian ---
     "ui.obsidian.authTokenConfig": "인증 설정",
