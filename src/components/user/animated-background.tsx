@@ -1,6 +1,6 @@
 import "../../styles/auth.css";
 
-import { Player } from "@lottiefiles/react-lottie-player";
+import { Player, type IPlayerProps } from "@lottiefiles/react-lottie-player";
 import { memo, useState, useEffect } from "react";
 
 import defaultLight from "../../assets/default_light.json";
@@ -12,9 +12,11 @@ import { useTheme } from "../context/theme-context";
  * Authentic default Lottie Animation Background
  * Exactly the same implementation as default project
  */
+type AnimationSource = IPlayerProps["src"];
+
 export const AnimatedBackground = memo(() => {
     const { resolvedTheme } = useTheme();
-    const [animationData, setAnimationData] = useState<any>(defaultDark);
+    const [animationData, setAnimationData] = useState<AnimationSource>(defaultDark);
 
     useEffect(() => {
         setAnimationData(resolvedTheme === 'dark' ? defaultDark : defaultLight);

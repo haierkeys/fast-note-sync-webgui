@@ -1,21 +1,12 @@
 import { addCacheBuster } from "@/lib/utils/cache-buster";
+import type { VersionInfo } from "@/lib/types/version";
 import { useAppStore } from "@/stores/app-store";
 import { useTranslation } from "react-i18next";
 import { getBrowserLang } from "@/i18n/utils";
 import { useState, useEffect } from "react";
 import env from "@/env.ts";
 
-
-export interface VersionInfo {
-    buildTime: string;
-    gitTag: string;
-    version: string;
-    versionIsNew?: boolean;
-    versionNewLink?: string;
-    versionNewName?: string;
-    versionNewChangelog?: string;
-    versionNewChangelogContent?: string;
-}
+export type { VersionInfo } from "@/lib/types/version";
 
 export function useVersion() {
     const { t } = useTranslation()

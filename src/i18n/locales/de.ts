@@ -211,6 +211,9 @@ export default {
     "ui.file.noVaultsForFiles": "Keine Notiz-Vaults vorhanden",
 
     // --- ui.settings ---
+    "ui.settings.securityConfig": "Security Settings",
+    "ui.settings.noteRelatedConfig": "Note Settings",
+    "ui.settings.fontConfig": "Interface Settings",
     "ui.settings.systemConfig": "Systemkonfiguration",
     "ui.settings.saveSettings": "Einstellungen speichern",
     "ui.settings.saveSuccess": "Einstellungen erfolgreich gespeichert",
@@ -284,6 +287,11 @@ export default {
     "ui.obsidian.copyConfigError": "Keine HTTPS-Seite, Zwischenablage kann nicht verwendet werden, bitte manuell kopieren",
 
     // --- ui.system ---
+    "ui.system.restartService": "Restart Service",
+    "ui.system.restartServiceConfirm": "Are you sure you want to restart the service now? Connection will be lost during restart.",
+    "ui.system.manualGC": "Memory GC",
+    "ui.system.manualGCConfirm": "Are you sure you want to trigger manual garbage collection (GC) now?",
+    "ui.system.manualGCSuccess": "Manual garbage collection (GC) triggered successfully",
     "ui.system.serviceInfo": "Service-Informationen",
     "ui.system.versionInfo": "Versionsinformationen",
     "ui.system.repo": "Projekt-Repository",
@@ -488,6 +496,10 @@ export default {
     "ui.validation.vault.nameRequired": "Vault-Name darf nicht leer sein",
 
     // --- api.handle ---
+    "api.system.restart.success": "Service restart triggered",
+    "api.system.restart.error": "Failed to request service restart",
+    "api.system.gc.success": "Memory GC triggered",
+    "api.system.gc.error": "Failed to request memory GC",
     "api.git.list.error": "Fehler beim Abrufen der Git-Konfigurationsliste",
     "api.git.save.success": "Konfiguration erfolgreich gespeichert",
     "api.git.save.error": "Speichern der Konfiguration fehlgeschlagen",

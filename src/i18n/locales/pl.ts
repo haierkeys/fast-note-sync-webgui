@@ -211,6 +211,9 @@ export default {
     "ui.file.noVaultsForFiles": "Brak skarbców notatek",
 
     // --- ui.settings ---
+    "ui.settings.securityConfig": "Security Settings",
+    "ui.settings.noteRelatedConfig": "Note Settings",
+    "ui.settings.fontConfig": "Interface Settings",
     "ui.settings.systemConfig": "Ustawienia systemowe",
     "ui.settings.saveSettings": "Zapisz ustawienia",
     "ui.settings.saveSuccess": "Ustawienia pomyślnie zapisane",
@@ -284,6 +287,11 @@ export default {
     "ui.obsidian.copyConfigError": "Strona bez HTTPS, nie można użyć schowka, skopiuj ręcznie",
 
     // --- ui.system ---
+    "ui.system.restartService": "Restart Service",
+    "ui.system.restartServiceConfirm": "Are you sure you want to restart the service now? Connection will be lost during restart.",
+    "ui.system.manualGC": "Memory GC",
+    "ui.system.manualGCConfirm": "Are you sure you want to trigger manual garbage collection (GC) now?",
+    "ui.system.manualGCSuccess": "Manual garbage collection (GC) triggered successfully",
     "ui.system.serviceInfo": "Informacje o usłudze",
     "ui.system.versionInfo": "Informacje o wersji",
     "ui.system.repo": "Repozytorium projektu",
@@ -488,6 +496,10 @@ export default {
     "ui.validation.vault.nameRequired": "Nazwa skarbca nie może być pusta",
 
     // --- api.handle ---
+    "api.system.restart.success": "Service restart triggered",
+    "api.system.restart.error": "Failed to request service restart",
+    "api.system.gc.success": "Memory GC triggered",
+    "api.system.gc.error": "Failed to request memory GC",
     "api.git.list.error": "Pobieranie listy konfiguracji Git nie powiodło się",
     "api.git.save.success": "Konfiguracja pomyślnie zapisana",
     "api.git.save.error": "Zapisywanie konfiguracji nie powiodło się",

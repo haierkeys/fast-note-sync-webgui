@@ -211,6 +211,9 @@ export default {
     "ui.file.noVaultsForFiles": "Geen notitiekluizen",
 
     // --- ui.settings ---
+    "ui.settings.securityConfig": "Security Settings",
+    "ui.settings.noteRelatedConfig": "Note Settings",
+    "ui.settings.fontConfig": "Interface Settings",
     "ui.settings.systemConfig": "Systeemconfiguratie",
     "ui.settings.saveSettings": "Instellingen opslaan",
     "ui.settings.saveSuccess": "Instellingen succesvol opgeslagen",
@@ -284,6 +287,11 @@ export default {
     "ui.obsidian.copyConfigError": "Niet-HTTPS-pagina, klembord kan niet worden gebruikt, kopieer handmatig a.u.b.",
 
     // --- ui.system ---
+    "ui.system.restartService": "Restart Service",
+    "ui.system.restartServiceConfirm": "Are you sure you want to restart the service now? Connection will be lost during restart.",
+    "ui.system.manualGC": "Memory GC",
+    "ui.system.manualGCConfirm": "Are you sure you want to trigger manual garbage collection (GC) now?",
+    "ui.system.manualGCSuccess": "Manual garbage collection (GC) triggered successfully",
     "ui.system.serviceInfo": "Serviceinformatie",
     "ui.system.versionInfo": "Versie-informatie",
     "ui.system.repo": "Projectrepository",
@@ -488,6 +496,10 @@ export default {
     "ui.validation.vault.nameRequired": "Kluisnaam mag niet leeg zijn",
 
     // --- api.handle ---
+    "api.system.restart.success": "Service restart triggered",
+    "api.system.restart.error": "Failed to request service restart",
+    "api.system.gc.success": "Memory GC triggered",
+    "api.system.gc.error": "Failed to request memory GC",
     "api.git.list.error": "Ophalen Git configuratielijst mislukt",
     "api.git.save.success": "Configuratie succesvol opgeslagen",
     "api.git.save.error": "Opslaan van configuratie mislukt",

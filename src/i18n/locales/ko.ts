@@ -212,6 +212,9 @@ export default {
     "ui.file.noVaultsForFiles": "보관함이 아직 없습니다",
 
     // --- ui.settings ---
+    "ui.settings.securityConfig": "Security Settings",
+    "ui.settings.noteRelatedConfig": "Note Settings",
+    "ui.settings.fontConfig": "Interface Settings",
     "ui.settings.systemConfig": "시스템 설정",
     "ui.settings.saveSettings": "설정 저장",
     "ui.settings.saveSuccess": "설정이 성공적으로 저장되었습니다",
@@ -285,6 +288,11 @@ export default {
     "ui.obsidian.copyConfigError": "HTTPS가 아닌 페이지에서는 클립보드 기능을 사용할 수 없습니다. 인증 설정을 수동으로 복사하세요",
 
     // --- ui.system ---
+    "ui.system.restartService": "Restart Service",
+    "ui.system.restartServiceConfirm": "Are you sure you want to restart the service now? Connection will be lost during restart.",
+    "ui.system.manualGC": "Memory GC",
+    "ui.system.manualGCConfirm": "Are you sure you want to trigger manual garbage collection (GC) now?",
+    "ui.system.manualGCSuccess": "Manual garbage collection (GC) triggered successfully",
     "ui.system.serviceInfo": "서비스 정보",
     "ui.system.versionInfo": "버전 정보",
     "ui.system.repo": "프로젝트 저장소",
@@ -489,6 +497,10 @@ export default {
     "ui.validation.vault.nameRequired": "보관함 이름은 필수입니다",
 
     // --- api.handle ---
+    "api.system.restart.success": "Service restart triggered",
+    "api.system.restart.error": "Failed to request service restart",
+    "api.system.gc.success": "Memory GC triggered",
+    "api.system.gc.error": "Failed to request memory GC",
     "api.git.list.error": "Git 설정 목록을 가져오지 못했습니다",
     "api.git.save.success": "설정 저장 성공",
     "api.git.save.error": "설정 저장 실패",

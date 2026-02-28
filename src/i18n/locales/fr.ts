@@ -211,6 +211,9 @@ export default {
     "ui.file.noVaultsForFiles": "Aucun coffre de notes",
 
     // --- ui.settings ---
+    "ui.settings.securityConfig": "Security Settings",
+    "ui.settings.noteRelatedConfig": "Note Settings",
+    "ui.settings.fontConfig": "Interface Settings",
     "ui.settings.systemConfig": "Configuration système",
     "ui.settings.saveSettings": "Enregistrer les paramètres",
     "ui.settings.saveSuccess": "Paramètres enregistrés avec succès",
@@ -284,6 +287,11 @@ export default {
     "ui.obsidian.copyConfigError": "Page non-HTTPS, impossible d'utiliser la fonction presse-papiers, veuillez copier la configuration d'autorisation manuellement",
 
     // --- ui.system ---
+    "ui.system.restartService": "Restart Service",
+    "ui.system.restartServiceConfirm": "Are you sure you want to restart the service now? Connection will be lost during restart.",
+    "ui.system.manualGC": "Memory GC",
+    "ui.system.manualGCConfirm": "Are you sure you want to trigger manual garbage collection (GC) now?",
+    "ui.system.manualGCSuccess": "Manual garbage collection (GC) triggered successfully",
     "ui.system.serviceInfo": "Informations sur le service",
     "ui.system.versionInfo": "Informations de version",
     "ui.system.repo": "Dépôt du projet",
@@ -488,6 +496,10 @@ export default {
     "ui.validation.vault.nameRequired": "Le nom du coffre ne peut pas être vide",
 
     // --- api.handle ---
+    "api.system.restart.success": "Service restart triggered",
+    "api.system.restart.error": "Failed to request service restart",
+    "api.system.gc.success": "Memory GC triggered",
+    "api.system.gc.error": "Failed to request memory GC",
     "api.git.list.error": "Échec d'obtention de la liste des configurations Git",
     "api.git.save.success": "Configuration enregistrée avec succès",
     "api.git.save.error": "Échec de l'enregistrement de la configuration",

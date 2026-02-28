@@ -50,6 +50,8 @@ export default {
     "ui.common.noSearchResults": "没有找到匹配的结果",
     "ui.common.selectAll": "全选",
     "ui.common.items": "条",
+    "ui.common.selectVault": "选择仓库",
+    "ui.common.sourceCode": "源代码",
 
 
     // --- ui.auth ---
@@ -84,6 +86,8 @@ export default {
     "ui.auth.submitting": "提交中...",
     "ui.auth.unknownUser": "未知用户",
     "ui.auth.userUid": "用户 UID: {{uid}}",
+    "ui.auth.loginRequestFailed": "登录请求失败，请检查网络状态",
+    "ui.auth.registerRequestFailed": "注册失败，请重试",
 
     // --- ui.nav ---
     "ui.nav.navigation": "功能导航",
@@ -95,6 +99,7 @@ export default {
     "ui.nav.menuSettings": "系统设置",
     "ui.nav.menuGit": "Git 自动化",
     "ui.nav.menuFiles": "附件管理",
+    "ui.nav.mainNavigation": "主导航",
 
     // --- ui.vault ---
     "ui.vault.vault": "仓库",
@@ -162,6 +167,8 @@ export default {
     "ui.note.fullscreen": "全屏",
     "ui.note.exitFullscreen": "退出全屏",
     "ui.note.contextMenu": "上下文菜单",
+    "ui.note.loadingEditor": "加载编辑器...",
+    "ui.note.unsavedContentWithoutTitle": "内容未保存，因为标题为空。",
 
     // --- ui.history ---
     "ui.history.title": "笔记历史",

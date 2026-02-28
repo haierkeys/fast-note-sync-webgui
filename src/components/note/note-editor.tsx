@@ -17,14 +17,18 @@ import type { MarkdownEditorRef } from "./markdown-editor";
 const MarkdownEditor = lazy(() => import("./markdown-editor").then(m => ({ default: m.MarkdownEditor })));
 
 // 编辑器加载占位符
-const EditorLoading = () => (
-    <div className="flex items-center justify-center h-full text-muted-foreground">
-        <div className="flex flex-col items-center gap-2">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-            <span>加载编辑器...</span>
+const EditorLoading = () => {
+    const { t } = useTranslation();
+
+    return (
+        <div className="flex items-center justify-center h-full text-muted-foreground">
+            <div className="flex flex-col items-center gap-2">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                <span>{t("ui.note.loadingEditor")}</span>
+            </div>
         </div>
-    </div>
-);
+    );
+};
 
 // x毫秒后未操作触发保存
 const AUTO_SAVE_DELAY = 1000;

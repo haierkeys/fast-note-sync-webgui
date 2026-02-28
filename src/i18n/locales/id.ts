@@ -211,6 +211,9 @@ export default {
     "ui.file.noVaultsForFiles": "Belum ada vault catatan",
 
     // --- ui.settings ---
+    "ui.settings.securityConfig": "Security Settings",
+    "ui.settings.noteRelatedConfig": "Note Settings",
+    "ui.settings.fontConfig": "Interface Settings",
     "ui.settings.systemConfig": "Konfigurasi Sistem",
     "ui.settings.saveSettings": "Simpan Pengaturan",
     "ui.settings.saveSuccess": "Pengaturan berhasil disimpan",
@@ -284,6 +287,11 @@ export default {
     "ui.obsidian.copyConfigError": "Halaman non-HTTPS, tidak dapat menggunakan fungsi papan klip, silakan salin konfigurasi otorisasi secara manual",
 
     // --- ui.system ---
+    "ui.system.restartService": "Restart Service",
+    "ui.system.restartServiceConfirm": "Are you sure you want to restart the service now? Connection will be lost during restart.",
+    "ui.system.manualGC": "Memory GC",
+    "ui.system.manualGCConfirm": "Are you sure you want to trigger manual garbage collection (GC) now?",
+    "ui.system.manualGCSuccess": "Manual garbage collection (GC) triggered successfully",
     "ui.system.serviceInfo": "Informasi Layanan",
     "ui.system.versionInfo": "Informasi Versi",
     "ui.system.repo": "Repositori Proyek",
@@ -426,7 +434,7 @@ export default {
     "ui.backup.history.storage": "Penyimpanan",
     "ui.backup.history.status": "Status",
     "ui.backup.history.backupStats": "Statistik Cadangan",
-    "ui.history.syncStats": "Statistik Sinkronisasi",
+    "ui.backup.history.syncStats": "Statistik Sinkronisasi",
     "ui.backup.history.backupFile": "File Cadangan",
     "ui.backup.history.message": "Pesan",
     "ui.backup.history.copyError": "Salin pesan error",
@@ -488,6 +496,10 @@ export default {
     "ui.validation.vault.nameRequired": "Nama vault tidak boleh kosong",
 
     // --- api.handle ---
+    "api.system.restart.success": "Service restart triggered",
+    "api.system.restart.error": "Failed to request service restart",
+    "api.system.gc.success": "Memory GC triggered",
+    "api.system.gc.error": "Failed to request memory GC",
     "api.git.list.error": "Gagal mendapatkan daftar konfigurasi Git",
     "api.git.save.success": "Berhasil menyimpan konfigurasi",
     "api.git.save.error": "Gagal menyimpan konfigurasi",

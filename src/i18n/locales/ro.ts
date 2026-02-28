@@ -211,6 +211,9 @@ export default {
     "ui.file.noVaultsForFiles": "Nu există seifuri de notițe",
 
     // --- ui.settings ---
+    "ui.settings.securityConfig": "Security Settings",
+    "ui.settings.noteRelatedConfig": "Note Settings",
+    "ui.settings.fontConfig": "Interface Settings",
     "ui.settings.systemConfig": "Setări sistem",
     "ui.settings.saveSettings": "Salvează setările",
     "ui.settings.saveSuccess": "Setări salvate cu succes",
@@ -284,6 +287,11 @@ export default {
     "ui.obsidian.copyConfigError": "Pagină fără HTTPS, clipboard-ul nu poate fi utilizat, te rugăm să copiezi manual",
 
     // --- ui.system ---
+    "ui.system.restartService": "Restart Service",
+    "ui.system.restartServiceConfirm": "Are you sure you want to restart the service now? Connection will be lost during restart.",
+    "ui.system.manualGC": "Memory GC",
+    "ui.system.manualGCConfirm": "Are you sure you want to trigger manual garbage collection (GC) now?",
+    "ui.system.manualGCSuccess": "Manual garbage collection (GC) triggered successfully",
     "ui.system.serviceInfo": "Informații serviciu",
     "ui.system.versionInfo": "Informații versiune",
     "ui.system.repo": "Depozit proiect",
@@ -488,6 +496,10 @@ export default {
     "ui.validation.vault.nameRequired": "Numele seifului nu poate fi gol",
 
     // --- api.handle ---
+    "api.system.restart.success": "Service restart triggered",
+    "api.system.restart.error": "Failed to request service restart",
+    "api.system.gc.success": "Memory GC triggered",
+    "api.system.gc.error": "Failed to request memory GC",
     "api.git.list.error": "Preluarea listei de configurații Git a eșuat",
     "api.git.save.success": "Configurație salvată cu succes",
     "api.git.save.error": "Salvarea configurației a eșuat",

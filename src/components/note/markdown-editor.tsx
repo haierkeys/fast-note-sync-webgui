@@ -102,8 +102,7 @@ const CM6_BASIC_SETUP = {
     highlightActiveLineGutter: false,
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const REMARK_PLUGINS: any[] = [[remarkGfm, { singleTilde: false }]];
+const REMARK_PLUGINS: NonNullable<React.ComponentProps<typeof ReactMarkdown>["remarkPlugins"]> = [[remarkGfm, { singleTilde: false }]];
 const REHYPE_PLUGINS = [rehypeRaw, rehypeHighlight];
 
 const EXPORT_STYLE = `

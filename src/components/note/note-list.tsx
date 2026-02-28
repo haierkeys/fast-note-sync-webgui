@@ -221,7 +221,7 @@ export function NoteList({ vault, vaults, onVaultChange, onSelectNote, onCreateN
                     {vaults && onVaultChange && (
                         <Select value={vault} onValueChange={onVaultChange}>
                             <SelectTrigger className="w-auto min-w-45 rounded-xl">
-                                <SelectValue placeholder="Select Vault" />
+                                <SelectValue placeholder={t("ui.common.selectVault")} />
                             </SelectTrigger>
                             <SelectContent className="rounded-xl">
                                 {vaults.map((v) => (

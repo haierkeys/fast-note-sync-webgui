@@ -211,6 +211,9 @@ export default {
     "ui.file.noVaultsForFiles": "لا توجد خزائن ملاحظات",
 
     // --- ui.settings ---
+    "ui.settings.securityConfig": "Security Settings",
+    "ui.settings.noteRelatedConfig": "Note Settings",
+    "ui.settings.fontConfig": "Interface Settings",
     "ui.settings.systemConfig": "إعدادات النظام",
     "ui.settings.saveSettings": "حفظ الإعدادات",
     "ui.settings.saveSuccess": "تم حفظ الإعدادات بنجاح",
@@ -284,6 +287,11 @@ export default {
     "ui.obsidian.copyConfigError": "ليست صفحة HTTPS، لا يمكن استخدام الحافظة، يرجى النسخ يدوياً",
 
     // --- ui.system ---
+    "ui.system.restartService": "Restart Service",
+    "ui.system.restartServiceConfirm": "Are you sure you want to restart the service now? Connection will be lost during restart.",
+    "ui.system.manualGC": "Memory GC",
+    "ui.system.manualGCConfirm": "Are you sure you want to trigger manual garbage collection (GC) now?",
+    "ui.system.manualGCSuccess": "Manual garbage collection (GC) triggered successfully",
     "ui.system.serviceInfo": "معلومات الخدمة",
     "ui.system.versionInfo": "معلومات الإصدار",
     "ui.system.repo": "مستودع المشروع",
@@ -488,6 +496,10 @@ export default {
     "ui.validation.vault.nameRequired": "اسم الخزنة لا يمكن أن يكون فارغاً",
 
     // --- api.handle ---
+    "api.system.restart.success": "Service restart triggered",
+    "api.system.restart.error": "Failed to request service restart",
+    "api.system.gc.success": "Memory GC triggered",
+    "api.system.gc.error": "Failed to request memory GC",
     "api.git.list.error": "فشل جلب قائمة إعدادات Git",
     "api.git.save.success": "تم حفظ الإعدادات بنجاح",
     "api.git.save.error": "فشل حفظ الإعدادات",

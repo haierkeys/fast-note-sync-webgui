@@ -50,6 +50,8 @@ export default {
     "ui.common.noSearchResults": "No matching results found",
     "ui.common.selectAll": "Select All",
     "ui.common.items": "items",
+    "ui.common.selectVault": "Select Vault",
+    "ui.common.sourceCode": "Source Code",
 
 
     // --- ui.auth ---
@@ -84,6 +86,8 @@ export default {
     "ui.auth.submitting": "Submitting...",
     "ui.auth.unknownUser": "Unknown User",
     "ui.auth.userUid": "User UID: {{uid}}",
+    "ui.auth.loginRequestFailed": "Login request failed, please check your network",
+    "ui.auth.registerRequestFailed": "Registration failed, please try again",
 
     // --- ui.nav ---
     "ui.nav.navigation": "Navigation",
@@ -95,6 +99,7 @@ export default {
     "ui.nav.menuSettings": "Settings",
     "ui.nav.menuGit": "Git Automation",
     "ui.nav.menuFiles": "Attachments",
+    "ui.nav.mainNavigation": "Main Navigation",
 
     // --- ui.vault ---
     "ui.vault.vault": "Vault",
@@ -162,6 +167,8 @@ export default {
     "ui.note.fullscreen": "Fullscreen",
     "ui.note.exitFullscreen": "Exit Fullscreen",
     "ui.note.contextMenu": "Context Menu",
+    "ui.note.loadingEditor": "Loading editor...",
+    "ui.note.unsavedContentWithoutTitle": "Content is not saved because the title is empty.",
 
     // --- ui.history ---
     "ui.history.title": "Note History",

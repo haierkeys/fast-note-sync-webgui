@@ -133,7 +133,7 @@ export function FloatingNav({ isAdmin, className }: FloatingNavProps) {
 
       <motion.nav
         ref={scrollRef}
-        aria-label="Main Navigation"
+        aria-label={t("ui.nav.mainNavigation")}
         className={cn(
           // 移动端：水平排列，启用横向滚动并隐藏滚动条
           "flex items-center gap-1 p-2 overflow-x-auto no-scrollbar",

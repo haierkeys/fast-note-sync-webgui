@@ -155,16 +155,23 @@ export function FileList({ vault, vaults, onVaultChange, isRecycle = false, page
         }
     };
 
-    const toggleSelect = (e: React.MouseEvent, file: FileDTO) => {
-        e.stopPropagation();
+    const toggleSelect = (file: FileDTO) => {
         if (!file.contentHash) return;
+
         const newSelected = new Set(selectedPaths);
+
         if (newSelected.has(file.pathHash)) {
             newSelected.delete(file.pathHash);
         } else {
             newSelected.add(file.pathHash);
         }
+
         setSelectedPaths(newSelected);
+    };
+
+    const toggleSelectWithEvent = (event: React.MouseEvent, file: FileDTO) => {
+        event.stopPropagation();
+        toggleSelect(file);
     };
 
     const onBatchRestore = () => {
@@ -243,7 +250,7 @@ export function FileList({ vault, vaults, onVaultChange, isRecycle = false, page
                     {vaults && onVaultChange && (
                         <Select value={vault} onValueChange={onVaultChange}>
                             <SelectTrigger className="w-auto min-w-45 rounded-xl">
-                                <SelectValue placeholder="Select Vault" />
+                                <SelectValue placeholder={t("ui.common.selectVault")} />
                             </SelectTrigger>
                             <SelectContent className="rounded-xl">
                                 {vaults.map((v) => (
@@ -560,11 +567,16 @@ export function FileList({ vault, vaults, onVaultChange, isRecycle = false, page
                                         {isRecycle && (
                                             <div
                                                 className={`flex items-center self-center ${!file.contentHash ? "opacity-30" : ""}`}
-                                                onClick={(e) => toggleSelect(e, file)}
+                                                onClick={(event) => toggleSelectWithEvent(event, file)}
                                             >
                                                 <Checkbox
                                                     checked={selectedPaths.has(file.pathHash)}
-                                                    onCheckedChange={() => !loading && file.contentHash && toggleSelect({ stopPropagation: () => { } } as unknown as React.MouseEvent, file)}
+                                                    onClick={(event) => event.stopPropagation()}
+                                                    onCheckedChange={() => {
+                                                        if (!loading && file.contentHash) {
+                                                            toggleSelect(file);
+                                                        }
+                                                    }}
                                                     disabled={!file.contentHash}
                                                     className="rounded-md"
                                                 />

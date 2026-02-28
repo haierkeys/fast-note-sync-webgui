@@ -211,6 +211,9 @@ export default {
     "ui.file.noVaultsForFiles": "No hay bóvedas de notas",
 
     // --- ui.settings ---
+    "ui.settings.securityConfig": "Security Settings",
+    "ui.settings.noteRelatedConfig": "Note Settings",
+    "ui.settings.fontConfig": "Interface Settings",
     "ui.settings.systemConfig": "Configuración del sistema",
     "ui.settings.saveSettings": "Guardar configuración",
     "ui.settings.saveSuccess": "Configuración guardada con éxito",
@@ -284,6 +287,11 @@ export default {
     "ui.obsidian.copyConfigError": "Página no HTTPS, no se puede usar la función del portapapeles, copie la configuración manualmente",
 
     // --- ui.system ---
+    "ui.system.restartService": "Restart Service",
+    "ui.system.restartServiceConfirm": "Are you sure you want to restart the service now? Connection will be lost during restart.",
+    "ui.system.manualGC": "Memory GC",
+    "ui.system.manualGCConfirm": "Are you sure you want to trigger manual garbage collection (GC) now?",
+    "ui.system.manualGCSuccess": "Manual garbage collection (GC) triggered successfully",
     "ui.system.serviceInfo": "Información del servicio",
     "ui.system.versionInfo": "Información de versión",
     "ui.system.repo": "Repositorio del proyecto",
@@ -488,6 +496,10 @@ export default {
     "ui.validation.vault.nameRequired": "El nombre de la bóveda es obligatorio",
 
     // --- api.handle ---
+    "api.system.restart.success": "Service restart triggered",
+    "api.system.restart.error": "Failed to request service restart",
+    "api.system.gc.success": "Memory GC triggered",
+    "api.system.gc.error": "Failed to request memory GC",
     "api.git.list.error": "Error al obtener la lista de configuraciones Git",
     "api.git.save.success": "Configuración guardada con éxito",
     "api.git.save.error": "Error al guardar la configuración",

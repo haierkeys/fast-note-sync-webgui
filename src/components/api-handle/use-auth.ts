@@ -1,12 +1,14 @@
 import type { LoginFormData, RegisterFormData } from "@/lib/validations/user-schema";
 import { addCacheBuster } from "@/lib/utils/cache-buster";
 import { getBrowserLang } from "@/i18n/utils";
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import env from "@/env.ts";
 
 
 export function useAuth() {
   const [isLoading, setIsLoading] = useState(false)
+  const { t } = useTranslation()
 
   const login = async (data: LoginFormData) => {
     setIsLoading(true)
@@ -38,7 +40,7 @@ export function useAuth() {
         return { success: false, error: errorMsg }
       }
     } catch (_error) {
-      return { success: false, error: "接口请求失败,请检查网络状态" }
+      return { success: false, error: t("ui.auth.loginRequestFailed") }
     } finally {
       setIsLoading(false)
     }
@@ -75,7 +77,7 @@ export function useAuth() {
         return { success: false, error: errorMsg }
       }
     } catch (_error) {
-      return { success: false, error: "注册失败，请重试" }
+      return { success: false, error: t("ui.auth.registerRequestFailed") }
     } finally {
       setIsLoading(false)
     }

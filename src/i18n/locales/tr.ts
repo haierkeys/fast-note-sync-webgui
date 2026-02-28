@@ -211,6 +211,9 @@ export default {
     "ui.file.noVaultsForFiles": "Not kasası yok",
 
     // --- ui.settings ---
+    "ui.settings.securityConfig": "Security Settings",
+    "ui.settings.noteRelatedConfig": "Note Settings",
+    "ui.settings.fontConfig": "Interface Settings",
     "ui.settings.systemConfig": "Sistem Yapılandırması",
     "ui.settings.saveSettings": "Ayarları Kaydet",
     "ui.settings.saveSuccess": "Ayarlar başarıyla kaydedildi",
@@ -284,6 +287,11 @@ export default {
     "ui.obsidian.copyConfigError": "HTTPS olmayan sayfa, pano kullanılamıyor, lütfen manuel olarak kopyalayın",
 
     // --- ui.system ---
+    "ui.system.restartService": "Restart Service",
+    "ui.system.restartServiceConfirm": "Are you sure you want to restart the service now? Connection will be lost during restart.",
+    "ui.system.manualGC": "Memory GC",
+    "ui.system.manualGCConfirm": "Are you sure you want to trigger manual garbage collection (GC) now?",
+    "ui.system.manualGCSuccess": "Manual garbage collection (GC) triggered successfully",
     "ui.system.serviceInfo": "Servis Bilgileri",
     "ui.system.versionInfo": "Sürüm Bilgileri",
     "ui.system.repo": "Proje Deposu",
@@ -488,6 +496,10 @@ export default {
     "ui.validation.vault.nameRequired": "Kasa adı boş bırakılamaz",
 
     // --- api.handle ---
+    "api.system.restart.success": "Service restart triggered",
+    "api.system.restart.error": "Failed to request service restart",
+    "api.system.gc.success": "Memory GC triggered",
+    "api.system.gc.error": "Failed to request memory GC",
     "api.git.list.error": "Git yapılandırma listesi alınamadı",
     "api.git.save.success": "Yapılandırma başarıyla kaydedildi",
     "api.git.save.error": "Yapılandırma kaydedilemedi",

@@ -211,6 +211,9 @@ export default {
     "ui.file.noVaultsForFiles": "ยังไม่มีคลังโน้ต",
 
     // --- ui.settings ---
+    "ui.settings.securityConfig": "Security Settings",
+    "ui.settings.noteRelatedConfig": "Note Settings",
+    "ui.settings.fontConfig": "Interface Settings",
     "ui.settings.systemConfig": "การตั้งค่าระบบ",
     "ui.settings.saveSettings": "บันทึกการตั้งค่า",
     "ui.settings.saveSuccess": "บันทึกการตั้งค่าสำเร็จ",
@@ -284,6 +287,11 @@ export default {
     "ui.obsidian.copyConfigError": "ไม่ใช่หน้า HTTPS ไม่สามารถใช้ฟังก์ชันคลิปบอร์ดได้ โปรดคัดลอกการตั้งค่าด้วยตนเอง",
 
     // --- ui.system ---
+    "ui.system.restartService": "Restart Service",
+    "ui.system.restartServiceConfirm": "Are you sure you want to restart the service now? Connection will be lost during restart.",
+    "ui.system.manualGC": "Memory GC",
+    "ui.system.manualGCConfirm": "Are you sure you want to trigger manual garbage collection (GC) now?",
+    "ui.system.manualGCSuccess": "Manual garbage collection (GC) triggered successfully",
     "ui.system.serviceInfo": "ข้อมูลบริการ",
     "ui.system.versionInfo": "ข้อมูลเวอร์ชัน",
     "ui.system.repo": "Repository ของโปรเจกต์",
@@ -488,6 +496,10 @@ export default {
     "ui.validation.vault.nameRequired": "ชื่อคลังไม่สามารถว่างได้",
 
     // --- api.handle ---
+    "api.system.restart.success": "Service restart triggered",
+    "api.system.restart.error": "Failed to request service restart",
+    "api.system.gc.success": "Memory GC triggered",
+    "api.system.gc.error": "Failed to request memory GC",
     "api.git.list.error": "ดึงรายการการตั้งค่า Git ไม่สำเร็จ",
     "api.git.save.success": "บันทึกการตั้งค่าสำเร็จ",
     "api.git.save.error": "บันทึกการตั้งค่าไม่สำเร็จ",

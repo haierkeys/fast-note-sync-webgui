@@ -1,6 +1,6 @@
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuLabel, DropdownMenuSeparator, } from "@/components/ui/dropdown-menu";
 import { Heart, RefreshCw, Loader2, MessageCircle, Smile, Coffee, QrCode, ExternalLink, SortDesc } from "lucide-react";
-import { useSupport, SupportRecord } from "@/components/api-handle/use-support";
+import { useSupport } from "@/components/api-handle/use-support";
 import { useEffect, useState, useMemo } from "react";
 import { Tooltip } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
@@ -22,16 +22,18 @@ export function SupportList() {
 
     const sortedList = useMemo(() => {
         return [...supportList].sort((a, b) => {
-            let valA: any = a[sortKey as keyof SupportRecord] || "";
-            let valB: any = b[sortKey as keyof SupportRecord] || "";
-
             if (sortKey === "amount") {
-                valA = parseFloat(String(a.amount || "0").replace(/,/g, '')) || 0;
-                valB = parseFloat(String(b.amount || "0").replace(/,/g, '')) || 0;
+                const amountA = parseFloat((a.amount || "0").replace(/,/g, "")) || 0;
+                const amountB = parseFloat((b.amount || "0").replace(/,/g, "")) || 0;
+                return sortOrder === "asc" ? amountA - amountB : amountB - amountA;
             }
 
-            if (valA < valB) return sortOrder === "asc" ? -1 : 1;
-            if (valA > valB) return sortOrder === "asc" ? 1 : -1;
+            const timeA = a.time || "";
+            const timeB = b.time || "";
+
+            if (timeA < timeB) return sortOrder === "asc" ? -1 : 1;
+            if (timeA > timeB) return sortOrder === "asc" ? 1 : -1;
+
             return 0;
         });
     }, [supportList, sortKey, sortOrder]);

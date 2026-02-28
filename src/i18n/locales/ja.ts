@@ -212,6 +212,9 @@ export default {
     "ui.file.noVaultsForFiles": "保管庫がまだありません",
 
     // --- ui.settings ---
+    "ui.settings.securityConfig": "Security Settings",
+    "ui.settings.noteRelatedConfig": "Note Settings",
+    "ui.settings.fontConfig": "Interface Settings",
     "ui.settings.systemConfig": "システム設定",
     "ui.settings.saveSettings": "設定を保存",
     "ui.settings.saveSuccess": "設定を保存しました",
@@ -285,6 +288,11 @@ export default {
     "ui.obsidian.copyConfigError": "HTTPS 以外のページではクリップボード機能を使用できません。認証設定を手動でコピーしてください",
 
     // --- ui.system ---
+    "ui.system.restartService": "Restart Service",
+    "ui.system.restartServiceConfirm": "Are you sure you want to restart the service now? Connection will be lost during restart.",
+    "ui.system.manualGC": "Memory GC",
+    "ui.system.manualGCConfirm": "Are you sure you want to trigger manual garbage collection (GC) now?",
+    "ui.system.manualGCSuccess": "Manual garbage collection (GC) triggered successfully",
     "ui.system.serviceInfo": "サービス情報",
     "ui.system.versionInfo": "バージョン情報",
     "ui.system.repo": "プロジェクトリポジトリ",
@@ -489,6 +497,10 @@ export default {
     "ui.validation.vault.nameRequired": "保管庫名は必須です",
 
     // --- api.handle ---
+    "api.system.restart.success": "Service restart triggered",
+    "api.system.restart.error": "Failed to request service restart",
+    "api.system.gc.success": "Memory GC triggered",
+    "api.system.gc.error": "Failed to request memory GC",
     "api.git.list.error": "Git 設定リストの取得に失敗しました",
     "api.git.save.success": "設定を保存しました",
     "api.git.save.error": "設定の保存に失敗しました",

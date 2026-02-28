@@ -1,4 +1,4 @@
-import type { VersionInfo } from '@/components/api-handle/use-version';
+import type { VersionInfo } from '@/lib/types/version';
 import { persist } from 'zustand/middleware';
 import { create } from 'zustand';
 

@@ -3,7 +3,10 @@ import { getBrowserLang } from "@/i18n/utils";
 import i18n from "i18next";
 
 
-const locales = import.meta.glob('./locales/*.ts');
+type TranslationResource = Record<string, string>;
+type LocaleModule = { default: TranslationResource };
+
+const locales = import.meta.glob<LocaleModule>("./locales/*.ts");
 
 /**
  * 确保指定语言的资源包已加载并添加到 i18n 实例中
@@ -13,13 +16,14 @@ export const ensureResourceLoaded = async (lang: string) => {
     return;
   }
 
-  let resource: any = null;
+  let resource: TranslationResource | null = null;
 
   // 1. 尝试直接匹配 (例如: zh-CN)
   const path = `./locales/${lang}.ts`;
-  if (locales[path]) {
+  const directLoader = locales[path];
+  if (directLoader) {
     try {
-      const module: any = await locales[path]();
+      const module = await directLoader();
       resource = module.default;
     } catch (error) {
       console.error(`Failed to load locale: ${lang}`, error);
@@ -31,11 +35,12 @@ export const ensureResourceLoaded = async (lang: string) => {
     const lowerLang = lang.toLowerCase();
     const matchedKey = Object.keys(locales).find(k => k.toLowerCase() === `./locales/${lowerLang}.ts`);
     if (matchedKey) {
+      const matchedLoader = locales[matchedKey];
       try {
-        const module: any = await locales[matchedKey]();
+        const module = await matchedLoader();
         resource = module.default;
       } catch (error) {
-        console.error(`Failed to load locale case-insensitively: ${lang}`, error);
+        console.error(`Failed to load locale (case-insensitive): ${lang}`, error);
       }
     }
   }
@@ -44,10 +49,15 @@ export const ensureResourceLoaded = async (lang: string) => {
   if (!resource && lang !== 'zh-CN') {
     console.warn(`Locale ${lang} not found, falling back to zh-CN`);
     try {
-      const fallback: any = await locales['./locales/zh-CN.ts']();
-      resource = fallback.default;
+      const fallbackLoader = locales["./locales/zh-CN.ts"];
+      if (fallbackLoader) {
+        const fallback = await fallbackLoader();
+        resource = fallback.default;
+      } else {
+        console.error("Fallback locale file ./locales/zh-CN.ts is missing");
+      }
     } catch (error) {
-      console.error(`Failed to load fallback locale zh-CN`, error);
+      console.error("Failed to load fallback locale zh-CN", error);
     }
   }
 

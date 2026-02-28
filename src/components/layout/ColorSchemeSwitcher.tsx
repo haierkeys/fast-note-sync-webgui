@@ -31,9 +31,11 @@ export function ColorSchemeSwitcher({ className }: ColorSchemeSwitcherProps) {
                 <DropdownMenuRadioGroup
                     value={colorScheme}
                     onValueChange={(value) => {
-                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                        setColorScheme(value as any);
-                        toast.success(t("ui.settings.colorSchemeSwitched", { scheme: t(COLOR_SCHEMES.find(s => s.value === value)?.label || "") }));
+                        const selectedScheme = COLOR_SCHEMES.find((scheme) => scheme.value === value);
+                        if (!selectedScheme) return;
+
+                        setColorScheme(selectedScheme.value);
+                        toast.success(t("ui.settings.colorSchemeSwitched", { scheme: t(selectedScheme.label) }));
                     }}
                 >
                     {COLOR_SCHEMES.map((scheme) => (

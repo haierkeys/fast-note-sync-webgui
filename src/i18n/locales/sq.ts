@@ -211,6 +211,9 @@ export default {
     "ui.file.noVaultsForFiles": "Nuk ka kasaforta shënimesh",
 
     // --- ui.settings ---
+    "ui.settings.securityConfig": "Security Settings",
+    "ui.settings.noteRelatedConfig": "Note Settings",
+    "ui.settings.fontConfig": "Interface Settings",
     "ui.settings.systemConfig": "Konfigurimi i sistemit",
     "ui.settings.saveSettings": "Ruaj cilësimet",
     "ui.settings.saveSuccess": "Cilësimet u ruajtën me sukses",
@@ -284,6 +287,11 @@ export default {
     "ui.obsidian.copyConfigError": "Faqe jo-HTTPS, clipboard nuk mund të përdoret, ju lutemi kopjoni manualisht",
 
     // --- ui.system ---
+    "ui.system.restartService": "Restart Service",
+    "ui.system.restartServiceConfirm": "Are you sure you want to restart the service now? Connection will be lost during restart.",
+    "ui.system.manualGC": "Memory GC",
+    "ui.system.manualGCConfirm": "Are you sure you want to trigger manual garbage collection (GC) now?",
+    "ui.system.manualGCSuccess": "Manual garbage collection (GC) triggered successfully",
     "ui.system.serviceInfo": "Informatat e shërbimit",
     "ui.system.versionInfo": "Informatat e versionit",
     "ui.system.repo": "Repozitori i projektit",
@@ -488,6 +496,10 @@ export default {
     "ui.validation.vault.nameRequired": "Emri i kasafortës nuk mund të jetë bosh",
 
     // --- api.handle ---
+    "api.system.restart.success": "Service restart triggered",
+    "api.system.restart.error": "Failed to request service restart",
+    "api.system.gc.success": "Memory GC triggered",
+    "api.system.gc.error": "Failed to request memory GC",
     "api.git.list.error": "Marrja e listës së konfigurimeve Git dështoi",
     "api.git.save.success": "Konfigurimi u ruajt me sukses",
     "api.git.save.error": "Ruajtja e konfigurimit dështoi",

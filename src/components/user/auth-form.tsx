@@ -97,7 +97,7 @@ export function AuthForm({ onSuccess, registerIsEnable = true }: AuthFormProps) 
         <button
           onClick={onSoft}
           className="auth-floating-switcher"
-          title="Source Code"
+          title={t("ui.common.sourceCode")}
         >
           <Github size={18} />
         </button>
@@ -185,7 +185,11 @@ export function AuthForm({ onSuccess, registerIsEnable = true }: AuthFormProps) 
                   </div>
 
                   <div className="relative group">
+                    <label htmlFor="login-password" className="sr-only">
+                      {t("ui.auth.password")}
+                    </label>
                     <Input
+                      id="login-password"
                       type="password"
                       placeholder={t("ui.auth.passwordPlaceholder")}
                       {...loginForm.register("password")}
@@ -226,7 +230,11 @@ export function AuthForm({ onSuccess, registerIsEnable = true }: AuthFormProps) 
               >
                 <div className="space-y-0">
                   <div className="relative group">
+                    <label htmlFor="register-username" className="sr-only">
+                      {t("ui.auth.username")}
+                    </label>
                     <Input
+                      id="register-username"
                       placeholder={t("ui.auth.usernamePlaceholder")}
                       {...registerForm.register("username")}
                       className="auth-input"
@@ -253,7 +261,11 @@ export function AuthForm({ onSuccess, registerIsEnable = true }: AuthFormProps) 
                   </div>
 
                   <div className="relative group">
+                    <label htmlFor="register-password" className="sr-only">
+                      {t("ui.auth.password")}
+                    </label>
                     <Input
+                      id="register-password"
                       type="password"
                       placeholder={t("ui.auth.passwordPlaceholder")}
                       {...registerForm.register("password")}
@@ -267,7 +279,11 @@ export function AuthForm({ onSuccess, registerIsEnable = true }: AuthFormProps) 
                   </div>
 
                   <div className="relative group">
+                    <label htmlFor="register-confirm-password" className="sr-only">
+                      {t("ui.auth.confirmPassword")}
+                    </label>
                     <Input
+                      id="register-confirm-password"
                       type="password"
                       placeholder={t("ui.auth.confirmPasswordPlaceholder")}
                       {...registerForm.register("confirmPassword")}

@@ -211,6 +211,9 @@ export default {
     "ui.file.noVaultsForFiles": "Нет хранилищ заметок",
 
     // --- ui.settings ---
+    "ui.settings.securityConfig": "Security Settings",
+    "ui.settings.noteRelatedConfig": "Note Settings",
+    "ui.settings.fontConfig": "Interface Settings",
     "ui.settings.systemConfig": "Системные настройки",
     "ui.settings.saveSettings": "Сохранить настройки",
     "ui.settings.saveSuccess": "Настройки успешно сохранены",
@@ -284,6 +287,11 @@ export default {
     "ui.obsidian.copyConfigError": "Страница без HTTPS, работа с буфером обмена недоступна, скопируйте вручную",
 
     // --- ui.system ---
+    "ui.system.restartService": "Restart Service",
+    "ui.system.restartServiceConfirm": "Are you sure you want to restart the service now? Connection will be lost during restart.",
+    "ui.system.manualGC": "Memory GC",
+    "ui.system.manualGCConfirm": "Are you sure you want to trigger manual garbage collection (GC) now?",
+    "ui.system.manualGCSuccess": "Manual garbage collection (GC) triggered successfully",
     "ui.system.serviceInfo": "Информация о сервисе",
     "ui.system.versionInfo": "Информация о версии",
     "ui.system.repo": "Репозиторий проекта",
@@ -488,6 +496,10 @@ export default {
     "ui.validation.vault.nameRequired": "Название хранилища не может быть пустым",
 
     // --- api.handle ---
+    "api.system.restart.success": "Service restart triggered",
+    "api.system.restart.error": "Failed to request service restart",
+    "api.system.gc.success": "Memory GC triggered",
+    "api.system.gc.error": "Failed to request memory GC",
     "api.git.list.error": "Не удалось получить список конфигураций Git",
     "api.git.save.success": "Конфигурация успешно сохранена",
     "api.git.save.error": "Не удалось сохранить конфигурацию",

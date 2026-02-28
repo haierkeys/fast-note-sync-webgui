@@ -211,6 +211,9 @@ export default {
     "ui.file.noVaultsForFiles": "Chưa có kho ghi chú nào",
 
     // --- ui.settings ---
+    "ui.settings.securityConfig": "Security Settings",
+    "ui.settings.noteRelatedConfig": "Note Settings",
+    "ui.settings.fontConfig": "Interface Settings",
     "ui.settings.systemConfig": "Cấu hình hệ thống",
     "ui.settings.saveSettings": "Lưu cài đặt",
     "ui.settings.saveSuccess": "Cài đặt đã được lưu thành công",
@@ -284,6 +287,11 @@ export default {
     "ui.obsidian.copyConfigError": "Trang không phải HTTPS, không thể sử dụng bộ nhớ tạm, vui lòng sao chép cấu hình thủ công",
 
     // --- ui.system ---
+    "ui.system.restartService": "Restart Service",
+    "ui.system.restartServiceConfirm": "Are you sure you want to restart the service now? Connection will be lost during restart.",
+    "ui.system.manualGC": "Memory GC",
+    "ui.system.manualGCConfirm": "Are you sure you want to trigger manual garbage collection (GC) now?",
+    "ui.system.manualGCSuccess": "Manual garbage collection (GC) triggered successfully",
     "ui.system.serviceInfo": "Thông tin dịch vụ",
     "ui.system.versionInfo": "Thông tin phiên bản",
     "ui.system.repo": "Kho lưu trữ dự án",
@@ -488,6 +496,10 @@ export default {
     "ui.validation.vault.nameRequired": "Tên kho không được để trống",
 
     // --- api.handle ---
+    "api.system.restart.success": "Service restart triggered",
+    "api.system.restart.error": "Failed to request service restart",
+    "api.system.gc.success": "Memory GC triggered",
+    "api.system.gc.error": "Failed to request memory GC",
     "api.git.list.error": "Lấy danh sách cấu hình Git thất bại",
     "api.git.save.success": "Lưu cấu hình thành công",
     "api.git.save.error": "Lưu cấu hình thất bại",
