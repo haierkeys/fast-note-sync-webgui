@@ -13,7 +13,7 @@ import { HelpCircle } from "lucide-react";
 import { VaultType } from "@/lib/types/vault";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { cn } from "@/lib/utils";
 
@@ -32,47 +32,67 @@ export function BackupForm({ config, storages, onSubmit, onCancel }: BackupFormP
     const [vaults, setVaults] = useState<VaultType[]>([]);
 
     // 过滤出可用的存储
-    const activeStorages = storages.filter(s => s.isEnabled);
+    const activeStorages = useMemo(() => storages.filter(s => s.isEnabled), [storages]);
 
     // 解析存储 ID 数组，并过滤掉不可用的存储 ID
-    const initialStorageIds = config?.storageIds
-        ? (JSON.parse(config.storageIds) as number[]).filter(id => activeStorages.some(s => Number(s.id) === id))
-        : [];
+    const initialStorageIds = useMemo(() => {
+        if (!config?.storageIds) return [];
+        try {
+            return (JSON.parse(config.storageIds) as number[])
+                .filter(id => activeStorages.some(s => Number(s.id) === id));
+        } catch {
+            return [];
+        }
+    }, [config?.storageIds, activeStorages]);
     const [selectedStorageIds, setSelectedStorageIds] = useState<number[]>(initialStorageIds);
 
     useEffect(() => {
         handleVaultList(setVaults);
     }, [handleVaultList]);
 
+    const schema = createBackupConfigSchema(t);
+
+    const defaultValues = useMemo(() => ({
+        vault: config?.vault || "",
+        type: config?.type,
+        cronStrategy: config?.cronStrategy || "daily",
+        cronExpression: config?.cronExpression || "0 0 * * *",
+        storageIds: JSON.stringify(initialStorageIds),
+        isEnabled: config?.isEnabled ?? true,
+        includeVaultName: config?.includeVaultName ?? false,
+        retentionDays: config?.retentionDays ?? 30,
+    }), [config?.vault, config?.type, config?.cronStrategy, config?.cronExpression, config?.isEnabled, config?.includeVaultName, config?.retentionDays, initialStorageIds]);
+
+    const { register, handleSubmit, formState: { errors }, setValue, watch, reset } = useForm<BackupFormData>({
+        resolver: zodResolver(schema),
+        defaultValues,
+    });
+
+    const selectedVault = watch("vault");
+    const cronStrategy = watch("cronStrategy");
+
+    useEffect(() => {
+        setSelectedStorageIds(initialStorageIds);
+        reset(defaultValues);
+    }, [defaultValues, initialStorageIds, reset]);
+
+    const handleCancel = useCallback(() => {
+        setSelectedStorageIds(initialStorageIds);
+        reset(defaultValues);
+        onCancel?.();
+    }, [initialStorageIds, defaultValues, reset, onCancel]);
+
     // ESC 键取消
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
             if (e.key === "Escape" && onCancel) {
                 e.preventDefault()
-                onCancel()
+                handleCancel()
             }
         }
         document.addEventListener("keydown", handleKeyDown)
         return () => document.removeEventListener("keydown", handleKeyDown)
-    }, [onCancel])
-
-    const schema = createBackupConfigSchema(t);
-
-    const { register, handleSubmit, formState: { errors }, setValue, watch } = useForm<BackupFormData>({
-        resolver: zodResolver(schema),
-        defaultValues: {
-            vault: config?.vault || "",
-            type: config?.type,
-            cronStrategy: config?.cronStrategy || "daily",
-            cronExpression: config?.cronExpression || "0 0 * * *",
-            storageIds: JSON.stringify(initialStorageIds),
-            isEnabled: config?.isEnabled ?? true,
-            includeVaultName: config?.includeVaultName ?? false,
-            retentionDays: config?.retentionDays ?? 30,
-        },
-    });
-
-    const cronStrategy = watch("cronStrategy");
+    }, [handleCancel, onCancel])
 
     const onFormSubmit = (data: BackupFormData) => {
         handleBackupConfigUpdate({
@@ -99,7 +119,7 @@ export function BackupForm({ config, storages, onSubmit, onCancel }: BackupFormP
                     <Label className="text-xs font-semibold text-muted-foreground ml-1">{t("ui.backup.vault")}</Label>
                     <Select
                         onValueChange={(value) => setValue("vault", value)}
-                        defaultValue={config?.vault}>
+                        value={selectedVault || undefined}>
                         <SelectTrigger className="bg-background border-input">
                             <SelectValue placeholder={t("ui.backup.selectVault")} />
                         </SelectTrigger>
@@ -119,7 +139,7 @@ export function BackupForm({ config, storages, onSubmit, onCancel }: BackupFormP
                     <Label className="text-xs font-semibold text-muted-foreground ml-1">{t("ui.backup.type")}</Label>
                     <Select
                         onValueChange={(value) => setValue("type", value as BackupType)}
-                        defaultValue={config?.type}>
+                        value={watch("type")}>
                         <SelectTrigger className="bg-background border-input">
                             <SelectValue placeholder={t("ui.backup.selectType")} />
                         </SelectTrigger>
@@ -167,7 +187,7 @@ export function BackupForm({ config, storages, onSubmit, onCancel }: BackupFormP
                             <Label className="text-xs font-semibold text-muted-foreground ml-1">{t("ui.backup.cronStrategy")}</Label>
                             <Select
                                 onValueChange={(value) => setValue("cronStrategy", value as CronStrategy)}
-                                defaultValue={config?.cronStrategy || "daily"}>
+                                value={cronStrategy || "daily"}>
                                 <SelectTrigger className="bg-background border-input">
                                     <SelectValue />
                                 </SelectTrigger>
@@ -256,7 +276,7 @@ export function BackupForm({ config, storages, onSubmit, onCancel }: BackupFormP
 
                 <div className="flex items-center gap-3">
                     {onCancel && (
-                        <Button type="button" variant="ghost" onClick={onCancel}>
+                        <Button type="button" variant="ghost" onClick={handleCancel}>
                             {t("ui.common.cancel")}
                         </Button>
                     )}

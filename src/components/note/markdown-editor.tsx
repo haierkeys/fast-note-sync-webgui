@@ -54,6 +54,7 @@ interface MarkdownEditorProps {
     vault?: string;
     fileLinks?: Record<string, string>;
     initialMode?: "edit" | "preview";
+    ariaLabel?: string;
 }
 
 type AttachmentType = "image" | "video" | "audio" | "file";
@@ -549,6 +550,7 @@ export const MarkdownEditor = forwardRef<MarkdownEditorRef, MarkdownEditorProps>
             vault = "",
             fileLinks = EMPTY_FILE_LINKS,
             initialMode = "edit",
+            ariaLabel,
         },
         ref
     ) => {
@@ -556,6 +558,7 @@ export const MarkdownEditor = forwardRef<MarkdownEditorRef, MarkdownEditorProps>
         const { t } = useTranslation();
         const editorViewRef = useRef<EditorView | null>(null);
         const valueRef = useRef(value);
+        const editorAriaLabel = ariaLabel ?? t("ui.note.editNote");
         const tokenRef = useRef(typeof window !== "undefined" ? localStorage.getItem("token") ?? "" : "");
         const mode = initialMode;
 
@@ -580,12 +583,17 @@ export const MarkdownEditor = forwardRef<MarkdownEditorRef, MarkdownEditorProps>
         }, []);
 
         const editorExtensions = useMemo(() => {
-            const extensions = [markdown(), EditorView.lineWrapping, EditorView.editable.of(!readOnly)];
+            const extensions = [
+                markdown(),
+                EditorView.lineWrapping,
+                EditorView.editable.of(!readOnly),
+                EditorView.contentAttributes.of({ "aria-label": editorAriaLabel }),
+            ];
             if (placeholder) {
                 extensions.push(cmPlaceholder(placeholder));
             }
             return extensions;
-        }, [placeholder, readOnly]);
+        }, [editorAriaLabel, placeholder, readOnly]);
 
         const handleEditorChange = useCallback(
             (nextValue: string) => {
@@ -629,15 +637,16 @@ export const MarkdownEditor = forwardRef<MarkdownEditorRef, MarkdownEditorProps>
         }, [mode, value, vault, fileLinks]);
 
         const handleExportHTML = useCallback(() => {
-            const markdownValue = getCurrentValue();
-            const transformed = transformObsidianSyntax(markdownValue, vault, fileLinks, tokenRef.current);
-            const rendered = renderToStaticMarkup(
-                <main>
-                    <MarkdownRenderer content={transformed} />
-                </main>
-            );
+            try {
+                const markdownValue = getCurrentValue();
+                const transformed = transformObsidianSyntax(markdownValue, vault, fileLinks, tokenRef.current);
+                const rendered = renderToStaticMarkup(
+                    <main>
+                        <MarkdownRenderer content={transformed} />
+                    </main>
+                );
 
-            const htmlDocument = `<!doctype html>
+                const htmlDocument = `<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8" />
@@ -648,26 +657,32 @@ export const MarkdownEditor = forwardRef<MarkdownEditorRef, MarkdownEditorProps>
 <body>${rendered}</body>
 </html>`;
 
-            const blob = new Blob([htmlDocument], { type: "text/html;charset=utf-8" });
-            const url = URL.createObjectURL(blob);
-            const anchor = document.createElement("a");
-            anchor.href = url;
-            anchor.download = `note-${new Date().toISOString().replace(/[:.]/g, "-")}.html`;
-            anchor.click();
-            URL.revokeObjectURL(url);
-        }, [fileLinks, getCurrentValue, vault]);
+                const blob = new Blob([htmlDocument], { type: "text/html;charset=utf-8" });
+                const url = URL.createObjectURL(blob);
+                const anchor = document.createElement("a");
+                anchor.href = url;
+                anchor.download = `note-${new Date().toISOString().replace(/[:.]/g, "-")}.html`;
+                anchor.click();
+                URL.revokeObjectURL(url);
+                toast.success(t("ui.note.exportHtmlSuccess", { defaultValue: "HTML exported successfully" }));
+            } catch {
+                toast.error(t("ui.note.exportHtmlFailed", { defaultValue: "Failed to export HTML" }));
+            }
+        }, [fileLinks, getCurrentValue, t, vault]);
+
+        const handleExportPDF = useCallback(() => {
+            toast.info(t("ui.note.exportPdfPlanned"));
+        }, [t]);
 
         useImperativeHandle(
             ref,
             () => ({
                 getValue: getCurrentValue,
                 setValue: setCurrentValue,
-                exportPDF: () => {
-                    toast.info(t("ui.note.exportPdfPlanned"));
-                },
+                exportPDF: handleExportPDF,
                 exportHTML: handleExportHTML,
             }),
-            [getCurrentValue, handleExportHTML, setCurrentValue, t]
+            [getCurrentValue, handleExportHTML, handleExportPDF, setCurrentValue]
         );
 
         if (mode === "preview") {

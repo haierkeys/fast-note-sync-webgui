@@ -4,7 +4,7 @@ import { createGitSyncSchema } from "@/lib/validations/git-sync-schema";
 import { useGitHandle } from "@/components/api-handle/git-handle";
 import { Eye, EyeOff, ShieldCheck } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
@@ -35,39 +35,57 @@ export function GitConfigForm({ config, vaults, onSubmit, onCancel }: GitConfigF
     const [showPassword, setShowPassword] = useState(false)
     const [isValidating, setIsValidating] = useState(false)
 
-    // ESC 键取消
-    useEffect(() => {
-        const handleKeyDown = (e: KeyboardEvent) => {
-            if (e.key === "Escape" && onCancel) {
-                e.preventDefault()
-                onCancel()
-            }
-        }
-        document.addEventListener("keydown", handleKeyDown)
-        return () => document.removeEventListener("keydown", handleKeyDown)
-    }, [onCancel])
-
     const schema = useMemo(() => createGitSyncSchema(t), [t])
 
-    const { register, handleSubmit, formState: { errors, isSubmitting }, setValue, getValues } = useForm<GitSyncConfigRequest>({
-        resolver: zodResolver(schema),
-        defaultValues: config ? {
+    const defaultValues = useMemo(() => (
+        config ? {
             id: config.id,
             vault: config.vault,
             repoUrl: config.repoUrl,
             branch: config.branch,
             username: config.username,
             password: config.password,
+            isEnabled: config.isEnabled,
             delay: config.delay,
             retentionDays: config.retentionDays ?? 30,
-            isEnabled: config.isEnabled,
         } : {
             isEnabled: true,
             branch: "main",
             delay: 10,
             retentionDays: 30,
-        },
+        }
+    ), [config?.id, config?.vault, config?.repoUrl, config?.branch, config?.username, config?.password, config?.isEnabled, config?.delay, config?.retentionDays])
+
+    const { register, handleSubmit, formState: { errors, isSubmitting }, setValue, getValues, reset, watch } = useForm<GitSyncConfigRequest>({
+        resolver: zodResolver(schema),
+        defaultValues,
     })
+
+    const selectedVault = watch("vault")
+    const isEnabled = watch("isEnabled")
+
+    useEffect(() => {
+        reset(defaultValues)
+        setShowPassword(false)
+    }, [defaultValues, reset])
+
+    const handleCancel = useCallback(() => {
+        reset(defaultValues)
+        setShowPassword(false)
+        onCancel?.()
+    }, [defaultValues, reset, onCancel])
+
+    // ESC 键取消
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === "Escape" && onCancel) {
+                e.preventDefault()
+                handleCancel()
+            }
+        }
+        document.addEventListener("keydown", handleKeyDown)
+        return () => document.removeEventListener("keydown", handleKeyDown)
+    }, [handleCancel, onCancel])
 
     const onFormSubmit = async (data: GitSyncConfigRequest) => {
         await handleGitSyncUpdate(data, () => {
@@ -84,7 +102,7 @@ export function GitConfigForm({ config, vaults, onSubmit, onCancel }: GitConfigF
                     <Select
                         name="vault"
                         onValueChange={(value) => setValue("vault", value)}
-                        defaultValue={config?.vault}>
+                        value={selectedVault || undefined}>
                         <SelectTrigger id="vault" className="bg-background border-input focus:ring-primary/20">
                             <SelectValue placeholder={t("ui.backup.selectVault")} />
                         </SelectTrigger>
@@ -172,7 +190,7 @@ export function GitConfigForm({ config, vaults, onSubmit, onCancel }: GitConfigF
                     <Checkbox
                         id="isEnabled"
                         name="isEnabled"
-                        defaultChecked={config ? (config.isEnabled ? true : false) : true}
+                        checked={Boolean(isEnabled)}
                         onCheckedChange={(checked) => setValue("isEnabled", Boolean(checked))}
                         className="border-input data-[state=checked]:bg-primary data-[state=checked]:border-primary"
                     />
@@ -181,7 +199,7 @@ export function GitConfigForm({ config, vaults, onSubmit, onCancel }: GitConfigF
 
                 <div className="flex items-center gap-3 flex-wrap justify-end">
                     {onCancel && (
-                        <Button type="button" variant="ghost" onClick={onCancel} disabled={isSubmitting || isValidating}>
+                        <Button type="button" variant="ghost" onClick={handleCancel} disabled={isSubmitting || isValidating}>
                             {t("ui.common.cancel")}
                         </Button>
                     )}

@@ -108,7 +108,7 @@ export function FilePreview({ file, url, onClose }: FilePreviewProps) {
                             key={url}
                             src={url}
                             alt={fileName}
-                            className={`max-w-full max-h-100 object-contain rounded-lg shadow-sm transition-opacity duration-300 ${isLoading ? 'opacity-0' : 'opacity-100'}`}
+                            className={`max-w-full max-h-[70vh] object-contain rounded-lg shadow-sm transition-opacity duration-300 ${isLoading ? 'opacity-0' : 'opacity-100'}`}
                             onLoad={handleLoaded}
                             onError={handleLoaded}
                         />
@@ -142,7 +142,7 @@ export function FilePreview({ file, url, onClose }: FilePreviewProps) {
                             src={url}
                             controls
                             autoPlay
-                            className={`max-w-full max-h-100 rounded-lg shadow-sm transition-opacity duration-300 ${isLoading ? 'opacity-0' : 'opacity-100'}`}
+                            className={`max-w-full max-h-[70vh] object-contain rounded-lg shadow-sm transition-opacity duration-300 ${isLoading ? 'opacity-0' : 'opacity-100'}`}
                             onVolumeChange={handleVolumeChange}
                             onLoadedMetadata={handleLoaded}
                             onCanPlay={handleLoaded}

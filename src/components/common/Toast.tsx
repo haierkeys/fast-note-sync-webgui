@@ -14,33 +14,37 @@ const icons = {
     loading: <Loader2 className="size-5 text-muted-foreground animate-spin" />,
 };
 
+const createAccessibleMessage = (message: string) => (
+    <span role="alert" aria-live="assertive">{message}</span>
+);
+
 export const toast = {
     success: (message: string, options?: ToastOptions) => {
-        sonnerToast(message, {
+        sonnerToast(createAccessibleMessage(message), {
             icon: icons.success,
             ...options,
         });
     },
     error: (message: string, options?: ToastOptions) => {
-        sonnerToast(message, {
+        sonnerToast(createAccessibleMessage(message), {
             icon: icons.error,
             ...options,
         });
     },
     warning: (message: string, options?: ToastOptions) => {
-        sonnerToast(message, {
+        sonnerToast(createAccessibleMessage(message), {
             icon: icons.warning,
             ...options,
         });
     },
     info: (message: string, options?: ToastOptions) => {
-        sonnerToast(message, {
+        sonnerToast(createAccessibleMessage(message), {
             icon: icons.info,
             ...options,
         });
     },
     loading: (message: string, options?: ToastOptions) => {
-        return sonnerToast(message, {
+        return sonnerToast(createAccessibleMessage(message), {
             icon: icons.loading,
             duration: Infinity,
             ...options,

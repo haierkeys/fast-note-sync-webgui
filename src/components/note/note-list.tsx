@@ -56,6 +56,7 @@ export function NoteList({ vault, vaults, onVaultChange, onSelectNote, onCreateN
     const [sortBy, setSortBy] = useState<SortBy>("mtime");
     const [sortOrder, setSortOrder] = useState<SortOrder>("desc");
     const [selectedPaths, setSelectedPaths] = useState<Set<string>>(new Set());
+    const [batchRestoreProgress, setBatchRestoreProgress] = useState<{ current: number; total: number } | null>(null);
     const [viewMode, setViewMode] = useState<ViewMode>("folder");
     const [folders, setFolders] = useState<Folder[]>([]);
     const noteRequestIdRef = useRef(0);
@@ -65,7 +66,7 @@ export function NoteList({ vault, vaults, onVaultChange, onSelectNote, onCreateN
     useEffect(() => {
         const timer = setTimeout(() => {
             setDebouncedKeyword(searchKeyword);
-        }, 500);
+        }, 300);
         return () => clearTimeout(timer);
     }, [searchKeyword]);
 
@@ -195,18 +196,23 @@ export function NoteList({ vault, vaults, onVaultChange, onSelectNote, onCreateN
         openConfirmDialog(t("ui.file.batchRestoreConfirm", { count: selectedPaths.size }), "confirm", async () => {
             setLoading(true);
             const selectedNotes = notes.filter(n => selectedPaths.has(n.pathHash));
+            const total = selectedNotes.length;
 
-            // 循环处理恢复
-            for (const note of selectedNotes) {
-                await new Promise<void>((resolve) => {
-                    handleRestoreNote(vault, note.path, note.pathHash, () => {
-                        resolve();
-                    });
-                });
+            try {
+                for (let i = 0; i < selectedNotes.length; i++) {
+                    setBatchRestoreProgress({ current: i + 1, total });
+                    await Promise.race([
+                        new Promise<void>((resolve) => {
+                            handleRestoreNote(vault, selectedNotes[i].path, selectedNotes[i].pathHash, resolve);
+                        }),
+                        new Promise<void>((resolve) => setTimeout(resolve, 30000)),
+                    ]);
+                }
+            } finally {
+                setBatchRestoreProgress(null);
+                setSelectedPaths(new Set());
+                fetchNotes();
             }
-
-            setSelectedPaths(new Set());
-            fetchNotes();
         });
     };
 
@@ -523,7 +529,9 @@ export function NoteList({ vault, vaults, onVaultChange, onSelectNote, onCreateN
             {loading ? (
                 <div className="rounded-xl border border-border bg-card p-12 text-center text-muted-foreground">
                     <RefreshCw className="h-6 w-6 animate-spin mx-auto mb-2" />
-                    {t("ui.common.loading")}
+                    {batchRestoreProgress
+                        ? `${batchRestoreProgress.current} / ${batchRestoreProgress.total}`
+                        : t("ui.common.loading")}
                 </div>
             ) : (!Array.isArray(notes) || notes.length === 0) && (!Array.isArray(folders) || folders.length === 0 || viewMode === "flat") ? (
                 <div className="rounded-xl border border-border bg-card p-12 text-center text-muted-foreground">

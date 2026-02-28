@@ -527,6 +527,7 @@ export function NoteEditor({
                                 onChange={handleContentChange}
                                 readOnly={isRecycle || isPreviewMode}
                                 placeholder={t("ui.note.noteContentPlaceholder")}
+                                ariaLabel={t("ui.note.editNote")}
                                 vault={vault}
                                 fileLinks={originalNote?.fileLinks}
                                 initialMode={isPreviewMode ? "preview" : "edit"}

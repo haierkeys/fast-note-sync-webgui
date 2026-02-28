@@ -62,6 +62,7 @@ export function FileList({ vault, vaults, onVaultChange, isRecycle = false, page
     const [sortBy, setSortBy] = useState<SortBy>("mtime");
     const [sortOrder, setSortOrder] = useState<SortOrder>("desc");
     const [selectedPaths, setSelectedPaths] = useState<Set<string>>(new Set());
+    const [batchRestoreProgress, setBatchRestoreProgress] = useState<{ current: number; total: number } | null>(null);
     const [viewMode, setViewMode] = useState<ViewMode>("folder");
     const [folders, setFolders] = useState<Folder[]>([]);
     const fileRequestIdRef = useRef(0);
@@ -75,7 +76,7 @@ export function FileList({ vault, vaults, onVaultChange, isRecycle = false, page
     useEffect(() => {
         const timer = setTimeout(() => {
             setDebouncedKeyword(searchKeyword);
-        }, 500);
+        }, 300);
         return () => clearTimeout(timer);
     }, [searchKeyword]);
 
@@ -182,17 +183,23 @@ export function FileList({ vault, vaults, onVaultChange, isRecycle = false, page
 
         openConfirmDialog(t("ui.file.batchRestoreConfirm", { count: selectedFiles.length }), "confirm", async () => {
             setLoading(true);
+            const total = selectedFiles.length;
 
-            for (const file of selectedFiles) {
-                await new Promise<void>((resolve) => {
-                    handleRestoreFile(vault, file.path, file.pathHash, () => {
-                        resolve();
-                    });
-                });
+            try {
+                for (let i = 0; i < selectedFiles.length; i++) {
+                    setBatchRestoreProgress({ current: i + 1, total });
+                    await Promise.race([
+                        new Promise<void>((resolve) => {
+                            handleRestoreFile(vault, selectedFiles[i].path, selectedFiles[i].pathHash, resolve);
+                        }),
+                        new Promise<void>((resolve) => setTimeout(resolve, 30000)),
+                    ]);
+                }
+            } finally {
+                setBatchRestoreProgress(null);
+                setSelectedPaths(new Set());
+                fetchFiles();
             }
-
-            setSelectedPaths(new Set());
-            fetchFiles();
         });
     };
 
@@ -501,7 +508,9 @@ export function FileList({ vault, vaults, onVaultChange, isRecycle = false, page
             {loading ? (
                 <div className="rounded-xl border border-border bg-card p-12 text-center text-muted-foreground">
                     <RefreshCw className="h-6 w-6 animate-spin mx-auto mb-2" />
-                    {t("ui.common.loading")}
+                    {batchRestoreProgress
+                        ? `${batchRestoreProgress.current} / ${batchRestoreProgress.total}`
+                        : t("ui.common.loading")}
                 </div>
             ) : (!Array.isArray(files) || files.length === 0) && (!Array.isArray(folders) || folders.length === 0 || viewMode === "flat") ? (
                 <div className="rounded-xl border border-border bg-card p-12 text-center text-muted-foreground">
