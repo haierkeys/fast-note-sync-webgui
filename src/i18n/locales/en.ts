@@ -4,6 +4,7 @@ export default {
     "ui.common.subtitle": "High-performance, low-latency note syncing, management, and REST service",
     "ui.common.footerTitle": "Built with Golang + Websocket + Sqlite + React\nRequires <a href='https://github.com/haierkeys/obsidian-fast-note-sync' target='_blank'>Obsidian Fast Note Sync Plugin</a> to work together",
     "ui.common.loading": "Loading...",
+    "ui.common.downloading": "Downloading...",
     "ui.common.actions": "Actions",
     "ui.common.save": "Save",
     "ui.common.add": "Add",
@@ -49,6 +50,7 @@ export default {
     "ui.common.noSearchResults": "No matching results found",
     "ui.common.selectAll": "Select All",
     "ui.common.items": "items",
+
 
     // --- ui.auth ---
     "ui.auth.login": "Login",
@@ -263,6 +265,20 @@ export default {
     "ui.settings.themeAuto": "Auto (18:00-06:00 Dark)",
     "ui.settings.themeLight": "Light",
     "ui.settings.themeDark": "Dark",
+    "ui.settings.cloudflaredTestRequired": "Please click Download Tunnel Program button first",
+    "ui.settings.downloadSuccess": "Download successful",
+    "ui.settings.downloadFailed": "Download failed",
+    "ui.settings.tunnelGatewayConfig": "Relay Gateway",
+    "ui.settings.tunnelGatewayDesc": "<b>FNS</b> integrated intranet penetration service, allowing your local <b>FNS</b> service to be safely accessed directly via public network, without the need for tedious HTTPS and WebSocket proxy configurations, to enjoy secure access service.\nSupports access via Ngrok or Cloudflare tunnel.",
+    "ui.settings.ngrokDesc": "Use Ngrok intranet penetration tunnel to safely expose local services to the public network.\nOfficial application portal: <a href=\"https://dashboard.ngrok.com/get-started/setup\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-primary hover:underline\">https://dashboard.ngrok.com/get-started/setup</a>\n <b>Note</b>: Ngrok free account has various limits, please refer to <a href=\"https://ngrok.com/docs/pricing-limits/free-plan-limits\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-primary hover:underline\">https://ngrok.com/docs/pricing-limits/free-plan-limits</a>",
+    "ui.settings.customDomain": "Custom Domain",
+    "ui.settings.customDomainDesc": "Optional, requires ngrok paid account",
+    "ui.settings.saveNgrok": "Save Settings",
+    "ui.settings.cloudflareDesc": "Reverse tunnel built on Cloudflare Zero Trust network, providing higher security and stability.\nOfficial application portal: <a href=\"https://one.dash.cloudflare.com\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-primary hover:underline\">https://one.dash.cloudflare.com</a>\nBefore saving settings, you need to <b>Download Tunnel Program</b> first",
+    "ui.settings.enableLog": "Enable Logging",
+    "ui.settings.cloudflareLogDesc": "Logs are stored in storage/logs/cloudflared_tunnel.log",
+    "ui.settings.saveCloudflare": "Save Settings",
+    "ui.settings.downloadCloudflared": "Download Tunnel Program",
 
     // --- ui.obsidian ---
     "ui.obsidian.authTokenConfig": "Auth Config",
