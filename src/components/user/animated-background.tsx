@@ -25,12 +25,13 @@ export const AnimatedBackground = memo(() => {
     return (
         <div className={`fixed inset-0 w-full h-full z-0 pointer-events-none transition-colors duration-500 overflow-hidden select-none ${resolvedTheme === 'dark' ? 'bg-black' : 'bg-white'}`}>
             {/* Lottie Animation */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[3840px] h-[2160px] opacity-100">
+            <div className="absolute inset-0 w-full h-full opacity-100 flex items-center justify-center overflow-hidden">
                 <Player
                     autoplay
                     loop
                     src={animationData}
-                    style={{ width: '100%', height: '100%' }}
+                    rendererSettings={{ preserveAspectRatio: 'xMidYMid slice' }}
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                 />
             </div>
 
