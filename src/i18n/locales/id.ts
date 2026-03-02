@@ -226,7 +226,7 @@ export default {
     // --- ui.settings ---
     "ui.settings.securityConfig": "Security Settings",
     "ui.settings.noteRelatedConfig": "Note Settings",
-    "ui.settings.fontConfig": "Interface Settings",
+    "ui.settings.fontConfig": "Pengaturan Umum",
     "ui.settings.systemConfig": "Konfigurasi Sistem",
     "ui.settings.saveSettings": "Simpan Pengaturan",
     "ui.settings.saveSuccess": "Pengaturan berhasil disimpan",
@@ -291,6 +291,11 @@ export default {
     "ui.settings.cloudflareLogDesc": "Log disimpan di storage/logs/cloudflared_tunnel.log",
     "ui.settings.saveCloudflare": "Simpan Pengaturan",
     "ui.settings.downloadCloudflared": "Unduh Program Tunnel",
+    "ui.settings.pullSource": "Sumber Deteksi Versi",
+    "ui.settings.pullSourceDesc": "Pilih repositori sumber saat memeriksa pembaruan versi sistem.",
+    "ui.settings.pullSource.auto": "Deteksi Otomatis",
+    "ui.settings.pullSource.github": "github.com",
+    "ui.settings.pullSource.cnb": "Tencent cnb.tool",
 
     // --- ui.obsidian ---
     "ui.obsidian.authTokenConfig": "Konfigurasi Otorisasi",

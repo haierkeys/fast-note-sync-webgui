@@ -227,7 +227,7 @@ export default {
     // --- ui.settings ---
     "ui.settings.securityConfig": "Security Settings",
     "ui.settings.noteRelatedConfig": "Note Settings",
-    "ui.settings.fontConfig": "Interface Settings",
+    "ui.settings.fontConfig": "일반 설정",
     "ui.settings.systemConfig": "시스템 설정",
     "ui.settings.saveSettings": "설정 저장",
     "ui.settings.saveSuccess": "설정이 성공적으로 저장되었습니다",
@@ -292,6 +292,11 @@ export default {
     "ui.settings.cloudflareLogDesc": "로그는 storage/logs/cloudflared_tunnel.log에 기록됩니다",
     "ui.settings.saveCloudflare": "설정 저장",
     "ui.settings.downloadCloudflared": "터널 프로그램 다운로드",
+    "ui.settings.pullSource": "버전 감지 소스",
+    "ui.settings.pullSourceDesc": "시스템이 버전 업데이트를 최신으로 확인할 소스 저장소를 선택합니다.",
+    "ui.settings.pullSource.auto": "자동 감지",
+    "ui.settings.pullSource.github": "github.com",
+    "ui.settings.pullSource.cnb": "Tencent cnb.tool",
 
     // --- ui.obsidian ---
     "ui.obsidian.authTokenConfig": "인증 설정",

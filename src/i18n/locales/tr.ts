@@ -226,7 +226,7 @@ export default {
     // --- ui.settings ---
     "ui.settings.securityConfig": "Security Settings",
     "ui.settings.noteRelatedConfig": "Note Settings",
-    "ui.settings.fontConfig": "Interface Settings",
+    "ui.settings.fontConfig": "Genel Ayarlar",
     "ui.settings.systemConfig": "Sistem Yapılandırması",
     "ui.settings.saveSettings": "Ayarları Kaydet",
     "ui.settings.saveSuccess": "Ayarlar başarıyla kaydedildi",
@@ -291,6 +291,11 @@ export default {
     "ui.settings.cloudflareLogDesc": "Günlükler storage/logs/cloudflared_tunnel.log dosyasına kaydedilir",
     "ui.settings.saveCloudflare": "Ayarları Kaydet",
     "ui.settings.downloadCloudflared": "Tünel Programını İndir",
+    "ui.settings.pullSource": "Sürüm Algılama Kaynağı",
+    "ui.settings.pullSourceDesc": "Sistem sürümü güncellemelerini kontrol ederken kaynak depoyu seçin.",
+    "ui.settings.pullSource.auto": "Otomatik Algılama",
+    "ui.settings.pullSource.github": "github.com",
+    "ui.settings.pullSource.cnb": "Tencent cnb.tool",
 
     // --- ui.obsidian ---
     "ui.obsidian.authTokenConfig": "Yetkilendirme Yapılandırması",

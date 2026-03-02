@@ -226,7 +226,7 @@ export default {
     // --- ui.settings ---
     "ui.settings.securityConfig": "Security Settings",
     "ui.settings.noteRelatedConfig": "Note Settings",
-    "ui.settings.fontConfig": "Interface Settings",
+    "ui.settings.fontConfig": "Impostazioni generali",
     "ui.settings.systemConfig": "Configurazione Sistema",
     "ui.settings.saveSettings": "Salva Impostazioni",
     "ui.settings.saveSuccess": "Impostazioni salvate con successo",
@@ -291,6 +291,11 @@ export default {
     "ui.settings.cloudflareLogDesc": "I log vengono salvati in storage/logs/cloudflared_tunnel.log",
     "ui.settings.saveCloudflare": "Salva impostazioni",
     "ui.settings.downloadCloudflared": "Scarica programma tunnel",
+    "ui.settings.pullSource": "Fonte di rilevamento versione",
+    "ui.settings.pullSourceDesc": "Seleziona il repository sorgente durante il controllo degli aggiornamenti della versione del sistema.",
+    "ui.settings.pullSource.auto": "Rilevamento automatico",
+    "ui.settings.pullSource.github": "github.com",
+    "ui.settings.pullSource.cnb": "Tencent cnb.tool",
 
     // --- ui.obsidian ---
     "ui.obsidian.authTokenConfig": "Configurazione Autorizzazione",

@@ -227,7 +227,7 @@ export default {
     // --- ui.settings ---
     "ui.settings.securityConfig": "Security Settings",
     "ui.settings.noteRelatedConfig": "Note Settings",
-    "ui.settings.fontConfig": "Interface Settings",
+    "ui.settings.fontConfig": "常规設置",
     "ui.settings.systemConfig": "系統配置",
     "ui.settings.saveSettings": "保存設置",
     "ui.settings.saveSuccess": "設置保存成功",
@@ -292,6 +292,11 @@ export default {
     "ui.settings.cloudflareLogDesc": "日誌記錄在 storage/logs/cloudflared_tunnel.log",
     "ui.settings.saveCloudflare": "保存設置",
     "ui.settings.downloadCloudflared": "隧道程序下載",
+    "ui.settings.pullSource": "版本檢測源",
+    "ui.settings.pullSourceDesc": "選擇版本檢測&更新時的來源倉庫。",
+    "ui.settings.pullSource.auto": "自動檢測",
+    "ui.settings.pullSource.github": "github.com",
+    "ui.settings.pullSource.cnb": "騰訊 cnb.tool",
 
     // --- ui.obsidian ---
     "ui.obsidian.authTokenConfig": "授權配置",

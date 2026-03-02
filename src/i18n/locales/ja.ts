@@ -227,7 +227,7 @@ export default {
     // --- ui.settings ---
     "ui.settings.securityConfig": "Security Settings",
     "ui.settings.noteRelatedConfig": "Note Settings",
-    "ui.settings.fontConfig": "Interface Settings",
+    "ui.settings.fontConfig": "一般設定",
     "ui.settings.systemConfig": "システム設定",
     "ui.settings.saveSettings": "設定を保存",
     "ui.settings.saveSuccess": "設定を保存しました",
@@ -292,6 +292,11 @@ export default {
     "ui.settings.cloudflareLogDesc": "ログは storage/logs/cloudflared_tunnel.log に記録されます",
     "ui.settings.saveCloudflare": "設定を保存",
     "ui.settings.downloadCloudflared": "隧道プログラムをダウンロード",
+    "ui.settings.pullSource": "バージョン検出ソース",
+    "ui.settings.pullSourceDesc": "システムのバージョン更新を確認する際のソースリポジトリを選択します。",
+    "ui.settings.pullSource.auto": "自動検出",
+    "ui.settings.pullSource.github": "github.com",
+    "ui.settings.pullSource.cnb": "Tencent cnb.tool",
 
     // --- ui.obsidian ---
     "ui.obsidian.authTokenConfig": "認証設定",
