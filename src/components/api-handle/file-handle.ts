@@ -146,74 +146,6 @@ export function useFileHandle() {
     }, [getHeaders]);
 
     /**
-     * 永久删除附件 (从回收站彻底删除)
-     */
-    const handlePermanentDeleteFile = useCallback(async (
-        vault: string,
-        path: string,
-        pathHash: string | undefined,
-        callback: () => void
-    ) => {
-        try {
-            const body = {
-                vault,
-                path,
-                pathHash,
-            };
-            const apiUrl = env.API_URL.endsWith("/") ? env.API_URL.slice(0, -1) : env.API_URL;
-            const response = await fetch(addCacheBuster(`${apiUrl}/api/file/recycle-clear`), {
-                method: "DELETE",
-                body: JSON.stringify(body),
-                headers: getHeaders(),
-            });
-
-            if (!response.ok) {
-                throw new Error("Network response was not ok");
-            }
-
-            const res: { code: number; message: string; details?: string[] } = await response.json();
-
-            if (res.code > 0 && res.code <= 200) {
-                toast.success(res.message);
-                callback();
-            } else {
-                toast.error(res.message + (res.details ? ": " + res.details.join(", ") : ""));
-            }
-        } catch (error: unknown) {
-            toast.error(error instanceof Error ? error.message : String(error));
-        }
-    }, [getHeaders]);
-
-    /**
-     * 清空附件回收站
-     */
-    const handleClearFileRecycle = useCallback(async (vault: string, callback: () => void) => {
-        try {
-            const body = { vault };
-            const apiUrl = env.API_URL.endsWith("/") ? env.API_URL.slice(0, -1) : env.API_URL;
-            const response = await fetch(addCacheBuster(`${apiUrl}/api/file/recycle-clear`), {
-                method: "DELETE",
-                body: JSON.stringify(body),
-                headers: getHeaders(),
-            });
-
-            if (!response.ok) {
-                throw new Error("Network response was not ok");
-            }
-
-            const res: { code: number; message: string } = await response.json();
-            if (res.code > 0 && res.code <= 200) {
-                toast.success(res.message);
-                callback();
-            } else {
-                toast.error(res.message);
-            }
-        } catch (error: unknown) {
-            toast.error(error instanceof Error ? error.message : String(error));
-        }
-    }, [getHeaders]);
-
-    /**
      * 恢复附件
      * @param vault 仓库名称
      * @param path 文件路径
@@ -375,8 +307,6 @@ export function useFileHandle() {
     return useMemo(() => ({
         handleFileList,
         handleDeleteFile,
-        handlePermanentDeleteFile,
-        handleClearFileRecycle,
         handleRestoreFile,
         getRawFileUrl,
         handleFolderList,
@@ -384,8 +314,6 @@ export function useFileHandle() {
     }), [
         handleFileList,
         handleDeleteFile,
-        handlePermanentDeleteFile,
-        handleClearFileRecycle,
         handleRestoreFile,
         getRawFileUrl,
         handleFolderList,

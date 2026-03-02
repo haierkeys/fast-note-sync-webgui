@@ -239,7 +239,7 @@ export function BackupForm({ config, storages, onSubmit, onCancel }: BackupFormP
                 {/* 存储后端多选 */}
                 <div className="space-y-1.5 md:col-span-2">
                     <Label className="text-xs font-semibold text-muted-foreground ml-1">{t("ui.backup.storages")}</Label>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 border border-input rounded-md p-3 bg-background/50">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2 border border-input rounded-md p-3 bg-background/50">
                         {activeStorages.length === 0 ? (
                             <div className="col-span-full flex flex-col items-center justify-center p-4 text-center text-muted-foreground bg-muted/30 rounded-md border border-dashed">
                                 <span className="text-sm mb-2">{t("ui.backup.noAvailableStorage")}</span>
@@ -264,7 +264,7 @@ export function BackupForm({ config, storages, onSubmit, onCancel }: BackupFormP
                 </div>
             </div>
 
-            <div className="flex items-center justify-between pt-3 border-t border-border">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pt-3 border-t border-border">
                 <div className="flex items-center space-x-2">
                     <Checkbox
                         id="isEnabledBackup"

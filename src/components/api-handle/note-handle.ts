@@ -200,58 +200,6 @@ export function useNoteHandle() {
         }
     }, [getHeaders])
 
-    // 永久删除笔记 (从回收站彻底删除)
-    const handlePermanentDeleteNote = useCallback(async (vault: string, path: string, pathHash: string | undefined, callback: () => void) => {
-        try {
-            const body = {
-                vault,
-                path,
-                pathHash,
-            }
-            const response = await fetch(addCacheBuster(`${env.API_URL}/api/note/recycle-clear`), {
-                method: "DELETE",
-                body: JSON.stringify(body),
-                headers: getHeaders(),
-            })
-            if (!response.ok) {
-                throw new Error("Network response was not ok")
-            }
-            const res: NoteResponse<unknown> = await response.json()
-            if (res.code > 0 && res.code <= 200) {
-                toast.success(res.message)
-                callback()
-            } else {
-                toast.error(res.message + (res.details ? ": " + res.details.join(", ") : ""))
-            }
-        } catch (error: unknown) {
-            toast.error(error instanceof Error ? error.message : String(error))
-        }
-    }, [getHeaders])
-
-    // 清空笔记回收站
-    const handleClearNoteRecycle = useCallback(async (vault: string, callback: () => void) => {
-        try {
-            const body = { vault }
-            const response = await fetch(addCacheBuster(`${env.API_URL}/api/note/recycle-clear`), {
-                method: "DELETE",
-                body: JSON.stringify(body),
-                headers: getHeaders(),
-            })
-            if (!response.ok) {
-                throw new Error("Network response was not ok")
-            }
-            const res: NoteResponse<unknown> = await response.json()
-            if (res.code > 0 && res.code <= 200) {
-                toast.success(res.message)
-                callback()
-            } else {
-                toast.error(res.message)
-            }
-        } catch (error: unknown) {
-            toast.error(error instanceof Error ? error.message : String(error))
-        }
-    }, [getHeaders])
-
     const handleRestoreNote = useCallback(async (vault: string, path: string, pathHash: string | undefined, callback: () => void) => {
         try {
             const body = {
@@ -469,8 +417,6 @@ export function useNoteHandle() {
         handleGetNote,
         handleSaveNote,
         handleDeleteNote,
-        handlePermanentDeleteNote,
-        handleClearNoteRecycle,
         handleRestoreNote,
         handleNoteHistoryList,
         handleNoteHistoryDetail,
@@ -482,8 +428,6 @@ export function useNoteHandle() {
         handleGetNote,
         handleSaveNote,
         handleDeleteNote,
-        handlePermanentDeleteNote,
-        handleClearNoteRecycle,
         handleRestoreNote,
         handleNoteHistoryList,
         handleNoteHistoryDetail,

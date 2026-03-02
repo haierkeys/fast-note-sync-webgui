@@ -184,7 +184,7 @@ export function GitConfigForm({ config, vaults, onSubmit, onCancel }: GitConfigF
                 </div>
             </div>
 
-            <div className="flex items-center justify-between pt-3 border-t border-border">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pt-3 border-t border-border">
                 {/* 是否启用 */}
                 <div className="flex items-center space-x-2 whitespace-nowrap shrink-0">
                     <Checkbox

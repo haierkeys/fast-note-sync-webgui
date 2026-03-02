@@ -2,8 +2,8 @@ import { FileText, Trash2, RefreshCw, Search, X, Calendar, Clock, SortDesc, Sort
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useConfirmDialog } from "@/components/context/confirm-dialog-context";
 import { useFileHandle } from "@/components/api-handle/file-handle";
-import React, { useState, useEffect, useRef } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
+import React, { useState, useEffect, useRef } from "react";
 import { File as FileDTO } from "@/lib/types/file";
 import { Tooltip } from "@/components/ui/tooltip";
 import { useAppStore } from "@/stores/app-store";
@@ -53,7 +53,7 @@ function formatFileSize(bytes: number): string {
 
 export function FileList({ vault, vaults, onVaultChange, isRecycle = false, page, setPage, pageSize, setPageSize, searchKeyword, setSearchKeyword, currentPath, setCurrentPath, currentPathHash, setCurrentPathHash, pathHashMap, setPathHashMap }: FileListProps) {
     const { t } = useTranslation();
-    const { handleFileList, handleDeleteFile, handleRestoreFile, getRawFileUrl, handleFolderFiles, handleFolderList, handlePermanentDeleteFile, handleClearFileRecycle } = useFileHandle();
+    const { handleFileList, handleDeleteFile, handleRestoreFile, getRawFileUrl, handleFolderFiles, handleFolderList } = useFileHandle();
     const { openConfirmDialog } = useConfirmDialog();
     const [files, setFiles] = useState<FileDTO[]>([]);
     const [loading, setLoading] = useState(false);
@@ -147,15 +147,6 @@ export function FileList({ vault, vaults, onVaultChange, isRecycle = false, page
         });
     };
 
-    const onPermanentDelete = (e: React.MouseEvent, file: FileDTO) => {
-        e.stopPropagation();
-        openConfirmDialog(t("ui.file.permanentDeleteConfirm", { title: file.path }), "confirm", () => {
-            handlePermanentDeleteFile(vault, file.path, file.pathHash, () => {
-                fetchFiles();
-            });
-        });
-    };
-
     const toggleSelectAll = () => {
         const restorableFiles = files.filter(f => f.contentHash);
         if (selectedPaths.size === restorableFiles.length && restorableFiles.length > 0) {
@@ -209,42 +200,6 @@ export function FileList({ vault, vaults, onVaultChange, isRecycle = false, page
                 setSelectedPaths(new Set());
                 fetchFiles();
             }
-        });
-    };
-
-    const onBatchPermanentDelete = () => {
-        if (selectedPaths.size === 0) return;
-
-        const selectedFiles = files.filter(f => selectedPaths.has(f.pathHash));
-        if (selectedFiles.length === 0) return;
-
-        openConfirmDialog(t("ui.common.batchPermanentDeleteConfirm", { count: selectedFiles.length }), "confirm", async () => {
-            setLoading(true);
-            const total = selectedFiles.length;
-
-            try {
-                for (let i = 0; i < selectedFiles.length; i++) {
-                    setBatchRestoreProgress({ current: i + 1, total });
-                    await Promise.race([
-                        new Promise<void>((resolve) => {
-                            handlePermanentDeleteFile(vault, selectedFiles[i].path, selectedFiles[i].pathHash, resolve);
-                        }),
-                        new Promise<void>((resolve) => setTimeout(resolve, 30000)),
-                    ]);
-                }
-            } finally {
-                setBatchRestoreProgress(null);
-                setSelectedPaths(new Set());
-                fetchFiles();
-            }
-        });
-    };
-
-    const onClearRecycleBin = () => {
-        openConfirmDialog(t("ui.file.clearRecycleConfirm"), "confirm", () => {
-            handleClearFileRecycle(vault, () => {
-                fetchFiles();
-            });
         });
     };
 
@@ -472,17 +427,6 @@ export function FileList({ vault, vaults, onVaultChange, isRecycle = false, page
                         <span className="text-sm font-medium text-muted-foreground mr-2">
                             {totalRows} {t("ui.nav.menuTrash")}{t("ui.file.file")}
                         </span>
-                        {files.length > 0 && (
-                            <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={onClearRecycleBin}
-                                className="h-8 rounded-lg text-destructive hover:bg-destructive/10 hover:text-destructive"
-                            >
-                                <Trash2 className="h-3.5 w-3.5 mr-1.5" />
-                                {t("ui.common.clear")}
-                            </Button>
-                        )}
                     </div>
 
 
@@ -515,15 +459,6 @@ export function FileList({ vault, vaults, onVaultChange, isRecycle = false, page
                                     >
                                         <RotateCcw className="h-3.5 w-3.5 mr-1.5" />
                                         {t("ui.file.batchRestore")}
-                                    </Button>
-                                    <Button
-                                        variant="outline"
-                                        size="sm"
-                                        onClick={onBatchPermanentDelete}
-                                        className="h-8 rounded-lg text-destructive border-destructive/20 hover:bg-destructive/5 hover:text-destructive hover:border-destructive/40 shadow-sm"
-                                    >
-                                        <Trash2 className="h-3.5 w-3.5 mr-1.5" />
-                                        {t("ui.common.batchPermanentDelete")}
                                     </Button>
                                 </div>
                             )}
@@ -698,29 +633,17 @@ export function FileList({ vault, vaults, onVaultChange, isRecycle = false, page
                                             </Tooltip>
                                         )}
                                         {isRecycle && (
-                                            <>
-                                                <Tooltip content={t("ui.common.restore")} side="top" delay={200}>
-                                                    <Button
-                                                        variant="ghost"
-                                                        size="icon"
-                                                        disabled={!file.contentHash}
-                                                        className="h-8 w-8 rounded-xl text-muted-foreground hover:text-green-600"
-                                                        onClick={(e) => onRestore(e, file)}
-                                                    >
-                                                        <RotateCcw className="h-4 w-4" />
-                                                    </Button>
-                                                </Tooltip>
-                                                <Tooltip content={t("ui.common.permanentDelete")} side="top" delay={200}>
-                                                    <Button
-                                                        variant="ghost"
-                                                        size="icon"
-                                                        className="h-8 w-8 rounded-xl text-muted-foreground hover:text-destructive"
-                                                        onClick={(e) => onPermanentDelete(e, file)}
-                                                    >
-                                                        <Trash2 className="h-4 w-4" />
-                                                    </Button>
-                                                </Tooltip>
-                                            </>
+                                            <Tooltip content={t("ui.common.restore")} side="top" delay={200}>
+                                                <Button
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    disabled={!file.contentHash}
+                                                    className="h-8 w-8 rounded-xl text-muted-foreground hover:text-green-600"
+                                                    onClick={(e) => onRestore(e, file)}
+                                                >
+                                                    <RotateCcw className="h-4 w-4" />
+                                                </Button>
+                                            </Tooltip>
                                         )}
                                     </div>
                                 </div>

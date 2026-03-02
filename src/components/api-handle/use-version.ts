@@ -6,7 +6,6 @@ import { getBrowserLang } from "@/i18n/utils";
 import { useState, useEffect } from "react";
 import env from "@/env.ts";
 
-
 export type { VersionInfo } from "@/lib/types/version";
 
 export function useVersion() {
@@ -17,7 +16,7 @@ export function useVersion() {
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        let isMounted = true;
+        const controller = new AbortController();
 
         const fetchVersion = async () => {
             setIsLoading(true);
@@ -30,6 +29,7 @@ export function useVersion() {
                         Domain: window.location.origin,
                         Lang: getBrowserLang(),
                     },
+                    signal: controller.signal,
                 });
 
                 if (!response.ok) {
@@ -37,7 +37,7 @@ export function useVersion() {
                 }
 
                 const res = await response.json();
-                if (!isMounted) {
+                if (controller.signal.aborted) {
                     return;
                 }
                 if (res.code < 100 && res.code > 0 && res.data) {
@@ -47,13 +47,15 @@ export function useVersion() {
                     setError(res.message || t('getVersionError'));
                 }
             } catch (error) {
-                if (!isMounted) {
+                if (error instanceof DOMException && error.name === "AbortError") {
                     return;
                 }
-                setError(t('getVersionError'));
-                console.error("Version fetch error:", error);
+                if (!controller.signal.aborted) {
+                    setError(t('getVersionError'));
+                    console.error("Version fetch error:", error);
+                }
             } finally {
-                if (isMounted) {
+                if (!controller.signal.aborted) {
                     setIsLoading(false);
                 }
             }
@@ -62,7 +64,7 @@ export function useVersion() {
         fetchVersion();
 
         return () => {
-            isMounted = false;
+            controller.abort();
         };
     }, [setVersionInfo, t]);
 

@@ -1,10 +1,10 @@
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuLabel, DropdownMenuSeparator, } from "@/components/ui/dropdown-menu";
-import { Heart, RefreshCw, Loader2, MessageCircle, Smile, Coffee, QrCode, ExternalLink, SortDesc, ChevronLeft, ChevronRight } from "lucide-react";
+import { Heart, RefreshCw, Loader2, MessageCircle, Smile, Coffee, QrCode, ExternalLink, SortDesc } from "lucide-react";
 import { useSupport } from "@/components/api-handle/use-support";
+import { useEffect, useState, useMemo } from "react";
 import { Tooltip } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
-import { useEffect, useState } from "react";
 
 
 type SortKey = "time" | "amount";
@@ -12,20 +12,35 @@ type SortOrder = "asc" | "desc";
 
 export function SupportList() {
     const { t } = useTranslation()
-    const { supportList, pager, isLoading, refresh } = useSupport()
-    const [page, setPage] = useState(1);
-    const [pageSize] = useState(20);
+    const { supportList, isLoading, refresh } = useSupport()
     const [sortKey, setSortKey] = useState<SortKey>("amount");
     const [sortOrder, setSortOrder] = useState<SortOrder>("desc");
 
     useEffect(() => {
-        refresh(page, pageSize, sortKey, sortOrder)
-    }, [refresh, page, pageSize, sortKey, sortOrder])
+        refresh()
+    }, [refresh])
+
+    const sortedList = useMemo(() => {
+        return [...supportList].sort((a, b) => {
+            if (sortKey === "amount") {
+                const amountA = parseFloat((a.amount || "0").replace(/,/g, "")) || 0;
+                const amountB = parseFloat((b.amount || "0").replace(/,/g, "")) || 0;
+                return sortOrder === "asc" ? amountA - amountB : amountB - amountA;
+            }
+
+            const timeA = a.time || "";
+            const timeB = b.time || "";
+
+            if (timeA < timeB) return sortOrder === "asc" ? -1 : 1;
+            if (timeA > timeB) return sortOrder === "asc" ? 1 : -1;
+
+            return 0;
+        });
+    }, [supportList, sortKey, sortOrder]);
 
     const handleSortChange = (key: SortKey, order: SortOrder) => {
         setSortKey(key);
         setSortOrder(order);
-        setPage(1);
     };
 
     if (isLoading && supportList.length === 0) {
@@ -47,7 +62,7 @@ export function SupportList() {
                 <Button
                     variant="ghost"
                     size="icon"
-                    onClick={() => refresh(page, pageSize, sortKey, sortOrder)}
+                    onClick={refresh}
                     disabled={isLoading}
                     className="h-6 w-6 rounded-full hover:bg-muted"
                 >
@@ -127,14 +142,14 @@ export function SupportList() {
             </div>
 
             <div className="flex-1 overflow-y-auto border border-border/40 rounded-lg bg-card/10 custom-scrollbar relative min-h-[120px]">
-                {supportList.length === 0 ? (
+                {sortedList.length === 0 ? (
                     <div className="flex flex-col items-center justify-center h-full text-muted-foreground space-y-2 opacity-60 py-8">
                         <MessageCircle className="h-6 w-6 stroke-[1.5]" />
                         <span className="text-xs italic">{t("ui.support.noData")}</span>
                     </div>
                 ) : (
                     <div className="divide-y divide-border/20">
-                        {supportList.map((record, index) => {
+                        {sortedList.map((record, index) => {
                             const tooltipContent = `${record.name || "Anonymous"}: ${record.message || record.item}`;
 
                             return (
@@ -170,37 +185,6 @@ export function SupportList() {
                     </div>
                 )}
             </div>
-
-            {pager && pager.totalRows > 0 && (
-                <div className="flex items-center justify-between pt-1 pb-1 px-1">
-                    <div className="text-[10px] text-muted-foreground opacity-70">
-                        {t("ui.common.total", { defaultValue: `共 ${pager.totalRows} 条` })}
-                    </div>
-                    <div className="flex items-center gap-1.5">
-                        <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-6 w-6 rounded-full hover:bg-muted"
-                            onClick={() => setPage((p) => Math.max(1, p - 1))}
-                            disabled={page <= 1 || isLoading}
-                        >
-                            <ChevronLeft className="h-3.5 w-3.5" />
-                        </Button>
-                        <span className="text-[10px] text-muted-foreground font-mono tabular-nums min-w-7.5 text-center">
-                            {page} / {Math.max(1, Math.ceil(pager.totalRows / pageSize))}
-                        </span>
-                        <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-6 w-6 rounded-full hover:bg-muted"
-                            onClick={() => setPage((p) => p + 1)}
-                            disabled={page >= Math.ceil(pager.totalRows / pageSize) || isLoading}
-                        >
-                            <ChevronRight className="h-3.5 w-3.5" />
-                        </Button>
-                    </div>
-                </div>
-            )}
 
             <div className="pt-0.5 text-[10px] text-center text-muted-foreground italic opacity-40">
                 {t("ui.support.thanks")}

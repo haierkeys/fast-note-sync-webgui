@@ -3,8 +3,8 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useConfirmDialog } from "@/components/context/confirm-dialog-context";
 import { useNoteHandle } from "@/components/api-handle/note-handle";
-import React, { useState, useEffect, useRef } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
+import React, { useState, useEffect, useRef } from "react";
 import { Tooltip } from "@/components/ui/tooltip";
 import { useAppStore } from "@/stores/app-store";
 import { Button } from "@/components/ui/button";
@@ -45,7 +45,7 @@ interface NoteListProps {
 
 export function NoteList({ vault, vaults, onVaultChange, onSelectNote, onCreateNote, page, setPage, pageSize, setPageSize, onViewHistory, isRecycle = false, searchKeyword, setSearchKeyword, currentPath, setCurrentPath, currentPathHash, setCurrentPathHash, pathHashMap, setPathHashMap }: NoteListProps) {
     const { t } = useTranslation();
-    const { handleNoteList, handleDeleteNote, handleRestoreNote, handleFolderList, handleFolderNotes, handlePermanentDeleteNote, handleClearNoteRecycle } = useNoteHandle();
+    const { handleNoteList, handleDeleteNote, handleRestoreNote, handleFolderList, handleFolderNotes } = useNoteHandle();
     const { openConfirmDialog } = useConfirmDialog();
     const [notes, setNotes] = useState<Note[]>([]);
     const [loading, setLoading] = useState(false);
@@ -170,15 +170,6 @@ export function NoteList({ vault, vaults, onVaultChange, onSelectNote, onCreateN
             });
         });
     };
-    const onPermanentDelete = (e: React.MouseEvent, note: Note) => {
-        e.stopPropagation();
-        const title = note.path.replace(/\.md$/, "");
-        openConfirmDialog(t("ui.note.permanentDeleteConfirm", { title }), "confirm", () => {
-            handlePermanentDeleteNote(vault, note.path, note.pathHash, () => {
-                fetchNotes();
-            });
-        });
-    };
 
     const toggleSelectAll = () => {
         if (selectedPaths.size === notes.length && notes.length > 0) {
@@ -222,40 +213,6 @@ export function NoteList({ vault, vaults, onVaultChange, onSelectNote, onCreateN
                 setSelectedPaths(new Set());
                 fetchNotes();
             }
-        });
-    };
-
-    const onBatchPermanentDelete = () => {
-        if (selectedPaths.size === 0) return;
-
-        openConfirmDialog(t("ui.common.batchPermanentDeleteConfirm", { count: selectedPaths.size }), "confirm", async () => {
-            setLoading(true);
-            const selectedNotes = notes.filter(n => selectedPaths.has(n.pathHash));
-            const total = selectedNotes.length;
-
-            try {
-                for (let i = 0; i < selectedNotes.length; i++) {
-                    setBatchRestoreProgress({ current: i + 1, total });
-                    await Promise.race([
-                        new Promise<void>((resolve) => {
-                            handlePermanentDeleteNote(vault, selectedNotes[i].path, selectedNotes[i].pathHash, resolve);
-                        }),
-                        new Promise<void>((resolve) => setTimeout(resolve, 30000)),
-                    ]);
-                }
-            } finally {
-                setBatchRestoreProgress(null);
-                setSelectedPaths(new Set());
-                fetchNotes();
-            }
-        });
-    };
-
-    const onClearRecycleBin = () => {
-        openConfirmDialog(t("ui.note.clearRecycleConfirm"), "confirm", () => {
-            handleClearNoteRecycle(vault, () => {
-                fetchNotes();
-            });
         });
     };
 
@@ -438,7 +395,7 @@ export function NoteList({ vault, vaults, onVaultChange, onSelectNote, onCreateN
 
             {/* 第二行工具栏：仅在回收站模式下显示 */}
             {isRecycle && (
-                <div className="flex flex-wrap items-center gap-4 py-2 px-2 bg-muted/30 rounded-xl border border-border/50">
+                <div className="flex flex-wrap items-center gap-2 sm:gap-4 py-2 px-2 bg-muted/30 rounded-xl border border-border/50">
                     <div className="flex items-center gap-3">
                         {/* 页面切换开关 */}
                         <div className="flex items-center h-8 rounded-lg border border-border overflow-hidden bg-background shadow-sm">
@@ -460,23 +417,12 @@ export function NoteList({ vault, vaults, onVaultChange, onSelectNote, onCreateN
                         <span className="text-sm font-medium text-muted-foreground mr-2">
                             {totalRows} {t("ui.nav.menuTrash")}{t("ui.note.note")}
                         </span>
-                        {notes.length > 0 && (
-                            <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={onClearRecycleBin}
-                                className="h-8 rounded-lg text-destructive hover:bg-destructive/10 hover:text-destructive"
-                            >
-                                <Trash2 className="h-3.5 w-3.5 mr-1.5" />
-                                {t("ui.common.clear")}
-                            </Button>
-                        )}
                     </div>
 
 
                     {/* 批量操作控制 */}
                     {notes.length > 0 && (
-                        <div className="flex items-center gap-3 pl-4 border-l border-border/60">
+                        <div className="flex items-center gap-3 pl-0 sm:pl-4 border-l-0 sm:border-l border-border/60">
                             <div className="flex items-center gap-2">
                                 <Checkbox
                                     id="select-all"
@@ -502,15 +448,6 @@ export function NoteList({ vault, vaults, onVaultChange, onSelectNote, onCreateN
                                     >
                                         <RotateCcw className="h-3.5 w-3.5 mr-1.5" />
                                         {t("ui.file.batchRestore")}
-                                    </Button>
-                                    <Button
-                                        variant="outline"
-                                        size="sm"
-                                        onClick={onBatchPermanentDelete}
-                                        className="h-8 rounded-lg text-destructive border-destructive/20 hover:bg-destructive/5 hover:text-destructive hover:border-destructive/40 shadow-sm"
-                                    >
-                                        <Trash2 className="h-3.5 w-3.5 mr-1.5" />
-                                        {t("ui.common.batchPermanentDelete")}
                                     </Button>
                                 </div>
                             )}
@@ -651,10 +588,10 @@ export function NoteList({ vault, vaults, onVaultChange, onSelectNote, onCreateN
                         {Array.isArray(notes) && notes.map((note) => (
                             <article
                                 key={`note-${note.pathHash}`}
-                                className="rounded-xl border border-border bg-card p-4 cursor-pointer transition-all duration-200 hover:shadow-md hover:border-primary/30"
+                                className="rounded-xl border border-border bg-card p-2.5 sm:p-4 cursor-pointer transition-all duration-200 hover:shadow-md hover:border-primary/30"
                                 onClick={() => onSelectNote(note, true)}
                             >
-                                <div className="flex items-center justify-between gap-4">
+                                <div className="flex items-center justify-between gap-2 sm:gap-4">
                                     {/* 左侧：图标和内容 */}
                                     <div className="flex items-start gap-3 min-w-0 flex-1">
                                         {isRecycle && (
@@ -668,8 +605,8 @@ export function NoteList({ vault, vaults, onVaultChange, onSelectNote, onCreateN
                                                 />
                                             </div>
                                         )}
-                                        <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary shrink-0">
-                                            <FileText className="h-5 w-5" />
+                                        <span className="flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-xl bg-primary/10 text-primary shrink-0">
+                                            <FileText className="h-4 w-4 sm:h-5 sm:w-5" />
                                         </span>
                                         <div className="min-w-0 flex-1">
                                             <h3 className="font-semibold text-card-foreground truncate">
@@ -685,7 +622,8 @@ export function NoteList({ vault, vaults, onVaultChange, onSelectNote, onCreateN
                                                 <Tooltip content={t("ui.common.updatedAt")} side="top" delay={300}>
                                                     <span className="flex items-center gap-1">
                                                         <Clock className="h-3.5 w-3.5" />
-                                                        {format(new Date(note.mtime), "yyyy-MM-dd HH:mm")}
+                                                        <span className="sm:hidden">{format(new Date(note.mtime), "MM-dd HH:mm")}</span>
+                                                        <span className="hidden sm:inline">{format(new Date(note.mtime), "yyyy-MM-dd HH:mm")}</span>
                                                     </span>
                                                 </Tooltip>
                                                 {note.version > 0 && (
@@ -706,7 +644,7 @@ export function NoteList({ vault, vaults, onVaultChange, onSelectNote, onCreateN
                                             <Button
                                                 variant="ghost"
                                                 size="icon"
-                                                className="h-8 w-8 rounded-xl text-muted-foreground hover:text-primary"
+                                                className="h-7 w-7 sm:h-8 sm:w-8 rounded-xl text-muted-foreground hover:text-primary"
                                                 onClick={(e) => {
                                                     e.stopPropagation();
                                                     onSelectNote(note, true);
@@ -719,7 +657,7 @@ export function NoteList({ vault, vaults, onVaultChange, onSelectNote, onCreateN
                                             <Button
                                                 variant="ghost"
                                                 size="icon"
-                                                className="h-8 w-8 rounded-xl text-muted-foreground hover:text-blue-600"
+                                                className="hidden sm:inline-flex h-7 w-7 sm:h-8 sm:w-8 rounded-xl text-muted-foreground hover:text-blue-600"
                                                 onClick={(e) => {
                                                     e.stopPropagation();
                                                     onSelectNote(note, false);
@@ -732,7 +670,7 @@ export function NoteList({ vault, vaults, onVaultChange, onSelectNote, onCreateN
                                             <Button
                                                 variant="ghost"
                                                 size="icon"
-                                                className="h-8 w-8 rounded-xl text-muted-foreground hover:text-purple-600"
+                                                className="hidden sm:inline-flex h-7 w-7 sm:h-8 sm:w-8 rounded-xl text-muted-foreground hover:text-purple-600"
                                                 onClick={(e) => {
                                                     e.stopPropagation();
                                                     onViewHistory(note);
@@ -746,7 +684,7 @@ export function NoteList({ vault, vaults, onVaultChange, onSelectNote, onCreateN
                                                 <Button
                                                     variant="ghost"
                                                     size="icon"
-                                                    className="h-8 w-8 rounded-xl text-muted-foreground hover:text-destructive"
+                                                    className="h-7 w-7 sm:h-8 sm:w-8 rounded-xl text-muted-foreground hover:text-destructive"
                                                     onClick={(e) => onDelete(e, note)}
                                                 >
                                                     <Trash2 className="h-4 w-4" />
@@ -754,28 +692,16 @@ export function NoteList({ vault, vaults, onVaultChange, onSelectNote, onCreateN
                                             </Tooltip>
                                         )}
                                         {isRecycle && (
-                                            <>
-                                                <Tooltip content={t("ui.common.restore")} side="top" delay={200}>
-                                                    <Button
-                                                        variant="ghost"
-                                                        size="icon"
-                                                        className="h-8 w-8 rounded-xl text-muted-foreground hover:text-green-600"
-                                                        onClick={(e) => onRestore(e, note)}
-                                                    >
-                                                        <RotateCcw className="h-4 w-4" />
-                                                    </Button>
-                                                </Tooltip>
-                                                <Tooltip content={t("ui.common.permanentDelete")} side="top" delay={200}>
-                                                    <Button
-                                                        variant="ghost"
-                                                        size="icon"
-                                                        className="h-8 w-8 rounded-xl text-muted-foreground hover:text-destructive"
-                                                        onClick={(e) => onPermanentDelete(e, note)}
-                                                    >
-                                                        <Trash2 className="h-4 w-4" />
-                                                    </Button>
-                                                </Tooltip>
-                                            </>
+                                            <Tooltip content={t("ui.common.restore")} side="top" delay={200}>
+                                                <Button
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    className="h-7 w-7 sm:h-8 sm:w-8 rounded-xl text-muted-foreground hover:text-green-600"
+                                                    onClick={(e) => onRestore(e, note)}
+                                                >
+                                                    <RotateCcw className="h-4 w-4" />
+                                                </Button>
+                                            </Tooltip>
                                         )}
                                     </div>
                                 </div>

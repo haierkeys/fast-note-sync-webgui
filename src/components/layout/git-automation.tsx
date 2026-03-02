@@ -140,7 +140,7 @@ export function GitAutomation() {
             {/* 左侧栏 - Git 仓库配置 */}
             <div className="flex flex-col gap-4">
                 <div className="rounded-xl border border-border bg-card p-6 custom-shadow">
-                    <div className="flex items-center justify-between mb-6">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 sm:mb-6 gap-3">
                         <div className="flex items-center gap-3">
                             <div className="p-2 bg-primary/10 rounded-lg">
                                 <GitPullRequestArrow className="h-5 w-5 text-primary" />
