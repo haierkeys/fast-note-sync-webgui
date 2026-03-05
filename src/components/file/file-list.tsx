@@ -38,6 +38,7 @@ interface FileListProps {
     setCurrentPathHash: (hash: string) => void;
     pathHashMap: Record<string, string>;
     setPathHashMap: (map: Record<string, string>) => void;
+    onCanvasOpen?: (file: { path: string; pathHash: string }) => void;
 }
 
 /**
@@ -51,7 +52,7 @@ function formatFileSize(bytes: number): string {
     return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + " " + sizes[i];
 }
 
-export function FileList({ vault, vaults, onVaultChange, isRecycle = false, page, setPage, pageSize, setPageSize, searchKeyword, setSearchKeyword, currentPath, setCurrentPath, currentPathHash, setCurrentPathHash, pathHashMap, setPathHashMap }: FileListProps) {
+export function FileList({ vault, vaults, onVaultChange, isRecycle = false, page, setPage, pageSize, setPageSize, searchKeyword, setSearchKeyword, currentPath, setCurrentPath, currentPathHash, setCurrentPathHash, pathHashMap, setPathHashMap, onCanvasOpen }: FileListProps) {
     const { t } = useTranslation();
     const { handleFileList, handleDeleteFile, handleRestoreFile, getRawFileUrl, handleFolderFiles, handleFolderList, handlePermanentDeleteFile, handleClearFileRecycle } = useFileHandle();
     const { openConfirmDialog } = useConfirmDialog();
@@ -252,6 +253,12 @@ export function FileList({ vault, vaults, onVaultChange, isRecycle = false, page
      * 处理文件点击 (预览或下载)
      */
     const handleItemClick = (file: FileDTO) => {
+        // .canvas 文件直接在 FileManager 中打开 CanvasViewer
+        if (file.path.endsWith(".canvas") && onCanvasOpen) {
+            onCanvasOpen({ path: file.path, pathHash: file.pathHash });
+            return;
+        }
+
         let url = getRawFileUrl(vault, file.path, file.pathHash?.toString());
         if (isRecycle) {
             url += (url.includes("?") ? "&" : "?") + "isRecycle=1";

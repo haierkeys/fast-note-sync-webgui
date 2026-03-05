@@ -540,7 +540,7 @@ const markdownComponents: Components = {
 
 // ─── 共用渲染器 ─────────────────────────────────────────────
 
-const MarkdownRenderer = memo(function MarkdownRenderer({ content }: { content: string }) {
+export const MarkdownRenderer = memo(function MarkdownRenderer({ content }: { content: string }) {
     return (
         <ReactMarkdown
             remarkPlugins={REMARK_PLUGINS}

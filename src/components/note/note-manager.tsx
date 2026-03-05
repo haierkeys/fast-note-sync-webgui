@@ -10,6 +10,7 @@ import { useNoteHandle } from "@/components/api-handle/note-handle";
 import { toast } from "@/components/common/Toast";
 import { NoteHistoryModal } from "./note-history-modal";
 import { NoteEditor } from "./note-editor";
+import { CanvasViewer } from "./canvas-viewer";
 import { NoteList } from "./note-list";
 
 
@@ -205,21 +206,32 @@ export function NoteManager({
 
     let content;
     if (view === "editor") {
-        content = (
-            <NoteEditor
-                vault={vault}
-                note={selectedNote}
-                onBack={handleBack}
-                onNavigateToFolder={handleNavigateToFolder}
-                onSaveSuccess={handleSaveSuccess}
-                onViewHistory={() => selectedNote && handleViewHistory(selectedNote)}
-                isMaximized={isMaximized}
-                onToggleMaximize={onToggleMaximize}
-                isRecycle={isRecycle}
-                initialPreviewMode={initialPreviewMode}
-                onWikiLinkClick={handleWikiLinkClick}
-            />
-        );
+        if (selectedNote?.path?.endsWith(".canvas")) {
+            content = (
+                <CanvasViewer
+                    vault={vault}
+                    note={selectedNote}
+                    onBack={handleBack}
+                    onWikiLinkClick={handleWikiLinkClick}
+                />
+            );
+        } else {
+            content = (
+                <NoteEditor
+                    vault={vault}
+                    note={selectedNote}
+                    onBack={handleBack}
+                    onNavigateToFolder={handleNavigateToFolder}
+                    onSaveSuccess={handleSaveSuccess}
+                    onViewHistory={() => selectedNote && handleViewHistory(selectedNote)}
+                    isMaximized={isMaximized}
+                    onToggleMaximize={onToggleMaximize}
+                    isRecycle={isRecycle}
+                    initialPreviewMode={initialPreviewMode}
+                    onWikiLinkClick={handleWikiLinkClick}
+                />
+            );
+        }
     } else {
         content = (
             <NoteList

@@ -1,11 +1,12 @@
 import { useVaultHandle } from "@/components/api-handle/vault-handle";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
 import { VaultType } from "@/lib/types/vault";
 import { Database } from "lucide-react";
 
 import { toast } from "@/components/common/Toast";
+import { CanvasViewer } from "@/components/note/canvas-viewer";
 import { FileList } from "./file-list";
 
 
@@ -42,6 +43,9 @@ export function FileManager({
     const [currentPath, setCurrentPath] = useState("");
     const [currentPathHash, setCurrentPathHash] = useState("");
     const [pathHashMap, setPathHashMap] = useState<Record<string, string>>({});
+
+    // Canvas viewer state
+    const [canvasFile, setCanvasFile] = useState<{ path: string; pathHash: string } | null>(null);
 
     useEffect(() => {
         localStorage.setItem("filePageSize", pageSize.toString());
@@ -82,7 +86,16 @@ export function FileManager({
         setCurrentPath("");
         setCurrentPathHash("");
         setPathHashMap({});
+        setCanvasFile(null);
     }, [vault]);
+
+    const handleCanvasOpen = useCallback((file: { path: string; pathHash: string }) => {
+        setCanvasFile(file);
+    }, []);
+
+    const handleCanvasBack = useCallback(() => {
+        setCanvasFile(null);
+    }, []);
 
     // 检查是否有仓库（只在加载完成后显示空状态）
     if (vaultsLoaded.current && vaults.length === 0) {
@@ -109,6 +122,17 @@ export function FileManager({
         );
     }
 
+    // Canvas viewer mode
+    if (canvasFile) {
+        return (
+            <CanvasViewer
+                vault={vault}
+                note={canvasFile}
+                onBack={handleCanvasBack}
+            />
+        );
+    }
+
     return (
         <FileList
             vault={vault}
@@ -127,6 +151,7 @@ export function FileManager({
             setCurrentPathHash={setCurrentPathHash}
             pathHashMap={pathHashMap}
             setPathHashMap={setPathHashMap}
+            onCanvasOpen={handleCanvasOpen}
         />
     );
 }
