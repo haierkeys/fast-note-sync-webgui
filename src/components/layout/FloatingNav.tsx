@@ -1,4 +1,4 @@
-import { Database, FileText, ArchiveX, Settings, DatabaseBackup, GitPullRequestArrow, Paperclip, Layers, ChevronUp, ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
+import { Database, FileText, ArchiveX, Settings, DatabaseBackup, GitPullRequestArrow, Paperclip, Layers, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, SlidersHorizontal } from "lucide-react";
 import { Fragment, useEffect, useRef, useState, useCallback } from "react";
 import { useAppStore, type ModuleId } from "@/stores/app-store";
 import { NavItem } from "@/components/navigation/NavItem";
@@ -85,6 +85,7 @@ export function FloatingNav({ isAdmin, className }: FloatingNavProps) {
       { id: "trash", icon: ArchiveX, labelKey: "ui.nav.menuTrash" },
       { id: "sync", icon: DatabaseBackup, labelKey: "ui.nav.menuSync" },
       { id: "git", icon: GitPullRequestArrow, labelKey: "ui.nav.menuGit" },
+      { id: "settings-browser", icon: SlidersHorizontal, labelKey: "ui.nav.menuSettingsBrowser" },
     ]
 
   const visibleItems = navItems.filter(item => !item.adminOnly || isAdmin)

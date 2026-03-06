@@ -20,6 +20,7 @@ const VaultList = lazy(() => import("@/components/vault/vault-list").then(m => (
 const AuthForm = lazy(() => import("@/components/user/auth-form").then(m => ({ default: m.AuthForm })));
 const SyncBackup = lazy(() => import("@/components/layout/sync-backup").then(m => ({ default: m.SyncBackup })));
 const GitAutomation = lazy(() => import("@/components/layout/git-automation").then(m => ({ default: m.GitAutomation })));
+const SettingManager = lazy(() => import("@/components/setting/setting-manager").then(m => ({ default: m.SettingManager })));
 
 // 加载占位符
 const PageLoading = () => (
@@ -60,7 +61,7 @@ function App() {
   }, [isLoggedIn, handleUserInfo, logout])
 
   useEffect(() => {
-    if ((currentModule !== "notes" && currentModule !== "files" && currentModule !== "trash") || !isLoggedIn) return
+    if ((currentModule !== "notes" && currentModule !== "files" && currentModule !== "trash" && currentModule !== "settings-browser") || !isLoggedIn) return
 
     let isMounted = true
     setVaultsLoaded(false)
@@ -316,6 +317,15 @@ function App() {
 
       case "git":
         return <GitAutomation />
+
+      case "settings-browser":
+        return (
+          <SettingManager
+            vault={activeVault || ""}
+            onVaultChange={setActiveVault}
+            onNavigateToVaults={() => setModule("vaults")}
+          />
+        )
 
       case "vaults":
       default:

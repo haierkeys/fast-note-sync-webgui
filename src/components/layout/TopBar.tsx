@@ -37,6 +37,7 @@ export function TopBar({ onLogout, className }: TopBarProps) {
     settings: t("ui.nav.menuSettings"),
     sync: t("ui.nav.menuSync"),
     git: t("ui.nav.menuGit"),
+    "settings-browser": t("ui.nav.menuSettingsBrowser"),
     files: t("ui.nav.menuFiles"),
   }
 

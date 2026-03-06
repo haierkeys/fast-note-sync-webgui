@@ -8,7 +8,7 @@ interface ConfirmDialogContextType {
   isDialogOpen: boolean
   message: string
   type: string
-  openConfirmDialog: (message: string, type?: string, onConfirm?: () => void, children?: ReactNode) => void
+  openConfirmDialog: (message: string, type?: string, onConfirm?: () => void, children?: ReactNode, className?: string) => void
   closeDialog: () => void
 }
 
@@ -22,6 +22,7 @@ export const ConfirmDialogProvider: React.FC<{ children: ReactNode }> = ({ child
   const [type, setType] = useState("confirm")
   const [handleConfirm, setHandleConfirm] = useState<() => void | undefined>()
   const [customChildren, setCustomChildren] = useState<ReactNode | undefined>()
+  const [className, setClassName] = useState<string | undefined>()
 
   // 关闭对话框，只设置 isOpen 为 false，不重置其他状态
   // 这样在关闭动画期间，对话框内容保持不变
@@ -36,19 +37,20 @@ export const ConfirmDialogProvider: React.FC<{ children: ReactNode }> = ({ child
     setIsDialogOpen(false)
   }
 
-  const openConfirmDialog = React.useCallback((message: string, type?: string, onConfirm?: () => void, children?: ReactNode) => {
+  const openConfirmDialog = React.useCallback((message: string, type?: string, onConfirm?: () => void, children?: ReactNode, className?: string) => {
     // 打开时设置所有状态
     setMessage(message)
     setType(type || "confirm")
     setHandleConfirm(() => onConfirm)
     setCustomChildren(children)
+    setClassName(className)
     setIsDialogOpen(true)
   }, [])
 
   return (
     <ConfirmDialogContext.Provider value={{ isDialogOpen, message, type, openConfirmDialog, closeDialog: handleCancel }}>
       {children}
-      <ConfirmDialog isOpen={isDialogOpen} onCancel={handleCancel} onConfirm={handleConfirmClick} message={message} type={type}>
+      <ConfirmDialog isOpen={isDialogOpen} onCancel={handleCancel} onConfirm={handleConfirmClick} message={message} type={type} className={className}>
         {customChildren}
       </ConfirmDialog>
     </ConfirmDialogContext.Provider>

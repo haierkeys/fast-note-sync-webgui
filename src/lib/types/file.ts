@@ -31,3 +31,13 @@ export interface FileListResponse {
         totalPages: number;
     };
 }
+
+/**
+ * 文件重命名请求
+ */
+export interface FileRenameRequest {
+    vault: string;
+    oldPath: string;
+    path: string;
+    oldPathHash?: string;
+}

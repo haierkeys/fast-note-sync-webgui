@@ -104,6 +104,7 @@ export default {
     "ui.nav.menuSettings": "系统设置",
     "ui.nav.menuGit": "Git 自动化",
     "ui.nav.menuFiles": "附件管理",
+    "ui.nav.menuSettingsBrowser": "配置浏览",
     "ui.nav.mainNavigation": "主导航",
 
     // --- ui.vault ---
@@ -310,6 +311,19 @@ export default {
     "ui.settings.pullSource.auto": "自动检测",
     "ui.settings.pullSource.github": "github.com",
     "ui.settings.pullSource.cnb": "腾讯 cnb.tool",
+
+    // --- ui.settings-browser ---
+    "ui.settingsBrowser.title": "配置浏览",
+    "ui.settingsBrowser.add": "新增配置",
+    "ui.settingsBrowser.edit": "编辑配置",
+    "ui.settingsBrowser.key": "配置键 (Key)",
+    "ui.settingsBrowser.value": "配置值 (Value)",
+    "ui.settingsBrowser.keyRequired": "键名不能为空",
+    "ui.settingsBrowser.confirmDelete": "确定要删除配置项 \"{{key}}\" 吗？",
+    "ui.settingsBrowser.rename": "重命名 Key",
+    "ui.settingsBrowser.newKey": "新键名",
+    "ui.settingsBrowser.renameSuccess": "配置项重命名成功",
+    "ui.settingsBrowser.noSettings": "暂无配置项",
 
     // --- ui.obsidian ---
     "ui.obsidian.authTokenConfig": "授权配置",
