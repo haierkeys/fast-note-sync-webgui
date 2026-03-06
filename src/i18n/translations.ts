@@ -45,7 +45,22 @@ export const ensureResourceLoaded = async (lang: string) => {
     }
   }
 
-  // 3. 回退到 zh-CN
+  // 3. 尝试按语言主标签匹配 (例如: en-US → en)
+  if (!resource && lang.includes('-')) {
+    const baseLang = lang.split('-')[0];
+    const basePath = `./locales/${baseLang}.ts`;
+    const baseLoader = locales[basePath];
+    if (baseLoader) {
+      try {
+        const module = await baseLoader();
+        resource = module.default;
+      } catch (error) {
+        console.error(`Failed to load base locale: ${baseLang}`, error);
+      }
+    }
+  }
+
+  // 4. 回退到 zh-CN
   if (!resource && lang !== 'zh-CN') {
     console.warn(`Locale ${lang} not found, falling back to zh-CN`);
     try {

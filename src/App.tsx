@@ -1,4 +1,4 @@
-import { useState, useEffect, lazy, Suspense, useCallback } from "react";
+import { useState, useEffect, useRef, lazy, Suspense, useCallback } from "react";
 import { useVaultHandle } from "@/components/api-handle/vault-handle";
 import { useUserHandle } from "@/components/api-handle/user-handle";
 import { useAuth } from "@/components/context/auth-context";
@@ -43,6 +43,11 @@ function App() {
   const trashType = useAppStore(state => state.trashType)
 
   const [activeVault, setActiveVault] = useState<string | null>(null)
+  // 通过 ref 读取 activeVault，避免其出现在 loadVaults effect 的依赖数组中
+  const activeVaultRef = useRef<string | null>(null)
+  useEffect(() => {
+    activeVaultRef.current = activeVault
+  }, [activeVault])
 
   useUrlSync(activeVault, setActiveVault)
 
@@ -72,7 +77,9 @@ function App() {
           if (!isMounted) return
 
           if (vaults.length > 0) {
-            const vaultExists = activeVault && vaults.some(v => v.vault === activeVault)
+            // 通过 ref 读取最新 activeVault，避免此 effect 依赖 activeVault
+            const currentVault = activeVaultRef.current
+            const vaultExists = currentVault && vaults.some(v => v.vault === currentVault)
             if (!vaultExists) {
               setActiveVault(vaults[0].vault)
             }
@@ -96,7 +103,8 @@ function App() {
     return () => {
       isMounted = false
     }
-  }, [currentModule, isLoggedIn, handleVaultList, t, setModule, activeVault])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentModule, isLoggedIn, handleVaultList, t, setModule])
 
   useEffect(() => {
     if (isLoggedIn && currentModule === "config" && configLoaded && !isAdmin) {

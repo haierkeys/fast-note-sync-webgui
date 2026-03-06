@@ -2,7 +2,6 @@ import { Database, FileText, ArchiveX, Settings, DatabaseBackup, GitPullRequestA
 import { Fragment, useEffect, useRef, useState, useCallback } from "react";
 import { useAppStore, type ModuleId } from "@/stores/app-store";
 import { NavItem } from "@/components/navigation/NavItem";
-import { motion, AnimatePresence } from "motion/react";
 import { useTranslation } from "react-i18next";
 import { useMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
@@ -99,40 +98,21 @@ export function FloatingNav({ isAdmin, className }: FloatingNavProps) {
       className
     )}>
       {/* 垂直滚动提示箭头 (仅桌面端显示) */}
-      <AnimatePresence>
-        {!isMobile && showTopArrow && (
-          <motion.div
-            initial={{ opacity: 0, y: 5 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 5 }}
-            transition={{
-              y: { repeat: Infinity, duration: 1.5, ease: "easeInOut", repeatType: "reverse" }
-            }}
-            className="hidden md:flex absolute top-4 left-[25px] z-10 text-primary pointer-events-none w-[44px] justify-center"
-          >
-            <ChevronUp className="h-4 w-4" />
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {!isMobile && showTopArrow && (
+        <div className="hidden md:flex absolute top-4 left-[25px] z-10 text-primary pointer-events-none w-[44px] justify-center animate-bounce">
+          <ChevronUp className="h-4 w-4" />
+        </div>
+      )}
 
       {/* 水平滚动提示箭头 (仅移动端/窄屏显示) */}
-      <AnimatePresence>
-        {isMobile && showLeftArrow && (
-          <motion.div
-            initial={{ opacity: 0, x: 5 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 5 }}
-            transition={{
-              x: { repeat: Infinity, duration: 1.5, ease: "easeInOut", repeatType: "reverse" }
-            }}
-            className="flex md:hidden absolute left-[-4px] top-1/2 -translate-y-1/2 z-10 text-primary pointer-events-none"
-          >
-            <ChevronLeft className="h-5 w-5" />
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {isMobile && showLeftArrow && (
+        <div className="flex md:hidden absolute left-[-4px] top-1/2 -translate-y-1/2 z-10 text-primary pointer-events-none animate-bounce [animation-direction:alternate] [transform-origin:center]"
+          style={{ animationName: 'bounce', transform: 'translateY(-50%)' }}>
+          <ChevronLeft className="h-5 w-5" />
+        </div>
+      )}
 
-      <motion.nav
+      <nav
         ref={scrollRef}
         aria-label={t("ui.nav.mainNavigation")}
         className={cn(
@@ -144,23 +124,6 @@ export function FloatingNav({ isAdmin, className }: FloatingNavProps) {
           "bg-sidebar text-sidebar-foreground border border-sidebar-border rounded-lg",
           "custom-shadow backdrop-blur-sm relative"
         )}
-        initial={{ opacity: 0, scale: 0.9, x: 0 }}
-        animate={isMobile ? {
-          opacity: 1,
-          scale: 1,
-          x: [0, -30, 10, 0]
-        } : {
-          opacity: 1,
-          scale: 1,
-          x: 0
-        }}
-        transition={isMobile ? {
-          opacity: { duration: 0.3 },
-          scale: { duration: 0.3 },
-          x: { duration: 1.2, times: [0, 0.4, 0.7, 1], ease: "easeInOut" }
-        } : {
-          duration: 0.3
-        }}
       >
         {visibleItems.map((item) => (
           <Fragment key={item.id}>
@@ -195,39 +158,21 @@ export function FloatingNav({ isAdmin, className }: FloatingNavProps) {
             />
           </Fragment>
         )}
-      </motion.nav>
+      </nav>
 
-      <AnimatePresence>
-        {isMobile && showRightArrow && (
-          <motion.div
-            initial={{ opacity: 0, x: -5 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -5 }}
-            transition={{
-              x: { repeat: Infinity, duration: 1.5, ease: "easeInOut", repeatType: "reverse" }
-            }}
-            className="flex md:hidden absolute right-[-4px] top-1/2 -translate-y-1/2 z-10 text-primary pointer-events-none"
-          >
-            <ChevronRight className="h-5 w-5" />
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {isMobile && showRightArrow && (
+        <div
+          className="flex md:hidden absolute right-[-4px] top-1/2 -translate-y-1/2 z-10 text-primary pointer-events-none animate-bounce [animation-direction:alternate]"
+          style={{ transform: 'translateY(-50%)' }}>
+          <ChevronRight className="h-5 w-5" />
+        </div>
+      )}
 
-      <AnimatePresence>
-        {!isMobile && showBottomArrow && (
-          <motion.div
-            initial={{ opacity: 0, y: -5 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -5 }}
-            transition={{
-              y: { repeat: Infinity, duration: 1.5, ease: "easeInOut", repeatType: "reverse" }
-            }}
-            className="hidden md:flex absolute bottom-2 left-[25px] z-10 text-primary pointer-events-none w-[44px] justify-center"
-          >
-            <ChevronDown className="h-4 w-4" />
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {!isMobile && showBottomArrow && (
+        <div className="hidden md:flex absolute bottom-2 left-[25px] z-10 text-primary pointer-events-none w-[44px] justify-center animate-bounce">
+          <ChevronDown className="h-4 w-4" />
+        </div>
+      )}
     </div>
   )
 }
