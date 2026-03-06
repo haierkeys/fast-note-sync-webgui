@@ -1,15 +1,17 @@
-import { Settings, Plus, RefreshCw, Search, X, Pencil, Trash2, TextCursorInput, Clock, ChevronLeft, ChevronRight } from "lucide-react";
+import { ListTree, Plus, RefreshCw, Search, X, Pencil, Trash2, TextCursorInput, Clock, ChevronLeft, ChevronRight, FileCode, FileJson, FileType, FileText, Image as ImageIcon, FileBox } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useConfirmDialog } from "@/components/context/confirm-dialog-context";
 import { useSettingHandle } from "@/components/api-handle/setting-handle";
-import { useState, useEffect, useCallback } from "react";
-import { Textarea } from "@/components/ui/textarea";
+import { useState, useEffect, useCallback, useMemo } from "react";
+import { markdown } from "@codemirror/lang-markdown";
 import { Tooltip } from "@/components/ui/tooltip";
 import { SettingItem } from "@/lib/types/setting";
 import { Button } from "@/components/ui/button";
+import CodeMirror from "@uiw/react-codemirror";
 import { useTranslation } from "react-i18next";
 import { VaultType } from "@/lib/types/vault";
 import { Input } from "@/components/ui/input";
+import { EditorView } from "@codemirror/view";
 import { format } from "date-fns";
 
 
@@ -51,9 +53,57 @@ export function SettingList({ vault, vaults, onVaultChange }: SettingListProps) 
 
     const filteredSettings = settings;
 
+    const getLanguageExtension = (_path: string) => {
+        // 使用已有的 markdown 扩展，它对于 json/js 也提供不错的基础支持
+        return [markdown()];
+    };
+
     const onAdd = () => {
         let path = "";
         let content = "";
+
+        const EditorWrapper = ({ initialPath }: { initialPath: string }) => {
+            const [currentPath, setCurrentPath] = useState(initialPath);
+            const extensions = useMemo(() => getLanguageExtension(currentPath), [currentPath]);
+
+            return (
+                <div className="space-y-4 pt-2">
+                    <div className="space-y-2">
+                        <label className="text-sm font-medium">{t("ui.settingsBrowser.key")}</label>
+                        <Input
+                            autoFocus
+                            placeholder="e.g. system/config.json"
+                            onChange={(e) => {
+                                path = e.target.value;
+                                setCurrentPath(e.target.value);
+                            }}
+                        />
+                    </div>
+                    <div className="space-y-2">
+                        <label className="text-sm font-medium">{t("ui.settingsBrowser.value")}</label>
+                        <div className="border border-border rounded-xl overflow-hidden min-h-[300px] focus-within:ring-2 focus-within:ring-primary/20">
+                            <CodeMirror
+                                height="300px"
+                                theme="dark"
+                                extensions={[...extensions, EditorView.lineWrapping]}
+                                onChange={(value) => { content = value; }}
+                                basicSetup={{
+                                    lineNumbers: true,
+                                    foldGutter: true,
+                                    dropCursor: true,
+                                    allowMultipleSelections: true,
+                                    indentOnInput: true,
+                                    bracketMatching: true,
+                                    closeBrackets: true,
+                                    highlightActiveLine: true,
+                                }}
+                            />
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
         openConfirmDialog(
             t("ui.settingsBrowser.add"),
             "confirm",
@@ -61,30 +111,15 @@ export function SettingList({ vault, vaults, onVaultChange }: SettingListProps) 
                 if (!path) return;
                 handleSaveSetting(vault, { path, content }, fetchSettings);
             },
-            <div className="space-y-4 pt-2">
-                <div className="space-y-2">
-                    <label className="text-sm font-medium">{t("ui.settingsBrowser.key")}</label>
-                    <Input
-                        autoFocus
-                        placeholder="e.g. system/name"
-                        onChange={(e) => { path = e.target.value; }}
-                    />
-                </div>
-                <div className="space-y-2">
-                    <label className="text-sm font-medium">{t("ui.settingsBrowser.value")}</label>
-                    <Textarea
-                        placeholder="e.g. My System"
-                        className="min-h-[200px] font-mono text-base"
-                        onChange={(e) => { content = e.target.value; }}
-                    />
-                </div>
-            </div>,
+            <EditorWrapper initialPath="" />,
             "max-w-3xl"
         );
     };
 
     const onEdit = (item: SettingItem) => {
         let content = item.content;
+        const extensions = getLanguageExtension(item.path);
+
         openConfirmDialog(
             t("ui.settingsBrowser.edit") + ": " + item.path,
             "confirm",
@@ -93,12 +128,26 @@ export function SettingList({ vault, vaults, onVaultChange }: SettingListProps) 
             },
             <div className="space-y-2 pt-2">
                 <label className="text-sm font-medium">{t("ui.settingsBrowser.value")}</label>
-                <Textarea
-                    autoFocus
-                    defaultValue={item.content}
-                    className="min-h-[400px] font-mono text-base"
-                    onChange={(e) => { content = e.target.value; }}
-                />
+                <div className="border border-border rounded-xl overflow-hidden min-h-[450px] focus-within:ring-2 focus-within:ring-primary/20">
+                    <CodeMirror
+                        autoFocus
+                        value={item.content}
+                        height="450px"
+                        theme="dark"
+                        extensions={[...extensions, EditorView.lineWrapping]}
+                        onChange={(value) => { content = value; }}
+                        basicSetup={{
+                            lineNumbers: true,
+                            foldGutter: true,
+                            dropCursor: true,
+                            allowMultipleSelections: true,
+                            indentOnInput: true,
+                            bracketMatching: true,
+                            closeBrackets: true,
+                            highlightActiveLine: true,
+                        }}
+                    />
+                </div>
             </div>,
             "max-w-4xl"
         );
@@ -141,7 +190,7 @@ export function SettingList({ vault, vaults, onVaultChange }: SettingListProps) 
             {/* Header / Toolbar */}
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 py-0">
                 <div className="flex items-center gap-3">
-                    <Settings className="h-5 w-5 text-primary" />
+                    <ListTree className="h-5 w-5 text-primary" />
                     {vaults && onVaultChange && (
                         <Select value={vault} onValueChange={onVaultChange}>
                             <SelectTrigger className="w-auto min-w-45 rounded-xl">
@@ -215,47 +264,117 @@ export function SettingList({ vault, vaults, onVaultChange }: SettingListProps) 
             ) : (
                 <>
                     {/* Row Layout List */}
-                    <div className="flex flex-col border border-border rounded-xl bg-card overflow-hidden">
-                        {filteredSettings.map((item, index) => (
-                            <div
-                                key={item.pathHash || item.path}
-                                className={`group flex items-center justify-between px-3 py-2 transition-colors hover:bg-muted/50 ${
-                                    index !== filteredSettings.length - 1 ? "border-b border-border/50" : ""
-                                }`}
-                            >
-                                <div className="flex items-center gap-4 flex-1 min-w-0">
-                                    <div className="flex flex-col min-w-0">
-                                        <span className="font-bold text-sm text-primary break-all truncate" title={item.path}>
-                                            {item.path}
-                                        </span>
-                                        {(item.updatedAt || item.createdAt) && (
-                                            <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground mt-0">
-                                                <Clock className="h-3 w-3" />
-                                                {format(new Date(item.updatedAt || item.createdAt || ""), "yyyy-MM-dd HH:mm:ss")}
+                    <div className="flex flex-col border border-border/50 rounded-xl bg-card/50 backdrop-blur-sm overflow-hidden shadow-sm">
+                        {filteredSettings.map((item, index) => {
+                            const pathParts = item.path.split('/');
+                            const fileName = pathParts.pop() || "";
+                            const dirPath = pathParts.join('/');
+
+                            const getFileIcon = (name: string) => {
+                                const ext = name.split('.').pop()?.toLowerCase();
+                                switch (ext) {
+                                    case 'json':
+                                        return <FileJson className="h-4 w-4 text-orange-500/70" />;
+                                    case 'js':
+                                    case 'ts':
+                                    case 'jsx':
+                                    case 'tsx':
+                                        return <FileCode className="h-4 w-4 text-blue-500/70" />;
+                                    case 'css':
+                                    case 'scss':
+                                    case 'less':
+                                        return <FileType className="h-4 w-4 text-pink-500/70" />;
+                                    case 'md':
+                                    case 'txt':
+                                        return <FileText className="h-4 w-4 text-emerald-500/70" />;
+                                    case 'yml':
+                                    case 'yaml':
+                                        return <FileBox className="h-4 w-4 text-purple-500/70" />;
+                                    case 'png':
+                                    case 'jpg':
+                                    case 'jpeg':
+                                    case 'gif':
+                                    case 'svg':
+                                    case 'webp':
+                                        return <ImageIcon className="h-4 w-4 text-indigo-500/70" />;
+                                    default:
+                                        return <FileText className="h-4 w-4 text-primary/70" />;
+                                }
+                            };
+
+                            return (
+                                <div
+                                    key={item.pathHash || item.path}
+                                    className={`group flex items-center justify-between px-4 py-3 transition-all duration-200 hover:bg-muted/40 ${
+                                        index !== filteredSettings.length - 1 ? "border-b border-border/40" : ""
+                                    }`}
+                                >
+                                    <div className="flex items-center gap-4 flex-1 min-w-0">
+                                        <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-primary/5 flex items-center justify-center group-hover:bg-primary/10 transition-colors">
+                                            {getFileIcon(fileName)}
+                                        </div>
+                                        <div className="flex flex-col min-w-0">
+                                            <div className="flex flex-wrap items-center gap-x-1 text-sm">
+                                                {dirPath && (
+                                                    <span className="text-muted-foreground/85">
+                                                        {dirPath}/
+                                                    </span>
+                                                )}
+                                                <span className="font-semibold text-foreground break-all">
+                                                    {fileName}
+                                                </span>
                                             </div>
-                                        )}
+                                            {(item.updatedAt || item.createdAt) && (
+                                                <div className="flex items-center gap-2 text-[10px] text-muted-foreground/50 mt-1">
+                                                    <div className="flex items-center gap-1">
+                                                        <Clock className="h-3 w-3" />
+                                                        {format(new Date(item.updatedAt || item.createdAt || ""), "yyyy-MM-dd HH:mm")}
+                                                    </div>
+                                                    {item.content && (
+                                                        <div className="hidden md:flex items-center gap-1 ml-2 px-1.5 py-0.5 rounded bg-muted/30 text-[9px] uppercase tracking-wider">
+                                                           {item.content.length} chars
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    <div className="flex items-center gap-1.5 ml-4 shrink-0 opacity-0 group-hover:opacity-100 translate-x-2 group-hover:translate-x-0 transition-all duration-200">
+                                        <Tooltip content={t("ui.settingsBrowser.rename")} side="top">
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                className="h-8 w-8 rounded-lg hover:bg-primary/10 hover:text-primary transition-colors"
+                                                onClick={() => onRename(item)}
+                                            >
+                                                <TextCursorInput className="h-4 w-4" />
+                                            </Button>
+                                        </Tooltip>
+                                        <Tooltip content={t("ui.common.edit")} side="top">
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                className="h-8 w-8 rounded-lg hover:bg-primary/10 hover:text-primary transition-colors"
+                                                onClick={() => onEdit(item)}
+                                            >
+                                                <Pencil className="h-4 w-4" />
+                                            </Button>
+                                        </Tooltip>
+                                        <Tooltip content={t("ui.common.delete")} side="top">
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                className="h-8 w-8 rounded-lg text-destructive/70 hover:text-destructive hover:bg-destructive/10"
+                                                onClick={() => onDelete(item)}
+                                            >
+                                                <Trash2 className="h-4 w-4" />
+                                            </Button>
+                                        </Tooltip>
                                     </div>
                                 </div>
-
-                                <div className="flex items-center gap-1 ml-4 shrink-0 opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <Tooltip content={t("ui.settingsBrowser.rename")} side="top">
-                                        <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg" onClick={() => onRename(item)}>
-                                            <TextCursorInput className="h-4 w-4" />
-                                        </Button>
-                                    </Tooltip>
-                                    <Tooltip content={t("ui.common.edit")} side="top">
-                                        <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg" onClick={() => onEdit(item)}>
-                                            <Pencil className="h-4 w-4" />
-                                        </Button>
-                                    </Tooltip>
-                                    <Tooltip content={t("ui.common.delete")} side="top">
-                                        <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg text-destructive hover:text-destructive hover:bg-destructive/10" onClick={() => onDelete(item)}>
-                                            <Trash2 className="h-4 w-4" />
-                                        </Button>
-                                    </Tooltip>
-                                </div>
-                            </div>
-                        ))}
+                            );
+                        })}
                     </div>
 
                     {/* Pagination Controller */}

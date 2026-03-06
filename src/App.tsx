@@ -61,7 +61,7 @@ function App() {
   }, [isLoggedIn, handleUserInfo, logout])
 
   useEffect(() => {
-    if ((currentModule !== "notes" && currentModule !== "files" && currentModule !== "trash" && currentModule !== "settings-browser") || !isLoggedIn) return
+    if ((currentModule !== "notes" && currentModule !== "files" && currentModule !== "trash" && currentModule !== "settings") || !isLoggedIn) return
 
     let isMounted = true
     setVaultsLoaded(false)
@@ -99,7 +99,7 @@ function App() {
   }, [currentModule, isLoggedIn, handleVaultList, t, setModule, activeVault])
 
   useEffect(() => {
-    if (isLoggedIn && currentModule === "settings" && configLoaded && !isAdmin) {
+    if (isLoggedIn && currentModule === "config" && configLoaded && !isAdmin) {
       toast.warning(t("ui.settings.onlyAdminAccess"))
       setModule("vaults")
     }
@@ -297,7 +297,7 @@ function App() {
           />
         )
 
-      case "settings":
+      case "config":
         if (!configLoaded) {
           return (
             <div className="flex items-center justify-center h-64">
@@ -318,7 +318,7 @@ function App() {
       case "git":
         return <GitAutomation />
 
-      case "settings-browser":
+      case "settings":
         return (
           <SettingManager
             vault={activeVault || ""}

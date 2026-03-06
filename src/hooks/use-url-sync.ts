@@ -47,12 +47,13 @@ export function useUrlSync(
 
             if (params.has('dashboard')) module = 'dashboard';
             else if (params.has('vaults')) module = 'vaults';
-            else if (params.has('settings')) module = 'settings';
+            else if (params.has('config')) module = 'config';
             else if (params.has('notes')) module = 'notes';
             else if (params.has('files')) module = 'files';
             else if (params.has('trash')) module = 'trash';
             else if (params.has('sync')) module = 'sync';
             else if (params.has('git')) module = 'git';
+            else if (params.has('settings')) module = 'settings';
 
             // 更新 module
             if (currentModuleRef.current !== module || (module === 'trash' && type)) {

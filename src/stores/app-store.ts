@@ -13,7 +13,7 @@ import { create } from 'zustand';
  * - sync: 远端备份（计划中）
  * - git: Git 自动化（计划中）
  */
-export type ModuleId = 'dashboard' | 'vaults' | 'notes' | 'files' | 'trash' | 'settings' | 'sync' | 'git' | 'settings-browser';
+export type ModuleId = 'dashboard' | 'vaults' | 'notes' | 'files' | 'trash' | 'config' | 'sync' | 'git' | 'settings';
 
 /**
  * 应用状态接口
@@ -97,12 +97,22 @@ export const useAppStore = create<AppState>()(
         currentModule: state.currentModule,
         trashType: state.trashType
       }),
-      // 迁移逻辑：如果持久化的值是旧的默认值 'vaults'，则更新为新的默认值 'dashboard'
+      // 迁移逻辑：处理模块 ID 重命名及默认值迁移
       onRehydrateStorage: () => (state) => {
-        if (state && state.currentModule === 'vaults') {
-          // 检查是否是首次访问（没有手动选择过）
-          // 如果用户从未手动切换过模块，则迁移到新的默认值
+        if (!state) return;
+
+        // 1. 旧默认值迁移
+        if (state.currentModule === 'vaults' as any) {
           state.currentModule = 'dashboard';
+        }
+
+        // 2. 模块 ID 重命名迁移 (settings -> config, settings-browser -> settings)
+        // 注意：由于类型已变，这里需要强制转换来判断旧值
+        const oldModule = state.currentModule as string;
+        if (oldModule === 'settings') {
+          state.currentModule = 'config';
+        } else if (oldModule === 'settings-browser') {
+          state.currentModule = 'settings';
         }
       },
     }

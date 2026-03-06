@@ -34,10 +34,10 @@ export function TopBar({ onLogout, className }: TopBarProps) {
     vaults: t("ui.nav.menuVaults"),
     notes: t("ui.nav.menuNotes"),
     trash: t("ui.nav.menuTrash"),
-    settings: t("ui.nav.menuSettings"),
+    settings: t("ui.nav.menuSettingsBrowser"),
     sync: t("ui.nav.menuSync"),
     git: t("ui.nav.menuGit"),
-    "settings-browser": t("ui.nav.menuSettingsBrowser"),
+    config: t("ui.nav.menuSettings"),
     files: t("ui.nav.menuFiles"),
   }
 

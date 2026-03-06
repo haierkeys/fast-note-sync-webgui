@@ -1,4 +1,4 @@
-import { Database, FileText, ArchiveX, Settings, DatabaseBackup, GitPullRequestArrow, Paperclip, Layers, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, SlidersHorizontal } from "lucide-react";
+import { Database, FileText, ArchiveX, Settings, DatabaseBackup, GitPullRequestArrow, Paperclip, Layers, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, ListTree } from "lucide-react";
 import { Fragment, useEffect, useRef, useState, useCallback } from "react";
 import { useAppStore, type ModuleId } from "@/stores/app-store";
 import { NavItem } from "@/components/navigation/NavItem";
@@ -83,9 +83,9 @@ export function FloatingNav({ isAdmin, className }: FloatingNavProps) {
       { id: "notes", icon: FileText, labelKey: "ui.nav.menuNotes" },
       { id: "files", icon: Paperclip, labelKey: "ui.nav.menuFiles" },
       { id: "trash", icon: ArchiveX, labelKey: "ui.nav.menuTrash" },
+      { id: "settings", icon: ListTree, labelKey: "ui.nav.menuSettingsBrowser" },
       { id: "sync", icon: DatabaseBackup, labelKey: "ui.nav.menuSync" },
       { id: "git", icon: GitPullRequestArrow, labelKey: "ui.nav.menuGit" },
-      { id: "settings-browser", icon: SlidersHorizontal, labelKey: "ui.nav.menuSettingsBrowser" },
     ]
 
   const visibleItems = navItems.filter(item => !item.adminOnly || isAdmin)
@@ -170,7 +170,7 @@ export function FloatingNav({ isAdmin, className }: FloatingNavProps) {
               isActive={currentModule === item.id}
               onClick={() => setModule(item.id)}
               tooltipSide="right"
-              showDot={item.id === 'settings' && !!versionInfo?.versionIsNew}
+              showDot={item.id === 'config' && !!versionInfo?.versionIsNew}
             />
             {/* 在看板和笔记仓库之间添加分隔线（仅桌面端） */}
             {item.id === 'dashboard' && (
@@ -185,11 +185,11 @@ export function FloatingNav({ isAdmin, className }: FloatingNavProps) {
             {/* 在设置上方添加分隔线（仅桌面端） */}
             <div className="hidden md:block w-8 h-px bg-border/50 my-1 flex-shrink-0" />
             <NavItem
-              key="settings"
+              key="config"
               icon={Settings}
               label={t("ui.nav.menuSettings")}
-              isActive={currentModule === 'settings'}
-              onClick={() => setModule('settings')}
+              isActive={currentModule === 'config'}
+              onClick={() => setModule('config')}
               tooltipSide="right"
               showDot={!!versionInfo?.versionIsNew}
             />
