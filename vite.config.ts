@@ -8,11 +8,11 @@ export default defineConfig({
   plugins: [
     react(),
     compression({
-      algorithm: 'gzip',
+      algorithms: ['gzip'],
       exclude: [/\.(br)$/, /\.(gz)$/],
     }),
     compression({
-      algorithm: 'brotliCompress',
+      algorithms: ['brotliCompress'],
       exclude: [/\.(br)$/, /\.(gz)$/],
     }),
   ],
@@ -20,6 +20,15 @@ export default defineConfig({
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
+  },
+  server: {
+    // 处理开发环境下的路径重写，使 /share.html/id/token 能够加载 share.html
+    proxy: {
+       '^/share.html/.*': {
+          target: 'http://localhost:5173',
+          rewrite: () => '/share.html',
+       }
+    }
   },
   build: {
     minify: 'terser', // 使用 Terser 压缩

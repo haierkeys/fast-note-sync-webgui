@@ -58,6 +58,7 @@ interface MarkdownEditorProps {
     ariaLabel?: string;
     onWikiLinkClick?: (target: string) => void;
     fullWidth?: boolean;
+    autoHeight?: boolean;
 }
 
 type AttachmentType = "image" | "video" | "audio" | "file";
@@ -570,6 +571,7 @@ export const MarkdownEditor = forwardRef<MarkdownEditorRef, MarkdownEditorProps>
             ariaLabel,
             onWikiLinkClick,
             fullWidth = false,
+            autoHeight = false,
         },
         ref
     ) => {
@@ -716,7 +718,7 @@ export const MarkdownEditor = forwardRef<MarkdownEditorRef, MarkdownEditorProps>
 
         if (mode === "preview") {
             return (
-                <div className={cn("markdown-preview h-full overflow-y-auto", highlightClass)} onClick={handlePreviewClick}>
+                <div className={cn("markdown-preview", !autoHeight && "h-full overflow-y-auto", highlightClass)} onClick={handlePreviewClick}>
                     <article className={cn("mx-auto px-5 py-10 transition-all duration-300", fullWidth ? "max-w-none" : "max-w-[900px]")}>
                         <MarkdownRenderer content={previewMarkdown} />
                     </article>

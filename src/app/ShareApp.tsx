@@ -48,15 +48,26 @@ export function ShareApp() {
     }, []);
 
     const fetchNote = useCallback(() => {
+        const pathname = window.location.pathname;
         const search = window.location.search.substring(1); // Remove leading '?'
         let id: string | null = null;
         let token: string | null = null;
 
-        if (search.includes('/')) {
+        // 优先从路径段解析: /share.html/id/token 或 /share/id/token
+        const pathParts = pathname.split('/').filter(Boolean);
+        // 查找 share.html 或 share 在路径中的位置
+        const shareIdx = pathParts.findIndex(p => p.toLowerCase().includes('share.html') || p.toLowerCase() === 'share');
+        
+        if (shareIdx !== -1 && pathParts.length >= shareIdx + 3) {
+            id = pathParts[shareIdx + 1];
+            token = pathParts[shareIdx + 2];
+        } else if (search.includes('/')) {
+            // 兼容旧模式: ?id/token
             const parts = search.split('/');
             id = parts[0];
             token = parts[1];
         } else {
+            // 兼容标准查询参数: ?id=xx&token=yy
             const params = new URLSearchParams(window.location.search);
             id = params.get("id");
             token = params.get("Share-Token") || params.get("token");
@@ -206,7 +217,8 @@ export function ShareApp() {
                                                 <DropdownMenuRadioGroup 
                                                     value={colorScheme}
                                                     onValueChange={(value) => {
-                                                        useShareSettingsStore.getState().setColorScheme(value as any);
+                                                        const store = useShareSettingsStore.getState();
+                                                        store.setColorScheme(value as any); // fallback to any or use import { ColorScheme }
                                                         const scheme = COLOR_SCHEMES.find(s => s.value === value);
                                                         if (scheme) toast.success(t("ui.settings.colorSchemeSwitched", { scheme: t(scheme.label) }));
                                                     }}
@@ -243,7 +255,7 @@ export function ShareApp() {
 
                 {/* 内容区域 */}
                 <main className="flex-1 overflow-visible p-4 sm:p-6 lg:p-8">
-                    <div className={cn("mx-auto h-full rounded-2xl border bg-card shadow-sm overflow-hidden transition-all duration-300", isFullWidth ? "max-w-none" : "max-w-5xl")}>
+                    <div className={cn("mx-auto rounded-2xl border bg-card shadow-sm transition-all duration-300", isFullWidth ? "max-w-none" : "max-w-5xl")}>
                         <MarkdownEditor
                             value={note.content}
                             readOnly={true}
@@ -251,6 +263,7 @@ export function ShareApp() {
                             vault="" // Shared note doesn't need vault context for simple display
                             fileLinks={note.fileLinks}
                             fullWidth={isFullWidth}
+                            autoHeight={true}
                         />
                     </div>
                 </main>
