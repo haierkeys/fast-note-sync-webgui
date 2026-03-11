@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useNoteHandle } from "@/components/api-handle/note-handle";
 import { NoteDetail } from "@/lib/types/note";
 import { useTranslation } from "react-i18next";
-import { Loader2, Share2, Calendar, FileText, Sun, Moon, RefreshCw, MoveHorizontal, SunMoon, MoreVertical } from "lucide-react";
+import { Loader2, Share2, Calendar, FileText, Sun, Moon, RefreshCw, MoveHorizontal, SunMoon, MoreVertical, Languages, Palette } from "lucide-react";
 import { format } from "date-fns";
 import { LanguageSwitcher } from "@/components/layout/language-switcher";
 import { ColorSchemeSwitcher } from "@/components/layout/ColorSchemeSwitcher";
@@ -295,7 +295,7 @@ export function ShareApp() {
                                         
                                         <DropdownMenuSub>
                                             <DropdownMenuSubTrigger className="rounded-lg cursor-pointer">
-                                                <SunMoon className="mr-2 h-4 w-4" />
+                                                <Palette className="mr-2 h-4 w-4" />
                                                 {t("ui.settings.colorScheme")}
                                             </DropdownMenuSubTrigger>
                                             <DropdownMenuSubContent className="rounded-xl w-48">
@@ -303,7 +303,7 @@ export function ShareApp() {
                                                     value={colorScheme}
                                                     onValueChange={(value) => {
                                                         const store = useShareSettingsStore.getState();
-                                                        store.setColorScheme(value as any); // fallback to any or use import { ColorScheme }
+                                                         store.setColorScheme(value as ColorScheme);
                                                         const scheme = COLOR_SCHEMES.find(s => s.value === value);
                                                         if (scheme) toast.success(t("ui.settings.colorSchemeSwitched", { scheme: t(scheme.label) }));
                                                     }}
@@ -320,7 +320,7 @@ export function ShareApp() {
 
                                         <DropdownMenuSub>
                                             <DropdownMenuSubTrigger className="rounded-lg cursor-pointer">
-                                                <Loader2 className="mr-2 h-4 w-4" /> {/* Use as fallback for language icon */}
+                                                <Languages className="mr-2 h-4 w-4" />
                                                 {t("ui.common.switchLanguage")}
                                             </DropdownMenuSubTrigger>
                                             <DropdownMenuSubContent className="rounded-xl">
