@@ -11,11 +11,14 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Tooltip } from "@/components/ui/tooltip";
 import { AnimatedBackground } from "@/components/user/animated-background";
-import { useShareSettingsStore, COLOR_SCHEMES } from "@/lib/stores/settings-store";
+import { useShareSettingsStore, COLOR_SCHEMES, ColorScheme } from "@/lib/stores/settings-store";
 import { MarkdownEditor } from "@/components/note/markdown-editor";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSub, DropdownMenuSubTrigger, DropdownMenuSubContent, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
-import { changeLang } from "@/i18n/utils";
+import { changeLang, getBrowserLang } from "@/i18n/utils";
 import { toast } from "@/components/common/Toast";
+import env from "@/env.ts";
+import { addCacheBuster } from "@/lib/utils/cache-buster";
+import { handleFontsUpdate } from "@/lib/utils/font-loader";
 
 export function ShareApp() {
     const { t } = useTranslation();
@@ -45,6 +48,32 @@ export function ShareApp() {
         if (shareLang) {
             import("@/i18n/utils").then(u => u.changeLang(shareLang, "share-lang"));
         }
+
+        // 分享页面字体同步加载
+        let isMounted = true;
+        const fetchConfig = async () => {
+            try {
+                const apiUrl = env.API_URL.endsWith("/") ? env.API_URL.slice(0, -1) : env.API_URL;
+                const response = await fetch(addCacheBuster(`${apiUrl}/api/webgui/config`), {
+                    headers: {
+                        "Lang": getBrowserLang()
+                    }
+                });
+                if (response.ok && isMounted) {
+                    const res = await response.json();
+                    if (res.code > 0 && res.data) {
+                        handleFontsUpdate(res.data.fontSet || res.data.FontSet || "");
+                    }
+                }
+            } catch (error: unknown) {
+                console.error("Failed to fetch font config:", error);
+            }
+        };
+        fetchConfig();
+
+        return () => {
+            isMounted = false;
+        };
     }, []);
 
     const fetchNote = useCallback(() => {
@@ -74,7 +103,7 @@ export function ShareApp() {
         }
 
         if (!id || !token) {
-            setError(t("ui.share.invalidLink", { defaultValue: "Invalid share link. Missing ID or Token." }));
+            setError(t("ui.share.invalidLink"));
             setLoading(false);
             return;
         }
@@ -91,12 +120,64 @@ export function ShareApp() {
         fetchNote();
     }, [fetchNote]);
 
+    // 动态更新页面标题
+    useEffect(() => {
+        if (note) {
+            const title = note.path.split('/').pop()?.replace('.md', '') || 'Note';
+            document.title = `${title} - Fast Note Sync`;
+        }
+    }, [note]);
+
+    // 图标动态自适应系统主题
+    useEffect(() => {
+        const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+        
+        const updateFavicon = (isDark: boolean) => {
+            const iconPath = isDark ? '/static/images/icon.svg' : '/static/images/icon-black.svg';
+            const selectors = [
+                "link[rel='icon']",
+                "link[rel='shortcut icon']",
+                "link[rel='apple-touch-icon']",
+                "link[rel='apple-touch-icon-precomposed']"
+            ];
+
+            selectors.forEach(selector => {
+                const links = document.querySelectorAll(selector);
+                links.forEach(link => {
+                    const newLink = link.cloneNode(true) as HTMLLinkElement;
+                    newLink.href = iconPath;
+                    link.parentNode?.replaceChild(newLink, link);
+                });
+            });
+        };
+
+        // 初始设置
+        updateFavicon(darkModeMediaQuery.matches);
+
+        // 监听系统主题切换
+        const handleChange = (e: MediaQueryListEvent) => updateFavicon(e.matches);
+        
+        try {
+            darkModeMediaQuery.addEventListener('change', handleChange);
+        } catch (_e) {
+            darkModeMediaQuery.addListener(handleChange);
+        }
+
+        return () => {
+            try {
+                darkModeMediaQuery.removeEventListener('change', handleChange);
+            } catch (_e) {
+                darkModeMediaQuery.removeListener(handleChange);
+            }
+        };
+    }, []);
+
     if (loading) {
         return (
             <div className="flex h-screen w-screen items-center justify-center bg-background">
                 <div className="flex flex-col items-center gap-4">
                     <Loader2 className="h-10 w-10 animate-spin text-primary" />
-                    <p className="text-muted-foreground animate-pulse">{t("ui.common.loading", { defaultValue: "Loading..." })}</p>
+                    <p className="text-muted-foreground animate-pulse">{t("ui.common.loading")}</p>
                 </div>
             </div>
         );
@@ -109,8 +190,8 @@ export function ShareApp() {
                     <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-destructive/10">
                         <Share2 className="h-8 w-8 text-destructive" />
                     </div>
-                    <h1 className="mb-2 text-2xl font-bold">{t("ui.share.errorTitle", { defaultValue: "Share Error" })}</h1>
-                    <p className="text-muted-foreground">{error || t("ui.share.noteNotFound", { defaultValue: "The shared note could not be found." })}</p>
+                    <h1 className="mb-2 text-2xl font-bold">{t("ui.share.errorTitle")}</h1>
+                    <p className="text-muted-foreground">{error || t("ui.share.noteNotFound")}</p>
                 </div>
             </div>
         );
@@ -139,7 +220,7 @@ export function ShareApp() {
                                         {format(new Date(note.mtime), "yyyy-MM-dd HH:mm")}
                                     </span>
                                     <span className="hidden sm:inline-flex items-center gap-1">
-                                        v{note.version}
+                                        {t("ui.share.version")} v{note.version}
                                     </span>
                                 </div>
                             </div>
@@ -147,7 +228,7 @@ export function ShareApp() {
                         <div className="flex items-center gap-1 sm:gap-2">
                             {/* Desktop only buttons */}
                             <div className="hidden sm:flex items-center gap-1 sm:gap-2">
-                                <Tooltip content={isFullWidth ? t("ui.common.narrowMode", { defaultValue: "Normal Width" }) : t("ui.common.wideMode", { defaultValue: "Wide Mode" })}>
+                                <Tooltip content={isFullWidth ? t("ui.common.narrowMode") : t("ui.common.wideMode")}>
                                     <Button
                                         variant="ghost"
                                         size="icon"
@@ -158,7 +239,7 @@ export function ShareApp() {
                                     </Button>
                                 </Tooltip>
 
-                                <Tooltip content={t("ui.common.refresh", { defaultValue: "Refresh" })}>
+                                <Tooltip content={t("ui.common.refresh")}>
                                     <Button
                                         variant="ghost"
                                         size="icon"
@@ -170,8 +251,12 @@ export function ShareApp() {
                                     </Button>
                                 </Tooltip>
 
-                                <ColorSchemeSwitcher className="rounded-xl" isShare={true} />
-                                <LanguageSwitcher className="size-9 rounded-xl" storageKey="share-lang" />
+                                <Tooltip content={t("ui.settings.colorScheme")}>
+                                    <div><ColorSchemeSwitcher className="rounded-xl" isShare={true} /></div>
+                                </Tooltip>
+                                <Tooltip content={t("ui.common.switchLanguage")}>
+                                    <div><LanguageSwitcher className="size-9 rounded-xl" storageKey="share-lang" /></div>
+                                </Tooltip>
                             </div>
 
                             {/* Theme toggle - Always visible as it's common */}
@@ -203,7 +288,7 @@ export function ShareApp() {
                                     <DropdownMenuContent align="end" className="w-48 rounded-xl">
                                         <DropdownMenuItem onClick={fetchNote} className="rounded-lg cursor-pointer">
                                             <RefreshCw className={cn("mr-2 h-4 w-4", loading && "animate-spin")} />
-                                            {t("ui.common.refresh", { defaultValue: "Refresh" })}
+                                            {t("ui.common.refresh")}
                                         </DropdownMenuItem>
                                         
                                         <DropdownMenuSeparator />
@@ -271,11 +356,12 @@ export function ShareApp() {
                 {/* 页脚 */}
                 <footer className="border-t bg-muted/30 py-6 px-4 text-center">
                     <div className="mx-auto max-w-5xl">
-                        <p className="text-sm text-muted-foreground flex items-center justify-center gap-2">
-                            <span>Powered by</span>
-                            <a href="https://github.com/haierkeys/fast-note-sync-service" target="_blank" rel="noreferrer" className="font-semibold text-primary hover:underline">
+                        <p className="text-sm text-muted-foreground flex items-center justify-center">
+                            <span>{t("ui.share.poweredByPrefix")}</span>
+                            <a href="https://github.com/haierkeys/fast-note-sync-service" target="_blank" rel="noreferrer" className="font-semibold text-primary hover:underline mx-1">
                                 Fast Note Sync
                             </a>
+                            <span>{t("ui.share.poweredBySuffix")}</span>
                         </p>
                     </div>
                 </footer>

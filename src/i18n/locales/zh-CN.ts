@@ -58,6 +58,8 @@ export default {
     "ui.common.count": "个",
     "ui.common.selectVault": "选择笔记库",
     "ui.common.sourceCode": "源代码",
+    "ui.common.wideMode": "宽屏模式",
+    "ui.common.narrowMode": "正常宽度",
 
 
     // --- ui.auth ---
@@ -625,4 +627,12 @@ export default {
     "ui.support.sort": "排序",
     "ui.support.buyMeACoffee": "请作者喝杯咖啡",
     "ui.support.wechatReward": "微信打赏支持",
+
+    // --- ui.share ---
+    "ui.share.invalidLink": "无效的分享链接。缺少 ID 或 Token。",
+    "ui.share.errorTitle": "分享错误",
+    "ui.share.noteNotFound": "找不到分享的笔记。",
+    "ui.share.poweredByPrefix": "由 ",
+    "ui.share.poweredBySuffix": " 提供支持",
+    "ui.share.version": "版本",
 };

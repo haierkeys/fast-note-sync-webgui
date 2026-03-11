@@ -1,7 +1,7 @@
 export default {
     // --- ui.common ---
     "ui.common.title": "Fast Note Sync",
-    "ui.common.subtitle": "高性能、低遅延なノート同期、管理、REST サービス",
+    "ui.common.subtitle": "高性能・低遅延なノート同期、管理、REST サービス",
     "ui.common.footerTitle": "Golang + Websocket + Sqlite + React で構築\nご利用には <a href='https://github.com/haierkeys/obsidian-fast-note-sync' target='_blank'>Obsidian Fast Note Sync Plugin</a> が必要です",
     "ui.common.loading": "読み込み中...",
     "ui.common.downloading": "ダウンロード中...",
@@ -55,6 +55,11 @@ export default {
     "ui.common.noSearchResults": "一致する結果が見つかりませんでした",
     "ui.common.selectAll": "すべて選択",
     "ui.common.items": "件",
+    "ui.common.count": "個",
+    "ui.common.selectVault": "保管庫を選択",
+    "ui.common.sourceCode": "ソースコード",
+    "ui.common.wideMode": "ワイドモード",
+    "ui.common.narrowMode": "通常幅",
 
 
     // --- ui.auth ---
@@ -89,6 +94,8 @@ export default {
     "ui.auth.submitting": "送信中...",
     "ui.auth.unknownUser": "不明なユーザー",
     "ui.auth.userUid": "ユーザー UID: {{uid}}",
+    "ui.auth.loginRequestFailed": "ログインリクエストに失敗しました。ネットワークを確認してください",
+    "ui.auth.registerRequestFailed": "登録に失敗しました。もう一度お試しください",
 
     // --- ui.nav ---
     "ui.nav.navigation": "ナビゲーション",
@@ -100,6 +107,8 @@ export default {
     "ui.nav.menuSettings": "システム設定",
     "ui.nav.menuGit": "Git オートメーション",
     "ui.nav.menuFiles": "添付ファイル管理",
+    "ui.nav.menuSettingsBrowser": "設定ブラウザ",
+    "ui.nav.mainNavigation": "メインナビゲーション",
 
     // --- ui.vault ---
     "ui.vault.vault": "保管庫",
@@ -141,10 +150,13 @@ export default {
     "ui.note.results": "件のノート",
     "ui.note.saving": "保存中...",
     "ui.note.lastSavedAt": "最終保存",
+    "ui.note.renameNote": "ノートの名前変更",
+    "ui.note.renameNotePlaceholder": "新しいノート名を入力してください (例: new-note.md)",
+    "ui.note.renameSuccess": "ノートの名前を変更しました",
     "ui.note.deleteNoteConfirm": "ノート \"{{title}}\" を削除してもよろしいですか？",
     "ui.note.permanentDeleteConfirm": "ノート \"{{title}}\" を永久に削除してもよろしいですか？この操作は取り消せません！",
-    "ui.note.clearRecycleConfirm": "ノートのゴミ箱を空にしてもよろしいですか？この操作は取り消せません！",
     "ui.note.restoreNoteConfirm": "ノート \"{{title}}\" を復元してもよろしいですか？",
+    "ui.note.clearRecycleConfirm": "ノートのゴミ箱を空にしてもよろしいですか？この操作は取り消せません！",
     "ui.note.noVaultsForNotes": "保管庫がまだありません",
     "ui.note.searchPath": "パス",
     "ui.note.searchContentMode": "内容",
@@ -169,6 +181,8 @@ export default {
     "ui.note.fullscreen": "全画面表示",
     "ui.note.exitFullscreen": "全画面表示終了",
     "ui.note.contextMenu": "コンテキストメニュー",
+    "ui.note.loadingEditor": "エディタを読み込み中...",
+    "ui.note.unsavedContentWithoutTitle": "タイトルが空のため、内容は保存されていません。",
     "ui.note.wikiLinkNotFound": "ノート \"{{target}}\" が見つかりません",
 
     // --- ui.history ---
@@ -207,6 +221,9 @@ export default {
     "ui.file.results": "件の添付ファイル",
     "ui.file.searchPlaceholder": "添付ファイルを検索...",
     "ui.file.totalSize": "合計 {{size}}",
+    "ui.file.renameFile": "添付ファイルの名前変更",
+    "ui.file.renameFilePlaceholder": "新しい添付ファイル名を入力してください",
+    "ui.file.renameSuccess": "添付ファイルの名前を変更しました",
     "ui.file.size": "使用容量",
     "ui.file.fileDetail": "添付ファイル詳細",
     "ui.file.imagePreview": "画像プレビュー",
@@ -225,10 +242,10 @@ export default {
     "ui.file.noVaultsForFiles": "保管庫がまだありません",
 
     // --- ui.settings ---
-    "ui.settings.securityConfig": "Security Settings",
-    "ui.settings.noteRelatedConfig": "Note Settings",
+    "ui.settings.systemConfig": "共有設定",
+    "ui.settings.securityConfig": "セキュリティ設定",
+    "ui.settings.noteRelatedConfig": "ノート設定",
     "ui.settings.fontConfig": "一般設定",
-    "ui.settings.systemConfig": "システム設定",
     "ui.settings.saveSettings": "設定を保存",
     "ui.settings.saveSuccess": "設定を保存しました",
     "ui.settings.saveFailed": "設定の保存に失敗しました",
@@ -298,6 +315,19 @@ export default {
     "ui.settings.pullSource.github": "github.com",
     "ui.settings.pullSource.cnb": "Tencent cnb.tool",
 
+    // --- ui.settings-browser ---
+    "ui.settingsBrowser.title": "設定ブラウザ",
+    "ui.settingsBrowser.add": "設定を追加",
+    "ui.settingsBrowser.edit": "設定を編集",
+    "ui.settingsBrowser.key": "設定キー (Key)",
+    "ui.settingsBrowser.value": "設定値 (Value)",
+    "ui.settingsBrowser.keyRequired": "キー名は必須です",
+    "ui.settingsBrowser.confirmDelete": "設定項目 \"{{key}}\" を削除してもよろしいですか？",
+    "ui.settingsBrowser.rename": "キーの名前変更",
+    "ui.settingsBrowser.newKey": "新しいキー名",
+    "ui.settingsBrowser.renameSuccess": "設定項目の名前を変更しました",
+    "ui.settingsBrowser.noSettings": "設定項目がありません",
+
     // --- ui.obsidian ---
     "ui.obsidian.authTokenConfig": "認証設定",
     "ui.obsidian.authTokenConfigTo": "Obsidian にワンクリック認証",
@@ -306,11 +336,6 @@ export default {
     "ui.obsidian.copyConfigError": "HTTPS 以外のページではクリップボード機能を使用できません。認証設定を手動でコピーしてください",
 
     // --- ui.system ---
-    "ui.system.restartService": "Restart Service",
-    "ui.system.restartServiceConfirm": "Are you sure you want to restart the service now? Connection will be lost during restart.",
-    "ui.system.manualGC": "Memory GC",
-    "ui.system.manualGCConfirm": "Are you sure you want to trigger manual garbage collection (GC) now?",
-    "ui.system.manualGCSuccess": "Manual garbage collection (GC) triggered successfully",
     "ui.system.serviceInfo": "サービス情報",
     "ui.system.versionInfo": "バージョン情報",
     "ui.system.repo": "プロジェクトリポジトリ",
@@ -331,11 +356,16 @@ export default {
     "ui.system.viewChangelog": "変更履歴を表示",
     "ui.system.getVersionError": "バージョン情報の取得に失敗しました",
     "ui.system.getWebGuiConfigError": "WebGui 設定の取得に失敗しました:",
+    "ui.system.restartService": "サービスを再起動",
+    "ui.system.restartServiceConfirm": "今すぐサービスを再起動してもよろしいですか？再起動中は接続が切断されます。",
+    "ui.system.manualGC": "メモリ回収 (GC)",
+    "ui.system.manualGCConfirm": "今すぐ手動でメモリ回収 (GC) を実行してもよろしいですか？",
+    "ui.system.manualGCSuccess": "手動でのメモリ回収 (GC) を実行しました",
     "ui.system.serverSystemInfo": "サーバー情報",
-    "ui.system.modelName": "CPU モデル",
-    "ui.system.hostInfo": "ホスト情報",
+    "ui.system.modelName": "プロセッサモデル",
+    "ui.system.hostInfo": "システム情報",
     "ui.system.systemTime": "システム時刻",
-    "ui.system.runtimeInfo": "サービス詳細",
+    "ui.system.runtimeInfo": "サービス情報",
     "ui.system.startTime": "起動時刻",
     "ui.system.serviceUptime": "稼働時間",
     "ui.system.physicalCores": "コア (論理/物理)",
@@ -343,7 +373,7 @@ export default {
     "ui.system.totalMemory": "総メモリ",
     "ui.system.usedMemory": "使用メモリ",
     "ui.system.memoryUsage": "メモリ使用率",
-    "ui.system.os": "オペレーティングシステム",
+    "ui.system.os": "OS",
     "ui.system.kernelVersion": "カーネルバージョン",
     "ui.system.uptime": "稼働時間",
     "ui.system.goVersion": "ランタイムバージョン",
@@ -352,6 +382,14 @@ export default {
     "ui.system.numGc": "GC 回数",
     "ui.system.createdAt": "作成日時",
     "ui.system.updatedAt": "更新日時",
+    "ui.system.websocketClients": "オンラインクライアント",
+    "ui.system.wsNickname": "ニックネーム",
+    "ui.system.wsClientName": "クライアント",
+    "ui.system.wsClientType": "タイプ",
+    "ui.system.wsRemoteAddr": "アドレス",
+    "ui.system.wsStartTime": "接続時刻",
+    "ui.system.wsTraceId": "トレース ID",
+    "ui.system.wsNoClients": "オンラインクライアントなし",
 
     // --- ui.storage ---
     "ui.storage.management": "ストレージ設定",
@@ -383,8 +421,8 @@ export default {
     "ui.storage.placeholder.region": "us-east-1",
     "ui.storage.placeholder.accountId": "your-account-id",
     "ui.storage.placeholder.bucketName": "my-bucket",
-    "ui.storage.placeholder.accessKeyId": "AKIAIOSFODNN7EXAMPLE",
-    "ui.storage.placeholder.accessKeySecret": "wJalrXUtnFEMI/K7MDENG/bPxRfi...",
+    "ui.storage.placeholder.accessKeyId": "",
+    "ui.storage.placeholder.accessKeySecret": "",
     "ui.storage.placeholder.webdavUrl": "http://192.168.1.100:5244/dav",
     "ui.storage.placeholder.webdavUser": "admin",
     "ui.storage.placeholder.webdavPassword": "",
@@ -515,10 +553,6 @@ export default {
     "ui.validation.vault.nameRequired": "保管庫名は必須です",
 
     // --- api.handle ---
-    "api.system.restart.success": "Service restart triggered",
-    "api.system.restart.error": "Failed to request service restart",
-    "api.system.gc.success": "Memory GC triggered",
-    "api.system.gc.error": "Failed to request memory GC",
     "api.git.list.error": "Git 設定リストの取得に失敗しました",
     "api.git.save.success": "設定を保存しました",
     "api.git.save.error": "設定の保存に失敗しました",
@@ -539,6 +573,10 @@ export default {
     "api.backup.execute.success": "手動実行をトリガーしました",
     "api.backup.execute.error": "バックアップの実行に失敗しました",
     "api.backup.history.error": "バックアップ履歴の取得に失敗しました",
+    "api.system.restart.success": "サービス再起動がトリガーされました",
+    "api.system.restart.error": "サービス再起動リクエストに失敗しました",
+    "api.system.gc.success": "メモリ回収 (GC) がトリガーされました",
+    "api.system.gc.error": "メモリ回収リクエストに失敗しました",
     "api.storage.list.error": "ストレージ設定リストの取得に失败しました",
     "api.storage.delete.success": "削除しました",
     "api.storage.delete.error": "ストレージ設定の削除に失敗しました",
@@ -589,4 +627,12 @@ export default {
     "ui.support.sort": "並べ替え",
     "ui.support.buyMeACoffee": "コーヒーを奢る",
     "ui.support.wechatReward": "WeChat で支援",
+
+    // --- ui.share ---
+    "ui.share.invalidLink": "無効な共有リンクです。ID またはトークンが不足しています。",
+    "ui.share.errorTitle": "共有エラー",
+    "ui.share.noteNotFound": "共有されたノートが見つかりませんでした。",
+    "ui.share.poweredByPrefix": "提供: ",
+    "ui.share.poweredBySuffix": "",
+    "ui.share.version": "バージョン",
 };
