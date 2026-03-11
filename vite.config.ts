@@ -30,6 +30,10 @@ export default defineConfig({
     },
     chunkSizeWarningLimit: 1500, // 降低警告阈值到 1MB
     rollupOptions: {
+      input: {
+        main: path.resolve(__dirname, 'index.html'),
+        share: path.resolve(__dirname, 'share.html'),
+      },
       output: {
         // 深度拆分供应商库
         manualChunks(id) {

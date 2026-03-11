@@ -17,22 +17,47 @@ type AnimationSource = IPlayerProps["src"];
 export const AnimatedBackground = memo(() => {
     const { resolvedTheme } = useTheme();
     const [animationData, setAnimationData] = useState<AnimationSource>(defaultDark);
+    const [isPaused, setIsPaused] = useState(false);
 
     useEffect(() => {
         setAnimationData(resolvedTheme === 'dark' ? defaultDark : defaultLight);
     }, [resolvedTheme]);
 
+    useEffect(() => {
+        const handleVisibilityChange = () => {
+            setIsPaused(document.hidden);
+        };
+
+        const handleResize = () => {
+            // Stop animation on small screens (mobile) to save resources
+            setIsPaused(window.innerWidth < 1920 || document.hidden);
+        };
+
+        // Initial check
+        handleResize();
+
+        document.addEventListener("visibilitychange", handleVisibilityChange);
+        window.addEventListener("resize", handleResize);
+
+        return () => {
+            document.removeEventListener("visibilitychange", handleVisibilityChange);
+            window.removeEventListener("resize", handleResize);
+        };
+    }, []);
+
     return (
         <div className={`fixed inset-0 w-full h-full z-0 pointer-events-none transition-colors duration-500 overflow-hidden select-none ${resolvedTheme === 'dark' ? 'bg-black' : 'bg-white'}`}>
             {/* Lottie Animation */}
-            <div className="absolute inset-0 w-full h-full opacity-100 flex items-center justify-center overflow-hidden">
-                <Player
-                    autoplay
-                    loop
-                    src={animationData}
-                    rendererSettings={{ preserveAspectRatio: 'xMidYMid slice' }}
-                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                />
+            <div className="absolute inset-0 w-full h-full opacity-100 flex items-center justify-center overflow-hidden scale-200 sm:scale-175">
+                {!isPaused && (
+                    <Player
+                        autoplay
+                        loop
+                        src={animationData}
+                        rendererSettings={{ preserveAspectRatio: 'xMidYMid slice' }}
+                        style={{ width: '100%', height: '100%' }}
+                    />
+                )}
             </div>
 
             {/* Grid Layer - Match default logic */}

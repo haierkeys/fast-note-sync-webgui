@@ -350,6 +350,33 @@ export function useNoteHandle() {
         }
     }, [getHeaders, handleTokenExpired])
 
+    const handleGetShareNote = useCallback(async (id: string, token: string, callback: (note: NoteDetail) => void, onSettled?: () => void) => {
+        try {
+            const url = `${env.API_URL}/api/share/note?id=${id}`;
+            const response = await fetch(addCacheBuster(url), {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Share-Token": token,
+                    "Lang": getBrowserLang(),
+                },
+            })
+            if (!response.ok) {
+                throw new Error("Network response was not ok")
+            }
+            const res: NoteResponse<NoteDetail> = await response.json()
+            if (res.code > 0 && res.code <= 200 && res.data) {
+                callback(res.data)
+            } else {
+                toast.error(res.message)
+            }
+        } catch (error: unknown) {
+            toast.error(error instanceof Error ? error.message : String(error))
+        } finally {
+            onSettled?.()
+        }
+    }, [])
+
     const handleNoteHistoryDetail = useCallback(async (vault: string, id: number, callback: (data: NoteHistoryDetail) => void) => {
         try {
             const response = await fetch(addCacheBuster(`${env.API_URL}/api/note/history?vault=${encodeURIComponent(vault)}&id=${id}`), {
@@ -504,6 +531,7 @@ export function useNoteHandle() {
         handleNoteHistoryList,
         handleNoteHistoryDetail,
         handleRestoreFromHistory,
+        handleGetShareNote,
     }), [
         handleNoteList,
         handleFolderList,
@@ -518,5 +546,6 @@ export function useNoteHandle() {
         handleNoteHistoryList,
         handleNoteHistoryDetail,
         handleRestoreFromHistory,
+        handleGetShareNote,
     ])
 }

@@ -38,7 +38,7 @@ interface SettingsState {
   setColorScheme: (scheme: ColorScheme) => void;
 }
 
-export const useSettingsStore = create<SettingsState>()(
+const createSettingsStore = (name: string) => create<SettingsState>()(
   persist(
     (set) => ({
       toastPosition: 'top-center',
@@ -46,12 +46,13 @@ export const useSettingsStore = create<SettingsState>()(
       colorScheme: 'default',
       setColorScheme: (scheme) => {
         // 更新 HTML 的 data-color-scheme 属性
+        // 注意：如果是主应用，保持原样；如果是分享页面，可能需要不同的逻辑，但目前所有页面共用 document.documentElement
         document.documentElement.setAttribute('data-color-scheme', scheme);
         set({ colorScheme: scheme });
       },
     }),
     {
-      name: 'app-settings',
+      name: name,
       onRehydrateStorage: () => (state) => {
         // 恢复时应用配色方案
         if (state?.colorScheme) {
@@ -61,3 +62,6 @@ export const useSettingsStore = create<SettingsState>()(
     }
   )
 );
+
+export const useSettingsStore = createSettingsStore('app-settings');
+export const useShareSettingsStore = createSettingsStore('share-settings');

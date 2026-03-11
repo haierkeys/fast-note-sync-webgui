@@ -1,5 +1,5 @@
 import { DropdownMenu, DropdownMenuContent, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { useSettingsStore, COLOR_SCHEMES } from "@/lib/stores/settings-store";
+import { useSettingsStore, useShareSettingsStore, COLOR_SCHEMES } from "@/lib/stores/settings-store";
 import { toast } from "@/components/common/Toast";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
@@ -9,11 +9,15 @@ import { cn } from "@/lib/utils";
 
 interface ColorSchemeSwitcherProps {
     className?: string;
+    isShare?: boolean;
 }
 
-export function ColorSchemeSwitcher({ className }: ColorSchemeSwitcherProps) {
+export function ColorSchemeSwitcher({ className, isShare = false }: ColorSchemeSwitcherProps) {
     const { t } = useTranslation();
-    const { colorScheme, setColorScheme } = useSettingsStore();
+    const mainStore = useSettingsStore();
+    const shareStore = useShareSettingsStore();
+    const settingsStore = isShare ? shareStore : mainStore;
+    const { colorScheme, setColorScheme } = settingsStore;
 
     return (
         <DropdownMenu>

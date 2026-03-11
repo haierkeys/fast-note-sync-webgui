@@ -8,10 +8,15 @@ import { Languages } from "lucide-react";
 interface LanguageSwitcherProps {
     className?: string;
     showText?: boolean;
+    storageKey?: string;
 }
 
-export function LanguageSwitcher({ className, showText = false }: LanguageSwitcherProps) {
+export function LanguageSwitcher({ className, showText = false, storageKey = "lang" }: LanguageSwitcherProps) {
     const { t } = useTranslation();
+
+    const handleSwitch = (lang: string) => {
+        changeLang(lang, storageKey);
+    };
 
     return (
         <DropdownMenu>
@@ -22,11 +27,11 @@ export function LanguageSwitcher({ className, showText = false }: LanguageSwitch
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="max-h-[300px] overflow-y-auto">
-                <DropdownMenuItem onClick={() => changeLang("en")}>🇺🇸 English</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => changeLang("zh-CN")}>🇨🇳 简体中文</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => changeLang("zh-TW")}>🇭🇰 繁體中文</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => changeLang("ja")}>🇯🇵 日本語</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => changeLang("ko")}>🇰🇷 한국어</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleSwitch("en")}>🇺🇸 English</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleSwitch("zh-CN")}>🇨🇳 简体中文</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleSwitch("zh-TW")}>🇭🇰 繁體中文</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleSwitch("ja")}>🇯🇵 日本語</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleSwitch("ko")}>🇰🇷 한국어</DropdownMenuItem>
                 {/*
                 <DropdownMenuItem onClick={() => changeLang("fr")}>🇫🇷 Français</DropdownMenuItem>
                 <DropdownMenuItem onClick={() => changeLang("de")}>🇩🇪 Deutsch</DropdownMenuItem>
