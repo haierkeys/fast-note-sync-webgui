@@ -232,11 +232,9 @@
 
 :root {
   --font-sans:
-    "CustomFont",
+    "Old Hangul Serif", "Siddham Serif", "Hentaigana Sans",
+    "CustomFont"/*預設*/,
     "Seal Sans",
-    "Old Hangul Serif",
-    "Siddham Serif",
-    "Hentaigana Sans",
     -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif,
     "FSung Serif"/*U+0-3FFFF 保底大字庫*/;
 }
