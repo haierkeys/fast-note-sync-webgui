@@ -75,7 +75,6 @@ export default {
     "ui.common.totalSize": "Total space usage",
     "ui.common.quickActions": "Quick actions",
     "ui.common.tips": "Tips",
-    "ui.common.recommended": "Recommended",
 
 
     // --- ui.auth ---
@@ -998,5 +997,11 @@ export default {
     "ui.file.upload": "Upload Attachment",
     "ui.file.uploading": "Uploading...",
     "ui.file.uploadSuccess": "Attachment uploaded successfully",
+
+    // --- ui.unsaved ---
+    "ui.unsaved.title": "Unsaved Changes",
+    "ui.unsaved.message": "You have unsaved changes. Are you sure you want to leave this page? Changes will be lost.",
+    "ui.unsaved.leave": "Leave",
+    "ui.unsaved.stay": "Stay",
 };
 

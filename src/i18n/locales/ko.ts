@@ -997,5 +997,11 @@ export default {
     "ui.file.upload": "첨부 파일 업로드",
     "ui.file.uploading": "업로드 중...",
     "ui.file.uploadSuccess": "첨부 파일 업로드 성공",
+
+    // --- ui.unsaved ---
+    "ui.unsaved.title": "저장되지 않은 변경 사항",
+    "ui.unsaved.message": "저장되지 않은 변경 사항이 있습니다. 이 페이지를 떠나시겠습니까? 변경 사항은 손실됩니다.",
+    "ui.unsaved.leave": "떠나기",
+    "ui.unsaved.stay": "머물기",
 };
 

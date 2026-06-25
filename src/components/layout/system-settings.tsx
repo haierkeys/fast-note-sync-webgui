@@ -8,6 +8,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "@/components/common/Toast";
 import { Button } from "@/components/ui/button";
+import { useAppStore } from "@/stores/app-store";
 import { useTranslation } from "react-i18next";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -91,6 +92,7 @@ interface UserDatabaseConfig {
 
 export function SystemSettings({ onBack, isDashboard = false, isAdmin = false }: { onBack?: () => void, isDashboard?: boolean, isAdmin?: boolean }) {
     const { t } = useTranslation()
+    const setDirty = useAppStore(state => state.setDirty)
     const [config, setConfig] = useState<SystemConfig | null>(null)
     const [cloudflareConfig, setCloudflareConfig] = useState<CloudflareConfig | null>(null)
     const [loading, setLoading] = useState(true)
@@ -118,14 +120,17 @@ export function SystemSettings({ onBack, isDashboard = false, isAdmin = false }:
             ...prev,
             { id: `header-${Date.now()}-${Math.random()}`, key: "", value: "" }
         ])
+        setDirty('system-config', true)
     }
 
     const removeHeaderRow = (id: string) => {
         setHeadersList(prev => prev.filter(item => item.id !== id))
+        setDirty('system-config', true)
     }
 
     const updateHeaderRow = (id: string, key: string, value: string) => {
         setHeadersList(prev => prev.map(item => item.id === id ? { ...item, key, value } : item))
+        setDirty('system-config', true)
     }
 
     const token = localStorage.getItem("token")
@@ -147,17 +152,20 @@ export function SystemSettings({ onBack, isDashboard = false, isAdmin = false }:
 
     const updateConfig = useCallback((updates: Partial<SystemConfig>) => {
         setConfig(prev => prev ? { ...prev, ...updates } : null)
-    }, [])
+        setDirty('system-config', true)
+    }, [setDirty])
 
 
     const updateCloudflareConfig = useCallback((updates: Partial<CloudflareConfig>) => {
         setCloudflareConfig(prev => prev ? { ...prev, ...updates } : null)
-    }, [])
+        setDirty('system-cloudflare', true)
+    }, [setDirty])
 
     const updateUserDbConfig = useCallback((updates: Partial<UserDatabaseConfig>) => {
         setUserDbConfig(prev => prev ? { ...prev, ...updates } : null)
         setHasTestedUserDb(false)
-    }, [])
+        setDirty('system-userdb', true)
+    }, [setDirty])
 
     const handleSaveConfig = async () => {
         if (!config) return
@@ -225,6 +233,7 @@ export function SystemSettings({ onBack, isDashboard = false, isAdmin = false }:
             if (res.code > 0 && res.code < 200 && res.status !== false) {
                 toast.success(t("ui.settings.saveSuccess"))
                 setConfig(prev => prev ? { ...prev, customResponseHeaders } : null)
+                setDirty('system-config', false)
             } else {
                 toast.error(`${res.message || t("ui.settings.saveFailed")}${res.details ? `\n${res.details}` : ""}`)
             }
@@ -252,6 +261,7 @@ export function SystemSettings({ onBack, isDashboard = false, isAdmin = false }:
             const res = await response.json()
             if (res.code > 0 && res.code < 200 && res.status !== false) {
                 toast.success(t("ui.settings.saveSuccess"))
+                setDirty('system-cloudflare', false)
             } else {
                 toast.error(`${res.message || t("ui.settings.saveFailed")}${res.details ? `\n${res.details}` : ""}`)
             }
@@ -278,6 +288,7 @@ export function SystemSettings({ onBack, isDashboard = false, isAdmin = false }:
             const res = await response.json()
             if (res.code > 0 && res.code < 200 && res.status !== false) {
                 toast.success(t("ui.settings.saveSuccess"))
+                setDirty('system-userdb', false)
             } else {
                 toast.error(`${res.message || t("ui.settings.saveFailed")}${res.details ? `\n${res.details}` : ""}`)
             }

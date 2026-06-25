@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, lazy, Suspense, useCallback } from "react";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { useVaultHandle } from "@/components/api-handle/vault-handle";
 import { useUserHandle } from "@/components/api-handle/user-handle";
 import { useAuth } from "@/components/context/auth-context";
@@ -160,6 +161,24 @@ function App() {
       setModule("vaults")
     }
   }, [isLoggedIn, currentModule, configLoaded, isAdmin, setModule, t])
+
+  // Unsaved changes: beforeunload + navigation guard
+  const dirtyState = useAppStore(state => state.dirtyState)
+  const pendingNavigation = useAppStore(state => state.pendingNavigation)
+  const confirmNavigation = useAppStore(state => state.confirmNavigation)
+  const cancelNavigation = useAppStore(state => state.cancelNavigation)
+
+  const hasDirty = Object.values(dirtyState).some(Boolean)
+
+  useEffect(() => {
+    if (hasDirty) {
+      const handler = (e: BeforeUnloadEvent) => {
+        e.preventDefault()
+      }
+      window.addEventListener('beforeunload', handler)
+      return () => window.removeEventListener('beforeunload', handler)
+    }
+  }, [hasDirty])
 
   const onFontsUpdate = useCallback((fontUrl: string) => {
     handleFontsUpdate(fontUrl)
@@ -351,19 +370,38 @@ function App() {
   }
 
   return (
-    <AppLayout isAdmin={isAdmin} onLogout={handleLogout}>
-      <Suspense fallback={<PageLoading />}>
-        {renderModuleContent()}
-      </Suspense>
-      {isLoggedIn && adminUid === 0 && isAdmin && (
-        <Suspense>
-          <AdminSetupDialog onDone={() => {
-            void fetchAdminInfo()
-            fetchConfig()
-          }} />
+    <>
+      <AppLayout isAdmin={isAdmin} onLogout={handleLogout}>
+        <Suspense fallback={<PageLoading />}>
+          {renderModuleContent()}
         </Suspense>
-      )}
-    </AppLayout>
+        {isLoggedIn && adminUid === 0 && isAdmin && (
+          <Suspense>
+            <AdminSetupDialog onDone={() => {
+              void fetchAdminInfo()
+              fetchConfig()
+            }} />
+          </Suspense>
+        )}
+      </AppLayout>
+
+      <AlertDialog open={!!pendingNavigation} onOpenChange={(open) => { if (!open) cancelNavigation() }}>
+        <AlertDialogContent className="rounded-2xl">
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t("ui.unsaved.title")}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {t("ui.unsaved.message")}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="rounded-xl">{t("ui.unsaved.stay")}</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmNavigation} className="rounded-xl">
+              {t("ui.unsaved.leave")}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   )
 }
 

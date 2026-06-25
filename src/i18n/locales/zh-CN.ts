@@ -997,5 +997,11 @@ export default {
     "ui.file.upload": "上传附件",
     "ui.file.uploading": "上传中...",
     "ui.file.uploadSuccess": "附件上传成功",
+
+    // --- ui.unsaved ---
+    "ui.unsaved.title": "未保存的更改",
+    "ui.unsaved.message": "您有未保存的更改。确定要离开此页面吗？更改将丢失。",
+    "ui.unsaved.leave": "离开",
+    "ui.unsaved.stay": "留下",
 };
 

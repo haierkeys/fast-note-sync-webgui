@@ -3,6 +3,7 @@ import { createBackupConfigSchema, BackupFormData } from "@/lib/validations/back
 import { BackupConfig, BackupType, CronStrategy } from "@/lib/types/backup";
 import { useBackupHandle } from "@/components/api-handle/backup-handle";
 import { useVaultHandle } from "@/components/api-handle/vault-handle";
+import { useAppStore } from "@/stores/app-store";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { StorageConfig } from "@/lib/types/storage";
 import { Tooltip } from "@/components/ui/tooltip";
@@ -29,6 +30,7 @@ export function BackupForm({ config, storages, onSubmit, onCancel }: BackupFormP
     const { t } = useTranslation();
     const { handleBackupConfigUpdate } = useBackupHandle();
     const { handleVaultList } = useVaultHandle();
+    const setDirty = useAppStore(state => state.setDirty);
     const [vaults, setVaults] = useState<VaultType[]>([]);
 
     // 过滤出可用的存储
@@ -65,10 +67,14 @@ export function BackupForm({ config, storages, onSubmit, onCancel }: BackupFormP
         retentionDays: config?.retentionDays ?? 30,
     }), [config?.vault, config?.type, config?.cronStrategy, config?.cronExpression, config?.isEnabled, config?.includeVaultName, config?.passwordMode, config?.passwordValue, config?.retentionDays, initialStorageIds]);
 
-    const { register, handleSubmit, formState: { errors }, setValue, watch, reset } = useForm<BackupFormData>({
+    const { register, handleSubmit, formState: { errors, isDirty }, setValue, watch, reset } = useForm<BackupFormData>({
         resolver: zodResolver(schema),
         defaultValues,
     });
+
+    useEffect(() => {
+        setDirty('backup-config', isDirty)
+    }, [isDirty, setDirty])
 
     const selectedVault = watch("vault");
     const cronStrategy = watch("cronStrategy");
