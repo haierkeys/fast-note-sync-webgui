@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { buildApiHeaders } from "@/lib/utils/api-headers";
+import { addCacheBuster } from "@/lib/utils/cache-buster";
 import env from "@/env.ts";
 import { Loader2, Activity, CheckCircle2, AlertCircle, XCircle } from "lucide-react";
 
@@ -43,7 +44,7 @@ export function SourceProbePanel({ token, mode, onApply }: SourceProbePanelProps
         setData(null);
         try {
             const res = await fetch(
-                env.API_URL + "/api/version/probe",
+                addCacheBuster(env.API_URL + "/api/version/probe"),
                 { headers: buildApiHeaders({ token }) }
             );
             if (!res.ok) throw new Error(`${res.status}`);
