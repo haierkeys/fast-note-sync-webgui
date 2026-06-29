@@ -997,5 +997,11 @@ export default {
     "ui.file.upload": "添付ファイルをアップロード",
     "ui.file.uploading": "アップロード中...",
     "ui.file.uploadSuccess": "添付ファイルのアップロードが完了しました",
+
+    // --- ui.unsaved ---
+    "ui.unsaved.title": "未保存の変更",
+    "ui.unsaved.message": "未保存の変更があります。このページを離れてよろしいですか？変更は失われます。",
+    "ui.unsaved.leave": "離れる",
+    "ui.unsaved.stay": "留まる",
 };
 

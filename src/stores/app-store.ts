@@ -16,6 +16,12 @@ import { create } from 'zustand';
  */
 export type ModuleId = 'dashboard' | 'vaults' | 'notes' | 'files' | 'trash' | 'config' | 'sync' | 'git' | 'settings' | 'sync-logs' | 'tokens';
 
+/** Pending navigation info */
+interface PendingNavigation {
+  module: ModuleId
+  trashType?: 'notes' | 'files'
+}
+
 /**
  * 应用状态接口
  */
@@ -37,10 +43,20 @@ interface AppState {
   currentPath: string;
   /** Current path hash in note manager / 当前文件夹路径 Hash */
   currentPathHash: string;
+  /** Dirty state tracking for unsaved changes guard */
+  dirtyState: Record<string, boolean>
+  /** Pending navigation blocked by unsaved changes */
+  pendingNavigation: PendingNavigation | null
 
   // Actions
   /** Set current module / 设置当前模块 */
   setModule: (module: ModuleId, trashType?: 'notes' | 'files') => void;
+  /** Mark a dirty key as dirty or clean */
+  setDirty: (key: string, dirty: boolean) => void;
+  /** Confirm pending navigation (discard changes) */
+  confirmNavigation: () => void;
+  /** Cancel pending navigation (stay on current page) */
+  cancelNavigation: () => void;
   /** Set version info / 设置版本信息 */
   setVersionInfo: (info: VersionInfo) => void;
   /** Toggle Zen mode / 切换 Zen 模式 */
@@ -71,6 +87,8 @@ const defaultState = {
   highlightTokenId: null,
   currentPath: '',
   currentPathHash: '',
+  dirtyState: {} as Record<string, boolean>,
+  pendingNavigation: null as PendingNavigation | null,
 };
 
 /**
@@ -85,10 +103,35 @@ export const useAppStore = create<AppState>()(
     (set) => ({
       ...defaultState,
 
-      setModule: (module, trashType) => set((state) => ({
-        currentModule: module,
-        trashType: trashType ?? state.trashType
+      setModule: (module, trashType) => set((state) => {
+        const hasDirty = Object.values(state.dirtyState).some(Boolean)
+        if (hasDirty && module !== state.currentModule) {
+          return { pendingNavigation: { module, trashType } }
+        }
+        return {
+          currentModule: module,
+          trashType: trashType ?? state.trashType,
+          pendingNavigation: null,
+        }
+      }),
+
+      setDirty: (key, dirty) => set((state) => ({
+        dirtyState: { ...state.dirtyState, [key]: dirty },
       })),
+
+      confirmNavigation: () => set((state) => {
+        if (!state.pendingNavigation) return state
+        return {
+          currentModule: state.pendingNavigation.module,
+          trashType: state.pendingNavigation.trashType ?? state.trashType,
+          pendingNavigation: null,
+          dirtyState: {},
+        }
+      }),
+
+      cancelNavigation: () => set({
+        pendingNavigation: null,
+      }),
 
       toggleZenMode: () => set((state) => ({ zenMode: !state.zenMode })),
 

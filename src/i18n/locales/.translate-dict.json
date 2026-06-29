@@ -951,5 +951,9 @@
   "ui.users.userBlockedHint": "3b29a5c9744eb784ff10af9bbf2c3a63",
   "ui.users.getUserListError": "0ac45fd57fae5ee71064c59b9004a9f2",
   "ui.users.userRoleAdmin": "b1dae9bc5cabbc13e4bee21af11cdb8d",
-  "ui.users.createdAtOrUpdatedAt": "a776e82509cdad4a30afa39eeff24fab"
+  "ui.users.createdAtOrUpdatedAt": "a776e82509cdad4a30afa39eeff24fab",
+  "ui.unsaved.title": "0bb2b736404b739b9363a4f5c4927fa3",
+  "ui.unsaved.message": "b94c9d089dfa48145be65f71d4e009ed",
+  "ui.unsaved.leave": "0a5ada90baf0eca1b301b659de9d72c5",
+  "ui.unsaved.stay": "337a46d59cdfac30e8882d1a60c7613e"
 }

@@ -1,6 +1,7 @@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useStorageHandle } from "@/components/api-handle/storage-handle";
 import { createStorageSchema } from "@/lib/validations/storage-schema";
+import { useAppStore } from "@/stores/app-store";
 import type { StorageConfig } from "@/lib/types/storage";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useMemo, useState } from "react";
@@ -29,6 +30,7 @@ interface StorageFormProps {
  */
 export function StorageForm({ config, types, onSubmit, onCancel }: StorageFormProps) {
     const { t } = useTranslation()
+    const setDirty = useAppStore(state => state.setDirty)
 
     const [storageType, setStorageType] = useState<StorageConfig["type"] | undefined>(config?.type)
 
@@ -39,10 +41,14 @@ export function StorageForm({ config, types, onSubmit, onCancel }: StorageFormPr
 
     const schema = useMemo(() => createStorageSchema(t), [t])
 
-    const { register, handleSubmit, formState: { errors, isSubmitting }, setValue, getValues } = useForm<StorageConfig>({
+    const { register, handleSubmit, formState: { errors, isSubmitting, isDirty }, setValue, getValues } = useForm<StorageConfig>({
         resolver: zodResolver(schema),
         defaultValues: config || { isEnabled: true },
     })
+
+    useEffect(() => {
+        setDirty('storage-config', isDirty)
+    }, [isDirty, setDirty])
 
     // ESC 键取消
     useEffect(() => {

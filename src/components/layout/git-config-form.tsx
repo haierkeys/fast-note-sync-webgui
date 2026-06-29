@@ -2,6 +2,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import type { GitSyncConfigRequest, GitSyncConfigDTO } from "@/lib/types/git";
 import { createGitSyncSchema } from "@/lib/validations/git-sync-schema";
 import { useGitHandle } from "@/components/api-handle/git-handle";
+import { useAppStore } from "@/stores/app-store";
 import { Eye, EyeOff, ShieldCheck, Plus, Trash2 } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -31,6 +32,7 @@ interface GitConfigFormProps {
 export function GitConfigForm({ config, vaults, onSubmit, onCancel }: GitConfigFormProps) {
     const { t } = useTranslation()
     const { handleGitSyncUpdate, handleGitSyncValidate } = useGitHandle()
+    const setDirty = useAppStore(state => state.setDirty)
 
     const [showPassword, setShowPassword] = useState(false)
     const [isValidating, setIsValidating] = useState(false)
@@ -60,10 +62,14 @@ export function GitConfigForm({ config, vaults, onSubmit, onCancel }: GitConfigF
         }
     ), [config])
 
-    const { register, handleSubmit, formState: { errors, isSubmitting }, setValue, getValues, reset, watch, control } = useForm<GitSyncConfigRequest>({
+    const { register, handleSubmit, formState: { errors, isSubmitting, isDirty }, setValue, getValues, reset, watch, control } = useForm<GitSyncConfigRequest>({
         resolver: zodResolver(schema),
         defaultValues,
     })
+
+    useEffect(() => {
+        setDirty('git-config', isDirty)
+    }, [isDirty, setDirty])
 
     const { fields, append, remove } = useFieldArray({
         control,
