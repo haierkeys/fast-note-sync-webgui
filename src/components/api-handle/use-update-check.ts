@@ -37,7 +37,7 @@ export function useUpdateCheck() {
             );
 
             if (!response.ok) {
-                throw new Error(`GitHub API error: ${response.status}`);
+                throw new Error(`Version API error: ${response.status}`);
             }
 
             const res = await response.json();

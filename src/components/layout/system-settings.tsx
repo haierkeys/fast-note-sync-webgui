@@ -22,6 +22,7 @@ import { WSClientList } from "./ws-client-list";
 import { SupportList } from "./support-list";
 import { Overview } from "./overview";
 import { UserManagment } from "./user-managment";
+import { SourceProbePanel } from "./source-probe-panel";
 
 
 interface SystemConfig {
@@ -770,6 +771,11 @@ export function SystemSettings({ onBack, isDashboard = false, isAdmin = false }:
                                             </SelectContent>
                                         </Select>
                                         <p className="text-xs text-muted-foreground">{t("ui.settings.pullSourceDesc")}</p>
+                                        <SourceProbePanel
+                                            token={token}
+                                            mode={config.pullSource || "auto"}
+                                            onApply={(recommended) => updateConfig({ pullSource: recommended })}
+                                        />
                                     </div>
 
                                     <div className="space-y-3 pt-1">
