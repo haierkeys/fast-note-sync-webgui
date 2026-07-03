@@ -25,19 +25,19 @@ export default defineConfig({
     cors: true,
     // 处理开发环境下的路径重写，使 /share.html/id/token 或 /share/id/token 能够加载 share.html
     proxy: {
-       '^/(share.html|share)/.*': {
-          target: 'http://localhost:5173',
-          rewrite: () => '/share.html',
-       },
-       '/api/user/sync': {
-          target: 'ws://localhost:9000',
-          ws: true,
-          changeOrigin: true,
-       },
-       '/api': {
-          target: 'http://localhost:9000',
-          changeOrigin: true,
-       }
+      '^/(share.html|share)/.*': {
+        target: 'http://localhost:5173',
+        rewrite: () => '/share.html',
+      },
+      '/api/user/sync': {
+        target: 'ws://localhost:9000',
+        ws: true,
+        changeOrigin: true,
+      },
+      '/api': {
+        target: 'http://localhost:9000',
+        changeOrigin: true,
+      }
     }
   },
   build: {
@@ -47,7 +47,7 @@ export default defineConfig({
         drop_console: true,  // 去除 console.log
       },
     },
-    chunkSizeWarningLimit: 1500, // 降低警告阈值到 1MB
+    chunkSizeWarningLimit: 2048, // 降低警告阈值到 1MB
     rollupOptions: {
       input: {
         main: path.resolve(__dirname, 'index.html'),
