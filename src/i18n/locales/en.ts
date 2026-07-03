@@ -222,6 +222,8 @@ export default {
     "ui.vault.name": "Vault Name",
     "ui.vault.nameRequired": "Vault name cannot be empty",
     "ui.vault.confirmDelete": "Are you sure you want to delete this vault? This action cannot be undone!",
+    "ui.vault.deleting": "Deleting vault, please wait...",
+    "ui.vault.deleteSuccess": "Deleted successfully",
     "ui.vault.noVaults": "No vaults yet",
     "ui.vault.count": "Total {{count}} vaults",
     "ui.vault.searchPlaceholder": "Search vaults...",

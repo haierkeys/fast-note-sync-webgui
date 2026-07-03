@@ -525,8 +525,20 @@ export function VaultList({ onNavigateToNotes, onNavigateToAttachments, ftsBleve
 
   const handleDelete = async (id: string) => {
     openConfirmDialog(t("ui.vault.confirmDelete"), "confirm", async () => {
-      await handleVaultDelete(id)
-      setVaults(vaults.filter((vault) => vault.id !== id))
+      // Show loading toast / 显示加载提示
+      const toastId = toast.loading(t("ui.vault.deleting") || "正在删除笔记库，请稍候...")
+      try {
+        await handleVaultDelete(id)
+        setVaults(vaults.filter((vault) => vault.id !== id))
+        // Show success toast / 显示成功提示
+        toast.success(t("ui.vault.deleteSuccess") || "删除成功")
+      } catch (error: unknown) {
+        // Show error toast / 显示错误提示
+        toast.error(error instanceof Error ? error.message : String(error))
+      } finally {
+        // Dismiss loading toast / 销毁加载提示
+        toast.dismiss(toastId)
+      }
     })
   }
 

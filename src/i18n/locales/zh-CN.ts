@@ -222,6 +222,8 @@ export default {
     "ui.vault.name": "笔记库名称",
     "ui.vault.nameRequired": "笔记库名称不能为空",
     "ui.vault.confirmDelete": "确定要删除这个笔记库吗？此操作将无法撤销！",
+    "ui.vault.deleting": "正在删除笔记库，请稍候...",
+    "ui.vault.deleteSuccess": "删除成功",
     "ui.vault.noVaults": "目前还没有任何笔记库",
     "ui.vault.count": "共 {{count}} 个笔记库",
     "ui.vault.searchPlaceholder": "搜索笔记库...",

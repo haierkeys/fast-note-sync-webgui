@@ -39,11 +39,17 @@ export function useVaultHandle() {
       headers: buildApiHeaders({ token }),
     })
     if (!response.ok) {
+      // Network error / 网络请求错误
       throw new Error("Network response was not ok")
     }
     const res = await response.json()
-    if (res.code > 100) {
-      toast.error(res.message + ": " + res.details)
+    if (res.code < 100 && res.code > 0) {
+      return res
+    } else {
+      const details = Array.isArray(res.details) ? res.details.join(", ") : res.details
+      const message = res.message || "Failed to delete vault"
+      // Throw error if delete failed / 如果删除失败则抛出错误
+      throw new Error(details ? `${message}: ${details}` : message)
     }
   }, [token])
 
