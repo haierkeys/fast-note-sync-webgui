@@ -6,10 +6,12 @@ import { useState, useEffect, useLayoutEffect, useRef, useCallback } from "react
 import { hashCode } from "@/lib/utils/hash";
 import type { ShareFilterType, ViewModeType } from "@/components/note/note-list";
 import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useTranslation } from "react-i18next";
 import { VaultType } from "@/lib/types/vault";
 import { Note } from "@/lib/types/note";
-import { Database } from "lucide-react";
+import type { Folder as FolderDTO } from "@/lib/types/folder";
+import { Database, FileText, FolderTree } from "lucide-react";
 
 import { useNoteHandle } from "@/components/api-handle/note-handle";
 import { toast } from "@/components/common/Toast";
@@ -17,8 +19,10 @@ import { NoteHistoryModal } from "./note-history-modal";
 import { NoteEditor } from "./note-editor";
 import { CanvasViewer } from "./canvas-viewer";
 import { NoteList } from "./note-list";
+import { NoteTreeSidebar } from "./note-tree-sidebar";
 import { useAppStore } from "@/stores/app-store";
 import { TocProvider } from "@/components/context/toc-context";
+import { useMobile } from "@/hooks/use-mobile";
 
 
 // 工具函数：将笔记内的相对路径解析为 vault 绝对路径（纯函数，无 hook 依赖）
@@ -62,6 +66,7 @@ export function NoteManager({
     isRecycle = false
 }: NoteManagerProps) {
     const { t } = useTranslation();
+    const isMobile = useMobile();
     const [view, setView] = useState<"list" | "editor">("list");
     const [selectedNote, setSelectedNote] = useState<Note | undefined>(undefined);
     const [initialPreviewMode, setInitialPreviewMode] = useState(false);
@@ -96,11 +101,19 @@ export function NoteManager({
         return (saved as ViewModeType) || "folder";
     });
 
+    const isWorkspaceMode = viewMode === "workspace" && !isRecycle && !isMobile;
+
     useEffect(() => {
         if (!isRecycle) {
             localStorage.setItem("noteViewMode", viewMode);
         }
     }, [viewMode, isRecycle]);
+
+    useEffect(() => {
+        if ((isMobile || isRecycle) && viewMode === "workspace") {
+            setViewMode("folder");
+        }
+    }, [isMobile, isRecycle, viewMode]);
 
     useEffect(() => {
         localStorage.setItem(isRecycle ? "trashPageSize" : "notePageSize", pageSize.toString());
@@ -142,6 +155,9 @@ export function NoteManager({
         setCurrentPathHash("");
         setPathHashMap({});
         setShareFilter(null);
+        setSelectedNote(undefined);
+        setInitialPreviewMode(false);
+        setView("list");
     }, [vault, setCurrentPath, setCurrentPathHash]);
 
     // NoteList 始终挂载，在浏览器绘制前同步恢复滚动位置
@@ -160,6 +176,31 @@ export function NoteManager({
         setSelectedNote(note);
         setInitialPreviewMode(previewMode);
         setView("editor");
+    }, []);
+
+    const handleSelectWorkspaceNote = useCallback((note: Note, previewMode: boolean = true) => {
+        const folder = note.path.includes("/") ? note.path.substring(0, note.path.lastIndexOf("/")) : "";
+        setCurrentPath(folder);
+        setCurrentPathHash(pathHashMap[folder] || (folder ? hashCode(folder) : ""));
+        setSelectedNote(note);
+        setInitialPreviewMode(previewMode);
+        setView("list");
+    }, [pathHashMap, setCurrentPath, setCurrentPathHash]);
+
+    const handleWorkspaceFoldersLoaded = useCallback((folders: FolderDTO[]) => {
+        setPathHashMap(prev => {
+            let changed = false;
+            const next = { ...prev };
+
+            for (const folder of folders) {
+                if (next[folder.path] !== folder.pathHash) {
+                    next[folder.path] = folder.pathHash;
+                    changed = true;
+                }
+            }
+
+            return changed ? next : prev;
+        });
     }, []);
 
     const handleWikiLinkClick = useCallback((target: string, currentNotePath?: string) => {
@@ -185,12 +226,16 @@ export function NoteManager({
                 const folder = match.path.includes('/') ? match.path.substring(0, match.path.lastIndexOf('/')) : '';
                 setCurrentPath(folder);
                 setCurrentPathHash(pathHashMap[folder] || (folder ? hashCode(folder) : ""));
-                handleSelectNote(match, true);
+                if (isWorkspaceMode) {
+                    handleSelectWorkspaceNote(match, true);
+                } else {
+                    handleSelectNote(match, true);
+                }
             } else {
                 toast.info(t("ui.note.wikiLinkNotFound", { target: resolvedTarget }));
             }
         });
-    }, [vault, handleNoteList, handleSelectNote, t, pathHashMap, setCurrentPath, setCurrentPathHash]);
+    }, [vault, handleNoteList, handleSelectNote, handleSelectWorkspaceNote, isWorkspaceMode, t, pathHashMap, setCurrentPath, setCurrentPathHash]);
 
     // 从 URL 参数中读取 notePath（新标签页打开 MD 链接时）
     useEffect(() => {
@@ -217,11 +262,15 @@ export function NoteManager({
                     const folder = match.path.includes('/') ? match.path.substring(0, match.path.lastIndexOf('/')) : '';
                     setCurrentPath(folder);
                     setCurrentPathHash(pathHashMap[folder] || (folder ? hashCode(folder) : ""));
-                    handleSelectNote(match, true);
+                    if (isWorkspaceMode) {
+                        handleSelectWorkspaceNote(match, true);
+                    } else {
+                        handleSelectNote(match, true);
+                    }
                 }
             });
         }
-    }, [vault, handleNoteList, handleSelectNote, setCurrentPath, setCurrentPathHash, pathHashMap]);
+    }, [vault, handleNoteList, handleSelectNote, handleSelectWorkspaceNote, isWorkspaceMode, setCurrentPath, setCurrentPathHash, pathHashMap]);
 
     const handleCreateNote = () => {
         setSelectedNote(undefined);
@@ -235,12 +284,19 @@ export function NoteManager({
         setPage(1);
     };
 
+    const handleWorkspaceBack = () => {
+        setSelectedNote(undefined);
+        setInitialPreviewMode(true);
+    };
+
     const handleNavigateToFolder = (folderPath: string) => {
         setCurrentPath(folderPath);
         setCurrentPathHash(pathHashMap[folderPath] || "");
         setPage(1);
-        setView("list");
-        setSelectedNote(undefined);
+        if (!isWorkspaceMode) {
+            setView("list");
+            setSelectedNote(undefined);
+        }
     };
 
     const handleSaveSuccess = (newPath: string, newPathHash: string) => {
@@ -303,7 +359,7 @@ export function NoteManager({
         <>
             {/* NoteList 始终挂载，editor 视图时用 hidden 隐藏 */}
             {/* NoteList is always mounted; hidden attribute hides it in editor view */}
-            <div hidden={view === "editor"}>
+            <div hidden={view === "editor" || isWorkspaceMode}>
                 <NoteList
                     vault={vault}
                     vaults={vaults}
@@ -330,6 +386,100 @@ export function NoteManager({
                     setViewMode={setViewMode}
                 />
             </div>
+
+            {isWorkspaceMode && (
+                <div className="flex min-h-[calc(100vh-12rem)] flex-col gap-4">
+                    <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border/50 bg-muted/30 px-3 py-2">
+                        <div className="flex items-center gap-3">
+                            {vaults && onVaultChange && (
+                                <Select value={vault} onValueChange={onVaultChange}>
+                                    <SelectTrigger className="h-8 w-auto min-w-45 rounded-xl bg-background">
+                                        <SelectValue placeholder={t("ui.common.selectVault")} />
+                                    </SelectTrigger>
+                                    <SelectContent className="rounded-xl">
+                                        {vaults.map((v) => (
+                                            <SelectItem key={v.id} value={v.vault} className="rounded-xl">
+                                                {v.vault}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            )}
+                            <div className="flex h-8 items-center overflow-hidden rounded-lg border border-border bg-background shadow-sm">
+                                <button
+                                    className="h-full px-4 text-xs font-medium transition-colors hover:bg-muted"
+                                    onClick={() => setViewMode("folder")}
+                                >
+                                    {t("ui.note.viewFolder")}
+                                </button>
+                                <button
+                                    className="h-full border-l border-border px-4 text-xs font-medium transition-colors hover:bg-muted"
+                                    onClick={() => setViewMode("flat")}
+                                >
+                                    {t("ui.note.viewFlatNotes")}
+                                </button>
+                                <button
+                                    className="h-full border-l border-border px-4 text-xs font-medium transition-colors hover:bg-muted"
+                                    onClick={() => setViewMode("flat-file")}
+                                >
+                                    {t("ui.note.viewFlatFiles")}
+                                </button>
+                                <button
+                                    className="inline-flex h-full items-center gap-1.5 border-l border-border bg-primary px-4 text-xs font-medium text-primary-foreground"
+                                    onClick={() => setViewMode("workspace")}
+                                >
+                                    <FolderTree className="h-3.5 w-3.5" />
+                                    {t("ui.note.viewWorkspace")}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="flex min-h-0 flex-1 gap-4">
+                        <NoteTreeSidebar
+                            key={vault}
+                            vault={vault}
+                            selectedPathHash={selectedNote?.pathHash}
+                            onSelectNote={handleSelectWorkspaceNote}
+                            onFoldersLoaded={handleWorkspaceFoldersLoaded}
+                        />
+                        <div className="min-w-0 flex-1">
+                            {selectedNote ? (
+                                selectedNote.path?.endsWith(".canvas") ? (
+                                    <CanvasViewer
+                                        vault={vault}
+                                        note={selectedNote}
+                                        onBack={handleWorkspaceBack}
+                                        onWikiLinkClick={handleWikiLinkClick}
+                                    />
+                                ) : (
+                                    <TocProvider>
+                                        <NoteEditor
+                                            vault={vault}
+                                            note={selectedNote}
+                                            onBack={handleWorkspaceBack}
+                                            onNavigateToFolder={handleNavigateToFolder}
+                                            onSaveSuccess={handleSaveSuccess}
+                                            onViewHistory={() => selectedNote && handleViewHistory(selectedNote)}
+                                            isMaximized={isMaximized}
+                                            onToggleMaximize={onToggleMaximize}
+                                            isRecycle={isRecycle}
+                                            initialPreviewMode={initialPreviewMode}
+                                            onWikiLinkClick={handleWikiLinkClick}
+                                            defaultFolderPath={currentPath}
+                                        />
+                                    </TocProvider>
+                                )
+                            ) : (
+                                <div className="flex h-full min-h-[420px] flex-col items-center justify-center rounded-xl border border-border bg-card p-12 text-center text-muted-foreground">
+                                    <FileText className="mb-3 h-12 w-12 text-muted-foreground/40" />
+                                    <div className="text-sm font-medium text-foreground">{t("ui.note.selectNoteFromTree")}</div>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {/* editor 视图时渲染 NoteEditor 或 CanvasViewer */}
             {/* Render NoteEditor or CanvasViewer only in editor view */}

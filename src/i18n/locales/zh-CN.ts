@@ -307,6 +307,12 @@ export default {
     "ui.note.viewFolder": "目录浏览",
     "ui.note.viewFlatNotes": "笔记平铺浏览",
     "ui.note.viewFlatFiles": "附件平铺浏览",
+    "ui.note.viewWorkspace": "文档树",
+    "ui.note.documentTree": "文档树",
+    "ui.note.selectNoteFromTree": "从文档树选择一篇笔记",
+    "ui.note.treeLoading": "正在加载文档树...",
+    "ui.note.treeEmpty": "暂无内容",
+    "ui.note.treeSearchPlaceholder": "搜索文档树...",
     "ui.note.editorHr": "分割线",
     "ui.note.exportPdfPlanned": "PDF 导出功能开发中...",
     "ui.note.undo": "撤销",
@@ -1013,4 +1019,3 @@ export default {
     "ui.unsaved.leave": "离开",
     "ui.unsaved.stay": "留下",
 };
-

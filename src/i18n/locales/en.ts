@@ -307,6 +307,12 @@ export default {
     "ui.note.viewFolder": "Folder view",
     "ui.note.viewFlatNotes": "Flat View of Notes",
     "ui.note.viewFlatFiles": "Flat View of Attachments",
+    "ui.note.viewWorkspace": "Document Tree",
+    "ui.note.documentTree": "Document tree",
+    "ui.note.selectNoteFromTree": "Select a note from the document tree",
+    "ui.note.treeLoading": "Loading document tree...",
+    "ui.note.treeEmpty": "No items",
+    "ui.note.treeSearchPlaceholder": "Search document tree...",
     "ui.note.editorHr": "Horizontal rule",
     "ui.note.exportPdfPlanned": "PDF export feature in development...",
     "ui.note.undo": "Undo",
@@ -1013,4 +1019,3 @@ export default {
     "ui.unsaved.leave": "Leave",
     "ui.unsaved.stay": "Stay",
 };
-
