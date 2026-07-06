@@ -311,6 +311,8 @@ export default {
     "ui.note.treeLoading": "문서 트리 로딩 중...",
     "ui.note.treeEmpty": "항목 없음",
     "ui.note.treeSearchPlaceholder": "문서 트리 검색...",
+    "ui.note.showLineNumbers": "줄 번호 표시",
+    "ui.note.hideLineNumbers": "줄 번호 숨기기",
     "ui.note.editorHr": "구분선",
     "ui.note.exportPdfPlanned": "PDF 내보내기 기능 개발 중...",
     "ui.note.undo": "실행 취소",

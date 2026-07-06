@@ -311,6 +311,8 @@ export default {
     "ui.note.treeLoading": "正在載入文件樹...",
     "ui.note.treeEmpty": "暫無內容",
     "ui.note.treeSearchPlaceholder": "搜尋文件樹...",
+    "ui.note.showLineNumbers": "顯示行號",
+    "ui.note.hideLineNumbers": "隱藏行號",
     "ui.note.editorHr": "分割線",
     "ui.note.exportPdfPlanned": "PDF 導出功能開發中...",
     "ui.note.undo": "撤銷",

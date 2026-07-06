@@ -311,6 +311,8 @@ export default {
     "ui.note.treeLoading": "ドキュメントツリーを読み込み中...",
     "ui.note.treeEmpty": "項目がありません",
     "ui.note.treeSearchPlaceholder": "ドキュメントツリーを検索...",
+    "ui.note.showLineNumbers": "行番号を表示",
+    "ui.note.hideLineNumbers": "行番号を非表示",
     "ui.note.editorHr": "区切り線",
     "ui.note.exportPdfPlanned": "PDF 出力機能は開発中です...",
     "ui.note.undo": "元に戻す",

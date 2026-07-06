@@ -313,6 +313,8 @@ export default {
     "ui.note.treeLoading": "正在加载文档树...",
     "ui.note.treeEmpty": "暂无内容",
     "ui.note.treeSearchPlaceholder": "搜索文档树...",
+    "ui.note.showLineNumbers": "显示行号",
+    "ui.note.hideLineNumbers": "隐藏行号",
     "ui.note.editorHr": "分割线",
     "ui.note.exportPdfPlanned": "PDF 导出功能开发中...",
     "ui.note.undo": "撤销",

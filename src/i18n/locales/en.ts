@@ -313,6 +313,8 @@ export default {
     "ui.note.treeLoading": "Loading document tree...",
     "ui.note.treeEmpty": "No items",
     "ui.note.treeSearchPlaceholder": "Search document tree...",
+    "ui.note.showLineNumbers": "Show line numbers",
+    "ui.note.hideLineNumbers": "Hide line numbers",
     "ui.note.editorHr": "Horizontal rule",
     "ui.note.exportPdfPlanned": "PDF export feature in development...",
     "ui.note.undo": "Undo",

@@ -18,15 +18,16 @@ import remarkMath from "remark-math";
 import "katex/dist/katex.min.css";
 
 import {
-    AlertTriangle, Bug, Check, CheckCircle2, ClipboardList, Flame,
+    AlertTriangle, Bug, Check, CheckCircle2, ClipboardList, Copy, Flame,
     HelpCircle, Info, List, Pencil, Quote, X, Zap, type LucideIcon,
-    ChevronDown, ChevronRight, Type, Tag, Hash, Binary, CheckSquare,
+    ChevronDown, ChevronRight, Type, Tag, Hash, Binary, CheckSquare, ListOrdered,
     Calendar, Clock, Link2, ExternalLink,
 } from "lucide-react";
 
 import { toast } from "@/components/common/Toast";
 import { useTheme } from "@/components/context/theme-context";
 import { useToc } from "@/components/context/toc-context";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { getBrowserLang } from "@/i18n/utils";
 import env from "@/env.ts";
@@ -133,6 +134,16 @@ const CALLOUT_STYLES: Record<string, { border: string; bg: string; text: string;
 
 const HeadingIdContext = React.createContext<((text: string, stableKey?: string) => string) | null>(null);
 
+type MarkdownNode = {
+    position?: {
+        start?: {
+            line?: number;
+            column?: number;
+            offset?: number;
+        };
+    };
+};
+
 /**
  * 根据 Markdown 节点位置生成稳定 key。
  * 当同一份文档重复渲染时，可借此复用同一个标题锚点 ID。
@@ -140,7 +151,7 @@ const HeadingIdContext = React.createContext<((text: string, stableKey?: string)
  * @param node - ReactMarkdown 传入的 AST 节点
  * @returns 稳定节点 key；若缺少位置信息则返回 null
  */
-function getHeadingStableKey(node: { position?: { start?: { line?: number; column?: number; offset?: number } } } | undefined): string | null {
+function getHeadingStableKey(node: MarkdownNode | undefined): string | null {
     const start = node?.position?.start;
     if (!start) {
         return null;
@@ -167,9 +178,14 @@ function extractTextFromChildren(children: React.ReactNode): string {
         return children.map(extractTextFromChildren).join('');
     }
     if (React.isValidElement(children) && children.props) {
-        return extractTextFromChildren((children.props as any).children);
+        return extractTextFromChildren((children.props as { children?: React.ReactNode }).children);
     }
     return '';
+}
+
+function normalizeCodeBlockText(children: React.ReactNode): string {
+    const text = extractTextFromChildren(children);
+    return text.endsWith("\n") ? text.slice(0, -1) : text;
 }
 
 const CM6_BASIC_SETUP = {
@@ -1016,6 +1032,11 @@ function extractCalloutInfo(children: React.ReactNode): {
 
 // ─── 标题注册组件 ──────────────────────────────────────────
 
+type MarkdownHeadingProps = React.HTMLAttributes<HTMLHeadingElement> & {
+    node?: MarkdownNode;
+    children?: React.ReactNode;
+};
+
 /**
  * 创建带标题注册功能的标题组件
  * 用于 ReactMarkdown 的自定义组件
@@ -1026,7 +1047,7 @@ function extractCalloutInfo(children: React.ReactNode): {
  * @returns 带注册逻辑的标题组件
  */
 function createHeadingComponent(Tag: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6', defaultClassName: string, level: number) {
-    return function HeadingComponent({ node, className, children, ...props }: any) {
+    return function HeadingComponent({ node, className, children, ...props }: MarkdownHeadingProps) {
         const { registerHeading, unregisterHeading } = useToc();
         const getHeadingId = React.useContext(HeadingIdContext);
         const text = extractTextFromChildren(children);
@@ -1049,7 +1070,7 @@ function createHeadingComponent(Tag: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6', de
             return () => {
                 unregisterHeading(id);
             };
-        }, [id, level, text, registerHeading, unregisterHeading]);
+        }, [id, text, registerHeading, unregisterHeading]);
 
         return React.createElement(Tag, {
             id,
@@ -1057,6 +1078,106 @@ function createHeadingComponent(Tag: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6', de
             ...props,
         }, children);
     };
+}
+
+interface MarkdownCodeBlockProps extends React.ComponentPropsWithoutRef<"pre"> {
+    enableCopy: boolean;
+}
+
+function MarkdownCodeBlock({ className, children, enableCopy, ...props }: MarkdownCodeBlockProps) {
+    const { t } = useTranslation();
+    const [copied, setCopied] = useState(false);
+    const [showLineNumbers, setShowLineNumbers] = useState(false);
+    const codeText = useMemo(() => normalizeCodeBlockText(children), [children]);
+    const lineNumbers = useMemo(() => codeText.split("\n").map((_, index) => index + 1), [codeText]);
+    const copyLabel = copied ? t("ui.common.copied") : t("ui.common.copy");
+    const lineNumberLabel = showLineNumbers
+        ? t("ui.note.hideLineNumbers", { defaultValue: "Hide line numbers" })
+        : t("ui.note.showLineNumbers", { defaultValue: "Show line numbers" });
+
+    useEffect(() => {
+        if (!copied) return;
+
+        const timer = window.setTimeout(() => {
+            setCopied(false);
+        }, 2000);
+
+        return () => window.clearTimeout(timer);
+    }, [copied]);
+
+    const handleCopy = useCallback(async () => {
+        if (!codeText) return;
+
+        try {
+            await navigator.clipboard.writeText(codeText);
+            setCopied(true);
+            toast.success(t("ui.common.copied"));
+        } catch {
+            toast.error(t("ui.vault.copyConfigError", { defaultValue: "Copy failed, please select and copy manually" }));
+        }
+    }, [codeText, t]);
+
+    return (
+        <div className="group relative my-4">
+            {enableCopy && codeText && (
+                <div className="absolute right-2 top-2 z-10 flex gap-1 opacity-80 transition group-hover:opacity-100 focus-within:opacity-100">
+                    <Button
+                        type="button"
+                        variant="secondary"
+                        size="icon-sm"
+                        className={cn(
+                            "size-8 border border-border/70",
+                            "bg-background/85 text-muted-foreground shadow-sm backdrop-blur",
+                            "hover:bg-background hover:text-foreground"
+                        )}
+                        aria-label={lineNumberLabel}
+                        title={lineNumberLabel}
+                        aria-pressed={showLineNumbers}
+                        onClick={() => setShowLineNumbers(prev => !prev)}
+                    >
+                        <ListOrdered className={cn("size-4", showLineNumbers && "text-primary")} />
+                    </Button>
+                    <Button
+                        type="button"
+                        variant="secondary"
+                        size="icon-sm"
+                        className={cn(
+                            "size-8 border border-border/70",
+                            "bg-background/85 text-muted-foreground shadow-sm backdrop-blur",
+                            "hover:bg-background hover:text-foreground"
+                        )}
+                        aria-label={copyLabel}
+                        title={copyLabel}
+                        onClick={handleCopy}
+                    >
+                        {copied ? <Check className="size-4 text-primary" /> : <Copy className="size-4" />}
+                    </Button>
+                </div>
+            )}
+            <div className="flex overflow-hidden rounded-lg border border-border/60 bg-muted/40">
+                {showLineNumbers && (
+                    <div
+                        className="select-none border-r border-border/60 bg-background/30 px-3 py-4 text-right font-mono text-sm leading-6 text-muted-foreground/70"
+                        aria-hidden="true"
+                    >
+                        {lineNumbers.map(lineNumber => (
+                            <div key={lineNumber}>{lineNumber}</div>
+                        ))}
+                    </div>
+                )}
+                <pre
+                    className={cn(
+                        "min-w-0 flex-1 overflow-x-auto p-4 [&_code]:block [&_code]:leading-6",
+                        enableCopy && codeText && "pr-20",
+                        className
+                    )}
+                    {...props}
+                >
+                    {children}
+                </pre>
+            </div>
+        </div>
+    );
 }
 
 // ─── React Markdown 自定义组件 ──────────────────────────────
@@ -1192,9 +1313,6 @@ const markdownComponents: Components = {
             </a>
         );
     },
-    pre: ({ node: _node, className, ...props }) => (
-        <pre className={cn("my-4 overflow-x-auto rounded-lg border border-border/60 bg-muted/40 p-4", className)} {...props} />
-    ),
     code: ({ node: _node, className, children, ...props }) => {
         const value = String(children);
         const isInline = !className && !value.includes("\n");
@@ -1230,9 +1348,11 @@ const markdownComponents: Components = {
 export const MarkdownRenderer = memo(function MarkdownRenderer({
     content,
     components: additionalComponents,
+    enableCodeCopy = true,
 }: {
     content: string;
     components?: Components;
+    enableCodeCopy?: boolean;
 }) {
     /**
      * 为当前文档中的标题生成稳定且唯一的锚点 ID。
@@ -1240,12 +1360,24 @@ export const MarkdownRenderer = memo(function MarkdownRenderer({
      * @param text - 标题文本内容
      * @returns 当前渲染树内唯一的标题 ID
      */
-    const getHeadingId = useMemo(() => createHeadingIdGenerator(), [content]);
+    const headingIdRef = useRef<{ content: string; getHeadingId: (text: string, stableKey?: string) => string } | null>(null);
+    if (!headingIdRef.current || headingIdRef.current.content !== content) {
+        headingIdRef.current = {
+            content,
+            getHeadingId: createHeadingIdGenerator(),
+        };
+    }
+    const getHeadingId = headingIdRef.current.getHeadingId;
 
-    const mergedComponents = useMemo(() => ({
+    const mergedComponents = useMemo<Components>(() => ({
         ...markdownComponents,
+        pre: ({ node: _node, ref: _ref, className, children, ...props }) => (
+            <MarkdownCodeBlock className={className} enableCopy={enableCodeCopy} {...props}>
+                {children}
+            </MarkdownCodeBlock>
+        ),
         ...additionalComponents,
-    }), [additionalComponents]);
+    }), [additionalComponents, enableCodeCopy]);
 
     return (
         <HeadingIdContext.Provider value={getHeadingId}>
@@ -1422,7 +1554,7 @@ export const MarkdownEditor = forwardRef<MarkdownEditorRef, MarkdownEditorProps>
                 const transformed = transformObsidianSyntax(markdownValue, vault, fileLinks, tokenRef.current, shareId, shareToken, password);
                 const rendered = renderToStaticMarkup(
                     <main>
-                        <MarkdownRenderer content={transformed} />
+                        <MarkdownRenderer content={transformed} enableCodeCopy={false} />
                     </main>
                 );
 
