@@ -555,9 +555,9 @@ export function NoteEditor({
     };
 
     return (
-        <div ref={containerRef} className={`w-full h-full flex flex-col ${isFullscreen ? "bg-background p-2 sm:p-4" : ""}`}>
+        <div ref={containerRef} className={`w-full h-full min-h-0 flex flex-col ${isFullscreen ? "bg-background p-2 sm:p-4" : ""}`}>
             {/* 顶部工具栏 */}
-            <div className="flex items-center justify-between gap-1 sm:gap-4 mb-1 sm:mb-4">
+            <div className="sticky top-0 z-30 -mx-1 mb-2 flex items-center justify-between gap-1 border-b border-border/60 bg-card/95 px-1 py-1 shadow-sm backdrop-blur supports-[backdrop-filter]:bg-card/80 sm:gap-4 sm:mb-4 sm:py-2">
                 <div className="flex items-center gap-1 sm:gap-3 min-w-0 flex-1">
                     <Button
                         variant="ghost"
@@ -784,7 +784,7 @@ export function NoteEditor({
                             </Suspense>
                         </div>
                         {isPreviewMode && showToc && (
-                            <TableOfContents isInline={true} className="hidden lg:flex shrink-0 w-60" />
+                            <TableOfContents isInline={true} className="hidden lg:flex shrink-0 w-60 top-16 max-h-[calc(100vh-166px)]" />
                         )}
                     </div>
                 )}

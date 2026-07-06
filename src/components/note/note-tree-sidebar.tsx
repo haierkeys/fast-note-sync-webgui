@@ -326,7 +326,7 @@ export function NoteTreeSidebar({ vault, selectedPathHash, onSelectNote, onFolde
     };
 
     return (
-        <aside className="flex h-full min-h-0 w-80 shrink-0 flex-col rounded-xl border border-border bg-card">
+        <aside className="sticky top-0 flex h-[calc(100vh-102px)] max-h-[calc(100vh-102px)] min-h-0 w-80 shrink-0 self-start flex-col rounded-xl border border-border bg-card">
             <div className="flex h-12 shrink-0 items-center justify-between border-b border-border px-3">
                 <div className="flex min-w-0 items-center gap-2">
                     <Folder className="h-4 w-4 shrink-0 text-muted-foreground" />
