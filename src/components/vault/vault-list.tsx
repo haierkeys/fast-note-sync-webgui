@@ -1,4 +1,4 @@
-import { Pencil, Trash2, Plus, Key, Globe, Monitor, Library, RefreshCw, Check, X, Search, GripVertical, FileText, Paperclip, HardDrive, Wifi, Clock, ScanText, Wrench, Copy } from "lucide-react";
+import { Pencil, Trash2, BrushCleaning, Plus, Key, Globe, Monitor, Library, RefreshCw, Check, X, Search, GripVertical, FileText, Paperclip, HardDrive, Wifi, Clock, ScanText, Wrench, Copy } from "lucide-react";
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, TouchSensor, useSensor, useSensors, DragEndEvent } from "@dnd-kit/core";
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, useSortable, rectSortingStrategy } from "@dnd-kit/sortable";
 import { TokenManager, TokenManagerHandle } from "@/components/user/token-manager";
@@ -15,6 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { CSS } from "@dnd-kit/utilities";
 import { cn } from "@/lib/utils";
+
 import { VaultForceDeleteModal } from "./vault-force-delete-modal";
 
 
@@ -752,7 +753,7 @@ export function VaultList({ onNavigateToNotes, onNavigateToAttachments, ftsBleve
           <div className="flex items-center justify-between px-5 pt-5 pb-2">
             <div className="flex items-center gap-2.5">
               <h2 className="text-xl font-black tracking-tight">{t("ui.vault.authTokenConfig") || "授权令牌"}</h2>
-              
+
               <div className="flex items-center gap-1.5 ml-1">
                 <Badge variant="outline" className="h-5 text-[10px] px-1.5 font-bold flex items-center gap-1 bg-muted/30 text-muted-foreground/60 border-none" title={t("ui.token.totalTokens")}>
                   {tokenCount}
@@ -809,6 +810,16 @@ export function VaultList({ onNavigateToNotes, onNavigateToAttachments, ftsBleve
                   className="h-8 w-8 rounded-lg text-muted-foreground hover:text-foreground"
                 >
                   <RefreshCw className="h-4 w-4" />
+                </Button>
+              </Tooltip>
+              <Tooltip content={t("ui.token.cleanExpired") || "批量清理已过期登录令牌"} side="top" delay={400}>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => tokenManagerRef.current?.cleanExpired()}
+                  className="h-8 w-8 rounded-lg text-destructive hover:bg-destructive/5"
+                >
+                  <BrushCleaning className="h-4 w-4" />
                 </Button>
               </Tooltip>
               <Tooltip content={t("ui.token.createTitle") || "创建令牌"} side="top" delay={400}>

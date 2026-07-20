@@ -32,6 +32,7 @@ export interface TokenManagerHandle {
   openCreate: () => void;
   refresh: () => void;
   setFilterType: (type: 0 | 1 | 2) => void;
+  cleanExpired: () => void;
 }
 
 // 专业品牌图标组件
@@ -61,7 +62,8 @@ const TokenManagerInner = (
     handleCreateToken, 
     handleUpdateToken, 
     handleFetchTokenLogs, 
-    handleRotateToken 
+    handleRotateToken,
+    handleCleanExpiredTokens
   } = useTokenHandle();
 
   const highlightTokenId = useAppStore(state => state.highlightTokenId);
@@ -89,6 +91,7 @@ const TokenManagerInner = (
       openCreate: () => setIsCreateOpen(true),
       refresh: () => handleListTokens(),
       setFilterType: (type: 0 | 1 | 2) => setFilterType(type),
+      cleanExpired: () => setIsCleanExpiredOpen(true),
     }));
     const [revokingId, setRevokingId] = useState<number | null>(null);
 
@@ -133,6 +136,25 @@ const TokenManagerInner = (
     const [rotateTargetId, setRotateTargetId] = useState<number | null>(null);
     const [isRotating, setIsRotating] = useState(false);
     const [isRotateMode, setIsRotateMode] = useState(false);
+
+    // Clean expired tokens state
+    const [isCleanExpiredOpen, setIsCleanExpiredOpen] = useState(false);
+    const [isCleaning, setIsCleaning] = useState(false);
+
+    const onCleanExpired = async () => {
+      setIsCleaning(true);
+      try {
+        const success = await handleCleanExpiredTokens(1);
+        if (success) {
+          toast.success(t("ui.token.cleanExpiredSuccess") || "Cleaned successfully");
+          setIsCleanExpiredOpen(false);
+        } else {
+          toast.error(t("ui.common.error") || "Clean failed");
+        }
+      } finally {
+        setIsCleaning(false);
+      }
+    };
 
     useEffect(() => {
       handleListTokens();
@@ -445,6 +467,16 @@ const TokenManagerInner = (
                 className="rounded-xl"
               >
                 <RefreshCw className={cn("h-4 w-4", isLoading && "animate-spin")} />
+              </Button>
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => setIsCleanExpiredOpen(true)}
+                disabled={isLoading || isCleaning}
+                className="rounded-xl border-destructive/20 text-destructive hover:bg-destructive/5"
+                title={t("ui.token.cleanExpired") || "批量清理已过期登录令牌"}
+              >
+                <Trash2 className="h-4 w-4" />
               </Button>
               <Button
                 variant="outline"
@@ -1152,6 +1184,53 @@ const TokenManagerInner = (
                 <RotateCw className="h-4 w-4 mr-2" />
               )}
               {t("ui.token.rotateAction")}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Clean Expired Tokens Dialog */}
+      <Dialog open={isCleanExpiredOpen} onOpenChange={setIsCleanExpiredOpen}>
+        <DialogContent className="sm:max-w-[500px] rounded-2xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-destructive">
+              <Trash2 className="h-5 w-5" />
+              {t("ui.token.cleanExpired") || "批量清理已过期登录令牌"}
+            </DialogTitle>
+            <DialogDescription>
+              {t("ui.token.cleanExpiredConfirm")}
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4 py-4 animate-in fade-in zoom-in-95 duration-300">
+            <div className="p-4 rounded-xl bg-destructive/10 border border-destructive/20 text-destructive text-xs flex gap-2">
+              <ShieldAlert className="h-4 w-4 shrink-0" />
+              <p className="leading-relaxed font-medium">
+                {t("ui.token.cleanExpiredConfirm")}
+              </p>
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button
+              variant="ghost"
+              onClick={() => setIsCleanExpiredOpen(false)}
+              className="rounded-xl"
+            >
+              {t("ui.common.cancel")}
+            </Button>
+            <Button
+              onClick={onCleanExpired}
+              disabled={isCleaning}
+              variant="destructive"
+              className="rounded-xl px-8"
+            >
+              {isCleaning ? (
+                <RefreshCw className="h-4 w-4 animate-spin mr-2" />
+              ) : (
+                <Trash2 className="h-4 w-4 mr-2" />
+              )}
+              {t("ui.token.cleanExpiredAction") || "立即清理"}
             </Button>
           </DialogFooter>
         </DialogContent>

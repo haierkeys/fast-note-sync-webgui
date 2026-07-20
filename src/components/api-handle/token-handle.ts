@@ -230,6 +230,33 @@ export function useTokenHandle() {
     }
   }, [token, handleListTokens]);
 
+  const handleCleanExpiredTokens = useCallback(async (issueType: number = 1) => {
+    setIsLoading(true);
+    try {
+      const response = await fetch(addCacheBuster(env.API_URL + `/api/tokens/clean-expired?issueType=${issueType}`), {
+        method: "DELETE",
+        headers: buildApiHeaders({ token }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to clean expired tokens");
+      }
+
+      const res = await response.json();
+      if (res.code > 0) {
+        // Refresh list
+        handleListTokens();
+        return true;
+      }
+      return false;
+    } catch (e) {
+      console.error("Clean expired tokens failed", e);
+      return false;
+    } finally {
+      setIsLoading(false);
+    }
+  }, [token, handleListTokens]);
+
   const currentTokenID = useMemo(() => {
     if (!token) return null;
     try {
@@ -257,6 +284,7 @@ export function useTokenHandle() {
     handleCreateToken,
     handleUpdateToken,
     handleFetchTokenLogs,
-    handleRotateToken
-  }), [tokens, isLoading, currentTokenID, handleListTokens, handleRevokeToken, handleCreateToken, handleUpdateToken, handleFetchTokenLogs, handleRotateToken]);
+    handleRotateToken,
+    handleCleanExpiredTokens
+  }), [tokens, isLoading, currentTokenID, handleListTokens, handleRevokeToken, handleCreateToken, handleUpdateToken, handleFetchTokenLogs, handleRotateToken, handleCleanExpiredTokens]);
 }
