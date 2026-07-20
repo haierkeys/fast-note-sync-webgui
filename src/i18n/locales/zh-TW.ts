@@ -305,6 +305,14 @@ export default {
     "ui.note.viewFolder": "目錄瀏覽",
     "ui.note.viewFlatNotes": "筆記平鋪瀏覽",
     "ui.note.viewFlatFiles": "附件平鋪瀏覽",
+    "ui.note.viewWorkspace": "文件樹",
+    "ui.note.documentTree": "文件樹",
+    "ui.note.selectNoteFromTree": "從文件樹選擇一篇筆記",
+    "ui.note.treeLoading": "正在載入文件樹...",
+    "ui.note.treeEmpty": "暫無內容",
+    "ui.note.treeSearchPlaceholder": "搜尋文件樹...",
+    "ui.note.showLineNumbers": "顯示行號",
+    "ui.note.hideLineNumbers": "隱藏行號",
     "ui.note.editorHr": "分割線",
     "ui.note.exportPdfPlanned": "PDF 導出功能開發中...",
     "ui.note.undo": "撤銷",
@@ -1011,4 +1019,3 @@ export default {
     "ui.unsaved.leave": "離開",
     "ui.unsaved.stay": "留下",
 };
-

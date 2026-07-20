@@ -305,6 +305,14 @@ export default {
     "ui.note.viewFolder": "폴더 뷰",
     "ui.note.viewFlatNotes": "노트 평면 보기",
     "ui.note.viewFlatFiles": "첨부 파일 평면 보기",
+    "ui.note.viewWorkspace": "문서 트리",
+    "ui.note.documentTree": "문서 트리",
+    "ui.note.selectNoteFromTree": "문서 트리에서 노트를 선택하세요",
+    "ui.note.treeLoading": "문서 트리 로딩 중...",
+    "ui.note.treeEmpty": "항목 없음",
+    "ui.note.treeSearchPlaceholder": "문서 트리 검색...",
+    "ui.note.showLineNumbers": "줄 번호 표시",
+    "ui.note.hideLineNumbers": "줄 번호 숨기기",
     "ui.note.editorHr": "구분선",
     "ui.note.exportPdfPlanned": "PDF 내보내기 기능 개발 중...",
     "ui.note.undo": "실행 취소",
@@ -1011,4 +1019,3 @@ export default {
     "ui.unsaved.leave": "떠나기",
     "ui.unsaved.stay": "머물기",
 };
-

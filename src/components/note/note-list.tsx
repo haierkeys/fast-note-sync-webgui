@@ -1,4 +1,4 @@
-import { NotepadText, Trash2, RefreshCw, Plus, Calendar, Clock, ChevronLeft, ChevronRight, History, Search, X, SortDesc, SortAsc, RotateCcw, Eye, Pencil, Folder as FolderIcon, ChevronDown, FolderSearch, TextCursorInput, Share2, Library, FileText, Paperclip, Image, Music, Video, FileCode, Upload, FolderPlus } from "lucide-react";
+import { NotepadText, Trash2, RefreshCw, Plus, Calendar, Clock, ChevronLeft, ChevronRight, History, Search, X, SortDesc, SortAsc, RotateCcw, Eye, Pencil, Folder as FolderIcon, ChevronDown, FolderSearch, TextCursorInput, Share2, Library, FileText, Paperclip, Image, Music, Video, FileCode, Upload, FolderPlus, FolderTree } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useConfirmDialog } from "@/components/context/confirm-dialog-context";
@@ -22,13 +22,14 @@ import { cn } from "@/lib/utils";
 import { FilePreview } from "@/components/file/file-preview";
 import { useFileHandle } from "@/components/api-handle/file-handle";
 import { File as FileDTO, FileListResponse } from "@/lib/types/file";
+import { useMobile } from "@/hooks/use-mobile";
 
 
 type SearchMode = "path" | "content";
 type SortBy = "mtime" | "ctime" | "path";
 type SortOrder = "desc" | "asc";
 export type ShareFilterType = 'active' | null;
-export type ViewModeType = 'flat' | 'folder' | 'flat-file';
+export type ViewModeType = 'flat' | 'folder' | 'flat-file' | 'workspace';
 
 interface NoteListProps {
     vault: string;
@@ -207,6 +208,7 @@ function DroppableBreadcrumbButton({ path, children, className }: DroppableBread
 
 export function NoteList({ vault, vaults, onVaultChange, onSelectNote, onCreateNote, page, setPage, pageSize, setPageSize, onViewHistory, isRecycle = false, searchKeyword, setSearchKeyword, currentPath, setCurrentPath, currentPathHash, setCurrentPathHash, pathHashMap, setPathHashMap, shareFilter, setShareFilter, viewMode, setViewMode }: NoteListProps) {
     const { t } = useTranslation();
+    const isMobile = useMobile();
     const { handleNoteList, handleDeleteNote, handleRestoreNote, handleFolderList, handleFolderNotes, handlePermanentDeleteNote, handleClearNoteRecycle, handleRenameNote, handleNoteListByPaths, handleDeleteFolder, handleCreateFolder } = useNoteHandle();
     const { handleGetNoteSharePaths } = useShareHandle();
     const { openConfirmDialog } = useConfirmDialog();
@@ -383,6 +385,17 @@ export function NoteList({ vault, vaults, onVaultChange, onSelectNote, onCreateN
         const requestId = ++noteRequestIdRef.current;
 
         setLoading(true);
+
+        if (viewMode === "workspace" && !isRecycle) {
+            setFolders([]);
+            setNotes([]);
+            setFiles([]);
+            setTotalRows(0);
+            setFilesTotalRows(0);
+            setLoading(false);
+            setFileLoading(false);
+            return;
+        }
 
         // 分享筛选：全库平铺查询（修复子文件夹漏筛）
         // Share filter: global flat search (fixes missing subfolder shares)
@@ -1153,10 +1166,26 @@ export function NoteList({ vault, vaults, onVaultChange, onSelectNote, onCreateN
                             >
                                 {t("ui.note.viewFlatFiles")}
                             </button>
+                            {!isMobile && (
+                                <button
+                                    className={`px-4 h-full text-xs font-medium transition-colors border-l border-border inline-flex items-center gap-1.5 ${viewMode === 'workspace' ? "bg-primary text-primary-foreground" : "hover:bg-muted"}`}
+                                    onClick={() => {
+                                        setSearchKeyword("");
+                                        setDebouncedKeyword("");
+                                        setViewMode("workspace");
+                                        setShareFilter(null);
+                                    }}
+                                >
+                                    <FolderTree className="h-3.5 w-3.5" />
+                                    {t("ui.note.viewWorkspace")}
+                                </button>
+                            )}
                         </div>
                         <span className="text-sm font-medium text-muted-foreground mr-2">
                             {viewMode === 'flat-file' ? (
                                 `${filesTotalRows} ${t("ui.file.file")}`
+                            ) : viewMode === 'workspace' ? (
+                                t("ui.note.documentTree")
                             ) : viewMode === 'folder' ? (
                                 `${totalRows} ${t("ui.note.note")} / ${filesTotalRows} ${t("ui.file.file")}`
                             ) : (
@@ -1802,4 +1831,3 @@ export function NoteList({ vault, vaults, onVaultChange, onSelectNote, onCreateN
         </div>
     );
 }
-
