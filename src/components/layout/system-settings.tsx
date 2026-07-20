@@ -180,7 +180,7 @@ export function SystemSettings({ onBack, isDashboard = false, isAdmin = false }:
                 toast.error(t("ui.settings.historySaveDelayFormatError"))
                 return
             }
-            if (seconds < 10) {
+            if (seconds < 1) {
                 toast.error(t("ui.settings.historySaveDelayMinError"))
                 return
             }
