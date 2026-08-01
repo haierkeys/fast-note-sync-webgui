@@ -231,7 +231,7 @@ export default {
     "ui.vault.searchPlaceholder": "노트 저장소 검색...",
     "ui.vault.note": "노트",
     "ui.vault.attachmentCount": "첨부 파일",
-    "ui.vault.totalSize": "총 용량: {{size}}",
+    "ui.vault.usedSpace": "사용 공간: {{size}}",
     "ui.vault.authTokenConfig": "Obsidian 인증",
     "ui.vault.copyConfig": "인증 구성 복사",
     "ui.vault.copyConfigSuccess": "구성이 클립보드에 복사되었습니다",

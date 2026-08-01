@@ -233,7 +233,7 @@ export default {
     "ui.vault.searchPlaceholder": "搜索笔记库...",
     "ui.vault.note": "笔记",
     "ui.vault.attachmentCount": "附件",
-    "ui.vault.totalSize": "总容量: {{size}}",
+    "ui.vault.usedSpace": "已用空间: {{size}}",
     "ui.vault.authTokenConfig": "授权 Obsidian",
     "ui.vault.copyConfig": "复制授权配置",
     "ui.vault.copyConfigSuccess": "配置已复制到剪贴板",

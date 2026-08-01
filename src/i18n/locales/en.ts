@@ -233,7 +233,7 @@ export default {
     "ui.vault.searchPlaceholder": "Search vaults...",
     "ui.vault.note": "Note",
     "ui.vault.attachmentCount": "Attachments",
-    "ui.vault.totalSize": "Total Size: {{size}}",
+    "ui.vault.usedSpace": "Used Space: {{size}}",
     "ui.vault.authTokenConfig": "Authorize Obsidian",
     "ui.vault.copyConfig": "Copy Authorization Config",
     "ui.vault.copyConfigSuccess": "Configuration copied to clipboard",
