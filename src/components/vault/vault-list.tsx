@@ -18,7 +18,6 @@ import { cn } from "@/lib/utils";
 
 import { VaultForceDeleteModal } from "./vault-force-delete-modal";
 
-
 interface VaultListProps {
   onNavigateToNotes?: (vaultName: string, mode?: "folder" | "flat") => void;
   onNavigateToAttachments?: (vaultName: string) => void;
@@ -80,6 +79,13 @@ function SortableVaultCard({
   };
 
   const [showToolbar, setShowToolbar] = useState(false);
+
+  // 进度条宽度：按笔记/附件在已用空间中的占比分段，合计占满整条进度条
+  const noteSize = parseInt(String(vault.noteSize || 0))
+  const fileSize = parseInt(String(vault.fileSize || 0))
+  const usedSize = noteSize + fileSize
+  const noteWidth = noteSize > 0 ? Math.max(5, (noteSize / usedSize) * 100) : 0
+  const fileWidth = fileSize > 0 ? Math.min((fileSize / usedSize) * 100, 100 - noteWidth) : 0
 
   return (
     <article
@@ -200,7 +206,7 @@ function SortableVaultCard({
         <div className="flex items-center justify-between text-[11px]">
           <div className="flex items-center gap-2 text-muted-foreground/70">
             <HardDrive className="h-3.5 w-3.5" />
-            <span className="font-medium">{t("ui.vault.totalSize", { size: formatBytes(vault.size) })}</span>
+            <span className="font-medium">{t("ui.vault.usedSpace", { size: formatBytes(vault.size) })}</span>
           </div>
           <div className="flex items-center gap-3">
             {vault.updatedAt && (
@@ -216,21 +222,21 @@ function SortableVaultCard({
 
         {/* 装饰性进度条 (细化显示笔记和附件占用) */}
         <div className="h-1 w-full rounded-full bg-muted overflow-hidden flex">
-          {parseInt(String(vault.noteSize || 0)) > 0 && (
+          {noteSize > 0 && (
             <div
               className="h-full transition-all duration-500"
               style={{
-                width: `${Math.max(5, Math.min((parseInt(String(vault.noteSize || 0)) / (1024 * 1024 * 1024)) * 100, 100))}%`,
+                width: `${noteWidth}%`,
                 backgroundColor: '#08b94e',
                 opacity: 0.3
               }}
             />
           )}
-          {parseInt(String(vault.fileSize || 0)) > 0 && (
+          {fileSize > 0 && (
             <div
               className="h-full transition-all duration-500"
               style={{
-                width: `${Math.min((parseInt(String(vault.fileSize || 0)) / (1024 * 1024 * 1024)) * 100, Math.max(0, 100 - (parseInt(String(vault.noteSize || 0)) > 0 ? Math.max(5, Math.min((parseInt(String(vault.noteSize || 0)) / (1024 * 1024 * 1024)) * 100, 100)) : 0)))}%`,
+                width: `${fileWidth}%`,
                 backgroundColor: '#7C4DFF',
                 opacity: 0.3
               }}
@@ -581,16 +587,17 @@ export function VaultList({ onNavigateToNotes, onNavigateToAttachments, ftsBleve
     })
   }
 
-  // 格式化字节
+  // 格式化字节：按大小自动选择单位 (B/KB/MB/GB/TB)
   const formatBytes = (bytes: string | number | undefined): string => {
     if (bytes === undefined || bytes === null || bytes === "") return "0 B"
     const numBytes = typeof bytes === 'string' ? parseInt(bytes) : bytes
     if (isNaN(numBytes) || numBytes === 0) return "0 B"
 
-    if (numBytes < 1024) return `${numBytes} B`
-    if (numBytes < 1024 * 1024) return `${(numBytes / 1024).toFixed(2)} KB`
-    const mb = numBytes / (1024 * 1024)
-    return `${mb.toFixed(2)} MB`
+    const k = 1024
+    const sizes = ["B", "KB", "MB", "GB", "TB"]
+    const unitIndex = Math.min(Math.floor(Math.log(numBytes) / Math.log(k)), sizes.length - 1)
+    if (unitIndex === 0) return `${numBytes} B`
+    return `${(numBytes / Math.pow(k, unitIndex)).toFixed(2)} ${sizes[unitIndex]}`
   }
 
   // 查看仓库配置

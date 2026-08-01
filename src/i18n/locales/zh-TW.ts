@@ -231,7 +231,7 @@ export default {
     "ui.vault.searchPlaceholder": "搜索筆記庫...",
     "ui.vault.note": "筆記",
     "ui.vault.attachmentCount": "附件",
-    "ui.vault.totalSize": "總容量: {{size}}",
+    "ui.vault.usedSpace": "已用空間: {{size}}",
     "ui.vault.authTokenConfig": "授權 Obsidian",
     "ui.vault.copyConfig": "複製授權配置",
     "ui.vault.copyConfigSuccess": "配置已複製到剪貼板",

@@ -231,7 +231,7 @@ export default {
     "ui.vault.searchPlaceholder": "ノートライブラリを検索...",
     "ui.vault.note": "ノート",
     "ui.vault.attachmentCount": "添付ファイル",
-    "ui.vault.totalSize": "総容量: {{size}}",
+    "ui.vault.usedSpace": "使用容量: {{size}}",
     "ui.vault.authTokenConfig": "Obsidian の認証",
     "ui.vault.copyConfig": "認証設定をコピー",
     "ui.vault.copyConfigSuccess": "設定がクリップボードにコピーされました",
