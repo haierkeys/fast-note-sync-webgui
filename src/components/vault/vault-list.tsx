@@ -201,7 +201,7 @@ function SortableVaultCard({
         </div>
       </div>
 
-      {/* 容量与时间 */}
+      {/* 已用空间与时间 */}
       <div className="flex flex-col gap-1.5">
         <div className="flex items-center justify-between text-[11px]">
           <div className="flex items-center gap-2 text-muted-foreground/70">
@@ -220,7 +220,7 @@ function SortableVaultCard({
           </div>
         </div>
 
-        {/* 装饰性进度条 (细化显示笔记和附件占用) */}
+        {/* 已用空间构成进度条：绿色=笔记、紫色=附件，合计占满整条 */}
         <div className="h-1 w-full rounded-full bg-muted overflow-hidden flex">
           {noteSize > 0 && (
             <div
