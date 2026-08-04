@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { ChevronDown, ChevronRight, FileText, Folder, FolderOpen, RefreshCw, Search, X } from "lucide-react";
+import { ChevronDown, ChevronRight, FileText, Folder, FolderOpen, Paperclip, RefreshCw, Search, X } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 import { useFileHandle } from "@/components/api-handle/file-handle";
@@ -13,18 +13,21 @@ interface TreeChildren {
     folders: FolderDTO[];
     notes: Note[];
     canvasFiles: FileDTO[];
+    attachments: FileDTO[];
 }
 
 interface NoteTreeSidebarProps {
     vault: string;
     selectedPathHash?: string;
     onSelectNote: (note: Note, previewMode?: boolean) => void;
+    onSelectFile: (file: FileDTO) => void;
     onFoldersLoaded?: (folders: FolderDTO[]) => void;
 }
 
 type TreeSearchResult =
     | { type: "note"; path: string; pathHash: string; note: Note }
-    | { type: "canvas"; path: string; pathHash: string; file: FileDTO };
+    | { type: "canvas"; path: string; pathHash: string; file: FileDTO }
+    | { type: "attachment"; path: string; pathHash: string; file: FileDTO };
 
 const ROOT_KEY = "__root__";
 const ROOT_PATH = "";
@@ -45,6 +48,7 @@ function sortChildren(children: TreeChildren): TreeChildren {
         folders: [...children.folders].sort((a, b) => a.path.localeCompare(b.path)),
         notes: [...children.notes].sort((a, b) => a.path.localeCompare(b.path)),
         canvasFiles: [...children.canvasFiles].sort((a, b) => a.path.localeCompare(b.path)),
+        attachments: [...children.attachments].sort((a, b) => a.path.localeCompare(b.path)),
     };
 }
 
@@ -63,7 +67,7 @@ function canvasFileToNote(file: FileDTO): Note {
     };
 }
 
-export function NoteTreeSidebar({ vault, selectedPathHash, onSelectNote, onFoldersLoaded }: NoteTreeSidebarProps) {
+export function NoteTreeSidebar({ vault, selectedPathHash, onSelectNote, onSelectFile, onFoldersLoaded }: NoteTreeSidebarProps) {
     const { t } = useTranslation();
     const { handleFolderList, handleFolderNotes, handleNoteList } = useNoteHandle();
     const { handleFolderFiles, handleFileList } = useFileHandle();
@@ -96,6 +100,7 @@ export function NoteTreeSidebar({ vault, selectedPathHash, onSelectNote, onFolde
                     folders: folderList,
                     notes: notes?.list || [],
                     canvasFiles: (files?.list || []).filter(file => file.path.toLowerCase().endsWith(".canvas")),
+                    attachments: (files?.list || []).filter(file => !file.path.toLowerCase().endsWith(".canvas")),
                 }),
             }));
         }).finally(() => {
@@ -154,16 +159,15 @@ export function NoteTreeSidebar({ vault, selectedPathHash, onSelectNote, onFolde
                 pathHash: note.pathHash,
                 note,
             }));
-            const canvasResults: TreeSearchResult[] = (fileData?.list || [])
-                .filter(file => file.path.toLowerCase().endsWith(".canvas"))
+            const fileResults: TreeSearchResult[] = (fileData?.list || [])
                 .map(file => ({
-                    type: "canvas",
+                    type: file.path.toLowerCase().endsWith(".canvas") ? "canvas" : "attachment",
                     path: file.path,
                     pathHash: file.pathHash,
                     file,
                 }));
 
-            setSearchResults([...noteResults, ...canvasResults].sort((a, b) => a.path.localeCompare(b.path)));
+            setSearchResults([...noteResults, ...fileResults].sort((a, b) => a.path.localeCompare(b.path)));
         }).finally(() => {
             if (requestId === searchRequestIdRef.current) {
                 setSearchLoading(false);
@@ -194,7 +198,7 @@ export function NoteTreeSidebar({ vault, selectedPathHash, onSelectNote, onFolde
 
     const isEmpty = useMemo(() => {
         if (!rootChildren) return false;
-        return rootChildren.folders.length === 0 && rootChildren.notes.length === 0 && rootChildren.canvasFiles.length === 0;
+        return rootChildren.folders.length === 0 && rootChildren.notes.length === 0 && rootChildren.canvasFiles.length === 0 && rootChildren.attachments.length === 0;
     }, [rootChildren]);
 
     const isSearching = debouncedSearchKeyword.length > 0;
@@ -209,6 +213,11 @@ export function NoteTreeSidebar({ vault, selectedPathHash, onSelectNote, onFolde
     const handleSelectSearchResult = (item: TreeSearchResult) => {
         if (item.type === "canvas") {
             onSelectNote(canvasFileToNote(item.file), true);
+            return;
+        }
+
+        if (item.type === "attachment") {
+            onSelectFile(item.file);
             return;
         }
 
@@ -228,7 +237,11 @@ export function NoteTreeSidebar({ vault, selectedPathHash, onSelectNote, onFolde
                 )}
                 onClick={() => handleSelectSearchResult(item)}
             >
-                <FileText className={cn("mt-0.5 h-4 w-4 shrink-0", item.type === "canvas" ? "text-amber-500" : "text-muted-foreground")} />
+                {item.type === "attachment" ? (
+                    <Paperclip className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
+                ) : (
+                    <FileText className={cn("mt-0.5 h-4 w-4 shrink-0", item.type === "canvas" ? "text-amber-500" : "text-muted-foreground")} />
+                )}
                 <span className="min-w-0 flex-1">
                     <span className="block truncate">{getItemTitle(item.path)}</span>
                     <span className="block truncate text-xs text-muted-foreground">{item.path}</span>
@@ -271,7 +284,8 @@ export function NoteTreeSidebar({ vault, selectedPathHash, onSelectNote, onFolde
                         {children.folders.map(child => renderFolder(child, depth + 1))}
                         {children.notes.map(note => renderNote(note, depth + 1))}
                         {children.canvasFiles.map(file => renderCanvasFile(file, depth + 1))}
-                        {children.folders.length === 0 && children.notes.length === 0 && children.canvasFiles.length === 0 && (
+                        {children.attachments.map(file => renderAttachment(file, depth + 1))}
+                        {children.folders.length === 0 && children.notes.length === 0 && children.canvasFiles.length === 0 && children.attachments.length === 0 && (
                             <div
                                 className="px-2 py-1.5 text-xs text-muted-foreground"
                                 style={{ paddingLeft: `${28 + (depth + 1) * 16}px` }}
@@ -320,6 +334,26 @@ export function NoteTreeSidebar({ vault, selectedPathHash, onSelectNote, onFolde
                 onClick={() => onSelectNote(canvasFileToNote(file), true)}
             >
                 <FileText className="h-4 w-4 shrink-0 text-amber-500" />
+                <span className="min-w-0 flex-1 truncate">{getItemTitle(file.path)}</span>
+            </button>
+        );
+    };
+
+    const renderAttachment = (file: FileDTO, depth: number) => {
+        const selected = selectedPathHash === file.pathHash;
+
+        return (
+            <button
+                key={file.pathHash || file.path}
+                type="button"
+                className={cn(
+                    "flex h-8 w-full items-center gap-1.5 rounded-md px-2 text-left text-sm transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                    selected && "bg-primary/10 text-primary hover:bg-primary/15"
+                )}
+                style={{ paddingLeft: `${28 + depth * 16}px` }}
+                onClick={() => onSelectFile(file)}
+            >
+                <Paperclip className="h-4 w-4 shrink-0 text-muted-foreground" />
                 <span className="min-w-0 flex-1 truncate">{getItemTitle(file.path)}</span>
             </button>
         );
@@ -385,6 +419,7 @@ export function NoteTreeSidebar({ vault, selectedPathHash, onSelectNote, onFolde
                         {rootChildren?.folders.map(folder => renderFolder(folder, 0))}
                         {rootChildren?.notes.map(note => renderNote(note, 0))}
                         {rootChildren?.canvasFiles.map(file => renderCanvasFile(file, 0))}
+                        {rootChildren?.attachments.map(file => renderAttachment(file, 0))}
                     </>
                 )}
             </div>

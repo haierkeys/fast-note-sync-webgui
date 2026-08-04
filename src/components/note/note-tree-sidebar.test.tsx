@@ -191,8 +191,9 @@ describe("NoteTreeSidebar", () => {
         });
     });
 
-    it("loads root nodes, lazy-loads child folders, and selects notes or canvas files", async () => {
+    it("loads root nodes, lazy-loads child folders, and selects notes, canvas files, or attachments", async () => {
         const onSelectNote = vi.fn();
+        const onSelectFile = vi.fn();
         const onFoldersLoaded = vi.fn();
 
         render(
@@ -200,6 +201,7 @@ describe("NoteTreeSidebar", () => {
                 vault="Work"
                 selectedPathHash="note-root"
                 onSelectNote={onSelectNote}
+                onSelectFile={onSelectFile}
                 onFoldersLoaded={onFoldersLoaded}
             />
         );
@@ -207,7 +209,7 @@ describe("NoteTreeSidebar", () => {
         expect(await screen.findByText("Projects")).toBeInTheDocument();
         expect(screen.getByText("Root")).toBeInTheDocument();
         expect(screen.getByText("Board")).toBeInTheDocument();
-        expect(screen.queryByText("image.png")).not.toBeInTheDocument();
+        expect(screen.getByText("image.png")).toBeInTheDocument();
         expect(onFoldersLoaded).toHaveBeenCalledWith([expect.objectContaining({ path: "Projects" })]);
 
         fireEvent.click(screen.getByRole("button", { name: "Projects" }));
@@ -222,16 +224,21 @@ describe("NoteTreeSidebar", () => {
 
         fireEvent.click(screen.getByRole("button", { name: "Board" }));
         expect(onSelectNote).toHaveBeenLastCalledWith(expect.objectContaining({ path: "Board.canvas" }), true);
+
+        fireEvent.click(screen.getByRole("button", { name: "image.png" }));
+        expect(onSelectFile).toHaveBeenLastCalledWith(expect.objectContaining({ path: "image.png" }));
     });
 
-    it("searches notes and canvas files without showing non-canvas attachments", async () => {
+    it("searches notes, canvas files, and attachments", async () => {
         const onSelectNote = vi.fn();
+        const onSelectFile = vi.fn();
 
         render(
             <NoteTreeSidebar
                 vault="Work"
                 selectedPathHash="note-root"
                 onSelectNote={onSelectNote}
+                onSelectFile={onSelectFile}
             />
         );
 
@@ -260,12 +267,15 @@ describe("NoteTreeSidebar", () => {
         expect(screen.getByText("Projects/Search Result.md")).toBeInTheDocument();
         expect(screen.getByText("Search Board")).toBeInTheDocument();
         expect(screen.getByText("Projects/Search Board.canvas")).toBeInTheDocument();
-        expect(screen.queryByText("Projects/image.png")).not.toBeInTheDocument();
+        expect(screen.getByText("Projects/image.png")).toBeInTheDocument();
 
         const canvasButton = screen.getByText("Search Board").closest("button");
         expect(canvasButton).not.toBeNull();
         fireEvent.click(canvasButton!);
         expect(onSelectNote).toHaveBeenLastCalledWith(expect.objectContaining({ path: "Projects/Search Board.canvas" }), true);
+
+        fireEvent.click(screen.getByText("image.png").closest("button")!);
+        expect(onSelectFile).toHaveBeenLastCalledWith(expect.objectContaining({ path: "Projects/image.png" }));
 
         fireEvent.click(screen.getByLabelText("ui.common.clear"));
         expect(screen.getByText("Projects")).toBeInTheDocument();
