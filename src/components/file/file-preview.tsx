@@ -4,31 +4,88 @@ import { useRef, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
 import { File } from "@/lib/types/file";
+import { buildApiHeaders } from "@/lib/utils/api-headers";
 
 
 interface FilePreviewProps {
     file: File;
     url: string;
     onClose: () => void;
+    variant?: "floating" | "panel";
 }
 
-export function FilePreview({ file, url, onClose }: FilePreviewProps) {
+interface PreviewSize {
+    width: number;
+    height: number;
+}
+
+const HTML_EXTENSIONS = ["htm", "html"];
+const TEXT_EXTENSIONS = ["txt", "md", "csv", "log", "xml", "yaml", "yml", "ini", "js", "ts", "jsx", "tsx", "py", "sh", "bat", "go", "css", "json", "c", "cpp", "rs", "php"];
+
+export function FilePreview({ file, url, onClose, variant = "floating" }: FilePreviewProps) {
     const { t } = useTranslation();
     const ext = file.path.split('.').pop()?.toLowerCase() || '';
     const isImage = ['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp', 'bmp'].includes(ext);
     const isAudio = ['mp3', 'wav', 'flac', 'ogg', 'm4a'].includes(ext);
     const isVideo = ['mp4', 'webm', 'mkv', 'avi', 'mov'].includes(ext);
     const isPdf = ext === 'pdf';
-    const isCode = ['js', 'ts', 'jsx', 'tsx', 'py', 'sh', 'bat', 'go', 'css', 'html', 'json', 'c', 'cpp', 'rs', 'php'].includes(ext);
+    const isHtml = HTML_EXTENSIONS.includes(ext);
+    const isText = TEXT_EXTENSIONS.includes(ext);
+    const isCode = isHtml || isText;
+    const hasLoadablePreview = isImage || isAudio || isVideo || isPdf || isHtml || isText;
+    const isFloating = variant === "floating";
 
     const fileName = file.path.split('/').pop() || file.path;
     const mediaRef = useRef<HTMLMediaElement>(null);
-    const [isLoading, setIsLoading] = useState(true);
+    const previewRef = useRef<HTMLDivElement>(null);
+    const resizeStartRef = useRef<{ x: number; y: number; size: PreviewSize } | null>(null);
+    const [isLoading, setIsLoading] = useState(hasLoadablePreview);
+    const [previewSize, setPreviewSize] = useState<PreviewSize | null>(null);
+    const [textContent, setTextContent] = useState("");
+    const [textLoadFailed, setTextLoadFailed] = useState(false);
 
-    // 当 URL 变化时重置加载状态
+    // 只有实际嵌入的媒体会触发加载事件，其他类型直接显示文件操作。
     useEffect(() => {
-        setIsLoading(true);
-    }, [url]);
+        setIsLoading(hasLoadablePreview);
+    }, [url, hasLoadablePreview]);
+
+    useEffect(() => {
+        if (!isText) {
+            setTextContent("");
+            setTextLoadFailed(false);
+            return;
+        }
+
+        const controller = new AbortController();
+        setTextContent("");
+        setTextLoadFailed(false);
+
+        fetch(url, {
+            cache: "no-store",
+            signal: controller.signal,
+            headers: buildApiHeaders({
+                token: localStorage.getItem("token"),
+                includeContentType: false,
+                includeDomain: false,
+                includeLang: false,
+            }),
+        })
+            .then(response => {
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                return response.text();
+            })
+            .then(content => {
+                if (!controller.signal.aborted) setTextContent(content);
+            })
+            .catch(() => {
+                if (!controller.signal.aborted) setTextLoadFailed(true);
+            })
+            .finally(() => {
+                if (!controller.signal.aborted) setIsLoading(false);
+            });
+
+        return () => controller.abort();
+    }, [isText, url]);
 
     // 加载记忆的音量
     useEffect(() => {
@@ -47,14 +104,55 @@ export function FilePreview({ file, url, onClose }: FilePreviewProps) {
         setIsLoading(false);
     };
 
+    const handleResizeStart = (event: React.PointerEvent<HTMLDivElement>) => {
+        if (event.pointerType !== "mouse" || !previewRef.current) return;
+
+        event.preventDefault();
+        const { width, height } = previewRef.current.getBoundingClientRect();
+        resizeStartRef.current = { x: event.clientX, y: event.clientY, size: { width, height } };
+        event.currentTarget.setPointerCapture(event.pointerId);
+    };
+
+    const handleResizeMove = (event: React.PointerEvent<HTMLDivElement>) => {
+        const resizeStart = resizeStartRef.current;
+        if (!resizeStart) return;
+
+        const maxWidth = Math.max(320, window.innerWidth - 48);
+        const maxHeight = Math.max(200, window.innerHeight * 0.8);
+        setPreviewSize({
+            width: Math.min(maxWidth, Math.max(320, resizeStart.size.width - (event.clientX - resizeStart.x))),
+            height: Math.min(maxHeight, Math.max(200, resizeStart.size.height - (event.clientY - resizeStart.y))),
+        });
+    };
+
+    const handleResizeEnd = (event: React.PointerEvent<HTMLDivElement>) => {
+        resizeStartRef.current = null;
+        event.currentTarget.releasePointerCapture(event.pointerId);
+    };
+
     return (
         <AnimatePresence>
             <motion.div
                 initial={{ opacity: 0, y: 50, scale: 0.9 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: 50, scale: 0.9 }}
-                className="fixed bottom-6 right-6 z-100 w-[320px] sm:w-100 bg-card border border-border rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[80vh]"
+                className={`bg-card border border-border rounded-2xl shadow-2xl overflow-hidden flex flex-col ${isFloating
+                    ? "fixed bottom-6 right-6 z-100 w-[320px] sm:w-100 max-h-[80vh]"
+                    : "h-full min-h-[420px] w-full"
+                }`}
+                ref={previewRef}
+                style={isFloating ? previewSize ?? undefined : undefined}
             >
+                {isFloating && (
+                    <div
+                        aria-hidden="true"
+                        className="absolute -left-1 -top-1 z-20 h-5 w-5 cursor-nwse-resize touch-none"
+                        onPointerDown={handleResizeStart}
+                        onPointerMove={handleResizeMove}
+                        onPointerUp={handleResizeEnd}
+                        onPointerCancel={handleResizeEnd}
+                    />
+                )}
                 {/* 头部 */}
                 <div className="flex items-center justify-between p-3 border-b border-border bg-muted/50">
                     <div className="flex flex-col min-w-0">
@@ -149,7 +247,32 @@ export function FilePreview({ file, url, onClose }: FilePreviewProps) {
                             onError={handleLoaded}
                         />
                     )}
-                    {!isImage && !isAudio && !isVideo && (
+                    {isPdf && (
+                        <iframe
+                            key={url}
+                            src={url}
+                            title={fileName}
+                            className="h-[70vh] min-h-80 w-full rounded-lg border-0 bg-white"
+                            onLoad={handleLoaded}
+                        />
+                    )}
+                    {isHtml && (
+                        <iframe
+                            key={url}
+                            src={url}
+                            title={fileName}
+                            sandbox=""
+                            referrerPolicy="no-referrer"
+                            className="h-[70vh] min-h-80 w-full rounded-lg border-0 bg-white"
+                            onLoad={handleLoaded}
+                        />
+                    )}
+                    {isText && !textLoadFailed && (
+                        <pre className="max-h-[70vh] min-h-80 w-full overflow-auto rounded-lg border bg-background p-4 text-left font-mono text-xs leading-5 whitespace-pre-wrap break-words">
+                            {textContent}
+                        </pre>
+                    )}
+                    {(!isImage && !isAudio && !isVideo && !isPdf && !isHtml && (!isText || textLoadFailed)) && (
                         <div className="flex flex-col items-center gap-4 py-6">
                             <div className="w-20 h-20 rounded-2xl bg-primary/5 flex items-center justify-center text-primary/60 border border-primary/10">
                                 {isPdf ? <FileText className="w-10 h-10" /> : isCode ? <FileCode className="w-10 h-10" /> : <Paperclip className="w-10 h-10" />}
@@ -184,4 +307,3 @@ export function FilePreview({ file, url, onClose }: FilePreviewProps) {
         </AnimatePresence>
     );
 }
-

@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useTranslation } from "react-i18next";
 import { VaultType } from "@/lib/types/vault";
 import { Note } from "@/lib/types/note";
+import type { File as FileDTO } from "@/lib/types/file";
 import type { Folder as FolderDTO } from "@/lib/types/folder";
 import { Database, FileText, FolderTree } from "lucide-react";
 
@@ -20,6 +21,8 @@ import { NoteEditor } from "./note-editor";
 import { CanvasViewer } from "./canvas-viewer";
 import { NoteList } from "./note-list";
 import { NoteTreeSidebar } from "./note-tree-sidebar";
+import { FilePreview } from "@/components/file/file-preview";
+import { useFileHandle } from "@/components/api-handle/file-handle";
 import { useAppStore } from "@/stores/app-store";
 import { TocProvider } from "@/components/context/toc-context";
 import { useMobile } from "@/hooks/use-mobile";
@@ -69,6 +72,7 @@ export function NoteManager({
     const isMobile = useMobile();
     const [view, setView] = useState<"list" | "editor">("list");
     const [selectedNote, setSelectedNote] = useState<Note | undefined>(undefined);
+    const [selectedFile, setSelectedFile] = useState<FileDTO | undefined>(undefined);
     const [initialPreviewMode, setInitialPreviewMode] = useState(false);
     const [vaults, setVaults] = useState<VaultType[]>([]);
     const [historyModalOpen, setHistoryModalOpen] = useState(false);
@@ -156,6 +160,7 @@ export function NoteManager({
         setPathHashMap({});
         setShareFilter(null);
         setSelectedNote(undefined);
+        setSelectedFile(undefined);
         setInitialPreviewMode(false);
         setView("list");
     }, [vault, setCurrentPath, setCurrentPathHash]);
@@ -169,11 +174,13 @@ export function NoteManager({
     }, [view]);
 
     const { handleNoteList } = useNoteHandle();
+    const { getRawFileUrl } = useFileHandle();
 
     const handleSelectNote = useCallback((note: Note, previewMode: boolean = false) => {
         // 进入编辑器前保存列表滚动位置 / Save list scroll position before entering editor
         scrollPositionRef.current = getMainEl()?.scrollTop ?? 0;
         setSelectedNote(note);
+        setSelectedFile(undefined);
         setInitialPreviewMode(previewMode);
         setView("editor");
     }, []);
@@ -183,9 +190,16 @@ export function NoteManager({
         setCurrentPath(folder);
         setCurrentPathHash(pathHashMap[folder] || (folder ? hashCode(folder) : ""));
         setSelectedNote(note);
+        setSelectedFile(undefined);
         setInitialPreviewMode(previewMode);
         setView("list");
     }, [pathHashMap, setCurrentPath, setCurrentPathHash]);
+
+    const handleSelectWorkspaceFile = useCallback((file: FileDTO) => {
+        setSelectedNote(undefined);
+        setSelectedFile(file);
+        setInitialPreviewMode(true);
+    }, []);
 
     const handleWorkspaceFoldersLoaded = useCallback((folders: FolderDTO[]) => {
         setPathHashMap(prev => {
@@ -439,8 +453,9 @@ export function NoteManager({
                         <NoteTreeSidebar
                             key={vault}
                             vault={vault}
-                            selectedPathHash={selectedNote?.pathHash}
+                            selectedPathHash={selectedNote?.pathHash || selectedFile?.pathHash}
                             onSelectNote={handleSelectWorkspaceNote}
+                            onSelectFile={handleSelectWorkspaceFile}
                             onFoldersLoaded={handleWorkspaceFoldersLoaded}
                         />
                         <div className="min-w-0 flex-1">
@@ -470,6 +485,14 @@ export function NoteManager({
                                         />
                                     </TocProvider>
                                 )
+                            ) : selectedFile ? (
+                                <FilePreview
+                                    key={selectedFile.pathHash}
+                                    file={selectedFile}
+                                    url={getRawFileUrl(vault, selectedFile.path, selectedFile.pathHash)}
+                                    variant="panel"
+                                    onClose={() => setSelectedFile(undefined)}
+                                />
                             ) : (
                                 <div className="flex h-full min-h-[420px] flex-col items-center justify-center rounded-xl border border-border bg-card p-12 text-center text-muted-foreground">
                                     <FileText className="mb-3 h-12 w-12 text-muted-foreground/40" />
@@ -523,6 +546,15 @@ export function NoteManager({
                     pathHash={selectedNoteForHistory.pathHash}
                     isRecycle={isRecycle}
                     onRestoreSuccess={handleHistoryRestoreSuccess}
+                />
+            )}
+
+            {selectedFile && !isWorkspaceMode && (
+                <FilePreview
+                    key={selectedFile.pathHash}
+                    file={selectedFile}
+                    url={getRawFileUrl(vault, selectedFile.path, selectedFile.pathHash)}
+                    onClose={() => setSelectedFile(undefined)}
                 />
             )}
         </>
