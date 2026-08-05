@@ -385,6 +385,10 @@ export function NoteList({ vault, vaults, onVaultChange, onSelectNote, onCreateN
         const requestId = ++noteRequestIdRef.current;
 
         setLoading(true);
+        // 每次新请求统一重置文件加载标志，避免上一个请求（如目录/附件模式）被新请求淘汰后残留 fileLoading，导致加载占位符永久显示
+        // Reset file loading flag on every new request so a stale request (e.g. folder/attachment mode) discarded by requestId
+        // cannot leave fileLoading stuck true and keep the loading placeholder visible forever.
+        setFileLoading(false);
 
         if (viewMode === "workspace" && !isRecycle) {
             setFolders([]);
