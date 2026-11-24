@@ -1,4 +1,5 @@
 export default {
+    "ui.auth.passwordLoginDisabled": "Password login is disabled. Use an identity provider below, or contact your administrator if none is available.",
     // --- ui.common ---
     "ui.common.title": "Fast Note Sync",
     "ui.common.subtitle": "High-performance, low-latency note synchronization, management, REST service",

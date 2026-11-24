@@ -1,4 +1,5 @@
 export default {
+    "ui.auth.passwordLoginDisabled": "密码登录已关闭。请使用下方身份提供商登录；如无可用的登录方式，请联系管理员。",
     // --- ui.common ---
     "ui.common.title": "Fast Note Sync",
     "ui.common.subtitle": "高性能、低延迟的笔记同步, 管理, REST 服务",
