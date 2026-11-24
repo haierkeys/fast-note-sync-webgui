@@ -48,6 +48,8 @@ export function AuthForm({ onSuccess, registerIsEnable = true }: AuthFormProps) 
   const { resolvedTheme } = useTheme()
   const [activeTab, setActiveTab] = useState<'login' | 'register'>('login')
   const [oidcProviders, setOIDCProviders] = useState<OIDCProvider[]>([])
+  const [passwordLoginIsEnable, setPasswordLoginIsEnable] = useState(true)
+  const [capabilitiesLoaded, setCapabilitiesLoaded] = useState(false)
 
   const loginSchema = createLoginSchema(t)
   const registerSchema = createRegisterSchema(t)
@@ -66,6 +68,24 @@ export function AuthForm({ onSuccess, registerIsEnable = true }: AuthFormProps) 
 
   useEffect(() => {
     let cancelled = false
+    // Also used on the OAuth authorization page, which does not load App's config.
+    const loadLoginCapabilities = async () => {
+      try {
+        const response = await fetch(addCacheBuster(env.API_URL + "/api/webgui/config"), {
+          headers: buildApiHeaders({ token: null, includeContentType: false }),
+        })
+        if (!response.ok) return
+        const res = await response.json()
+        if (!cancelled && res.code > 0 && res.code < 100) {
+          // Older backends omit this capability: keep password login available.
+          setPasswordLoginIsEnable(res.data?.passwordLoginIsEnable !== false)
+        }
+      } catch (_error) {
+        // The backend remains responsible for enforcing disabled password login.
+      } finally {
+        if (!cancelled) setCapabilitiesLoaded(true)
+      }
+    }
     const loadOIDCConfig = async () => {
       try {
         const response = await fetch(addCacheBuster(env.API_URL + "/api/user/auth/oidc/config"), {
@@ -83,6 +103,7 @@ export function AuthForm({ onSuccess, registerIsEnable = true }: AuthFormProps) 
       }
     }
     loadOIDCConfig()
+    loadLoginCapabilities()
     return () => {
       cancelled = true
     }
@@ -155,7 +176,7 @@ export function AuthForm({ onSuccess, registerIsEnable = true }: AuthFormProps) 
         {/* Auth Card */}
         <div className="auth-card">
           {/* Tabs Switcher at Top */}
-          {registerIsEnable && <div className="auth-tabs-container">
+          {capabilitiesLoaded && passwordLoginIsEnable && registerIsEnable && <div className="auth-tabs-container">
             <div className="auth-tabs">
               <button
                 onClick={() => toggleTab('login')}
@@ -172,7 +193,7 @@ export function AuthForm({ onSuccess, registerIsEnable = true }: AuthFormProps) 
             </div>
           </div>}
 
-          <AnimatePresence mode="wait">
+          {capabilitiesLoaded && passwordLoginIsEnable && <AnimatePresence mode="wait">
             {activeTab === 'login' ? (
               <motion.form
                 key="login"
@@ -328,11 +349,17 @@ export function AuthForm({ onSuccess, registerIsEnable = true }: AuthFormProps) 
                 </button>
               </motion.form>
             )}
-          </AnimatePresence>
+          </AnimatePresence>}
 
-          {activeTab === 'login' && oidcProviders.length > 0 && (
+          {capabilitiesLoaded && !passwordLoginIsEnable && (
+            <p className="text-sm text-muted-foreground" role="status">
+              {t("ui.auth.passwordLoginDisabled", { defaultValue: "Password login is disabled. Use an identity provider below, or contact your administrator if none is available." })}
+            </p>
+          )}
+
+          {(!passwordLoginIsEnable || activeTab === 'login') && oidcProviders.length > 0 && (
             <div className="auth-oidc-section">
-              <div className="auth-divider" />
+              {passwordLoginIsEnable && <div className="auth-divider" />}
               {oidcProviders.map((provider) => (
                 <button
                   key={provider.id}
